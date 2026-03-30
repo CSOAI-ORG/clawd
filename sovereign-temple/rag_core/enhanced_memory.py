@@ -284,12 +284,24 @@ class EnhancedMemoryStore:
     async def initialize(self):
         """Initialize database connections"""
         # PostgreSQL
-        self.pool = await asyncpg.create_pool(self.postgres_dsn)
+        self.pool = await asyncpg.create_pool(
+            self.postgres_dsn,
+            min_size=2,
+            max_size=10,
+            max_queries=50000,                      # Recycle connections — prevents 24/7 crashes
+            max_inactive_connection_lifetime=300.0,  # Close idle after 5min
+            command_timeout=60.0,                    # Kill hung queries before pool exhaustion
+        )
         await self._create_tables()
         
-        # Weaviate
-        self.weaviate_client = weaviate.Client(self.weaviate_url)
-        await self._ensure_schema()
+        # Weaviate (optional — Postgres is the primary store)
+        try:
+            self.weaviate_client = weaviate.Client(self.weaviate_url)
+            await self._ensure_schema()
+        except Exception as _wv_err:
+            import logging
+            logging.getLogger(__name__).warning("Weaviate unavailable (Postgres OK): %s", _wv_err)
+            self.weaviate_client = None
     
     async def _create_tables(self):
         """Create PostgreSQL tables"""
@@ -398,14 +410,25 @@ class EnhancedMemoryStore:
             episode, emotional_valence, decision_impact, agent_trust
         )
         
-        # Store in PostgreSQL
+        # Store in PostgreSQL (with DB-level deduplication)
         async with self.pool.acquire() as conn:
+            # Check for identical content in last hour — prevents duplicate registration/heartbeat entries
+            existing = await conn.fetchval("""
+                SELECT id FROM memory_episodes
+                WHERE content = $1 AND timestamp > NOW() - INTERVAL '1 hour'
+                LIMIT 1
+            """, episode.content)
+            if existing:
+                import logging
+                logging.getLogger(__name__).debug("Skipping duplicate memory: %s", episode.content[:50])
+                return episode  # Return without inserting
+
             await conn.execute("""
-                INSERT INTO memory_episodes 
-                (id, content, timestamp, importance_score, care_weight, source_agent, 
+                INSERT INTO memory_episodes
+                (id, content, timestamp, importance_score, care_weight, source_agent,
                  memory_type, related_episodes, tags, access_count)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-            """, episode.id, episode.content, episode.timestamp, 
+            """, episode.id, episode.content, episode.timestamp,
                 episode.importance_score, episode.care_weight, episode.source_agent,
                 episode.memory_type, episode.related_episodes, episode.tags, episode.access_count)
         
@@ -662,6 +685,8 @@ class EnhancedMemoryStore:
     
     async def list_all_memories(self, limit: int = 100) -> List[Dict[str, Any]]:
         """List all memories from PostgreSQL"""
+        if self.pool is None:
+            return []
         async with self.pool.acquire() as conn:
             rows = await conn.fetch("""
                 SELECT id, content, timestamp, importance_score, care_weight,

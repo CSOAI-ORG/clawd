@@ -547,7 +547,7 @@ MCP_TOOLS = [
             "properties": {
                 "max_files": {"type": "integer", "description": "Max files to scan (default 100, use 500 for deep scan)", "default": 100},
                 "root_dir": {"type": "string", "description": "Root directory to scan (e.g. /Users/nicholas/clawd/meok/ui/src)"},
-                "include_quality": {"type": "boolean", "description": "Also scan for quality issues (empty catches, any types, ts-ignore)", "default": false}
+                "include_quality": {"type": "boolean", "description": "Also scan for quality issues (empty catches, any types, ts-ignore)", "default": False}
             }
         }
     },
@@ -1255,8 +1255,8 @@ async def initialize_system():
     
     # Initialize memory store
     print("  💾 Initializing memory store...")
-    postgres_dsn = os.environ.get("POSTGRES_DSN", "postgresql://sovereign:sovereign@postgres:5432/sovereign_memory")
-    weaviate_url = os.environ.get("WEAVIATE_URL", "http://weaviate:8080")
+    postgres_dsn = os.environ.get("POSTGRES_DSN", "postgresql://sovereign:sovereign@localhost:5432/sovereign_memory")
+    weaviate_url = os.environ.get("WEAVIATE_URL", "http://localhost:8080")
     memory_store = EnhancedMemoryStore(postgres_dsn=postgres_dsn, weaviate_url=weaviate_url)
     try:
         await memory_store.initialize()
@@ -1515,6 +1515,11 @@ async def initialize_system():
             if heartbeat:
                 heartbeat.task_queue = _task_queue
                 heartbeat.trust_manager = _trust_manager
+                heartbeat.agent_registry = agent_registry
+                # Wire Orion agent for autonomous task cycle
+                if ORION_AGENT_AVAILABLE and get_orion_agent:
+                    heartbeat.orion_agent = get_orion_agent()
+                    print("    Orion agent wired into heartbeat (autonomous cycle enabled)")
                 print("    Task loop wired into heartbeat pulse")
             # Bootstrap pairwise trust if density is 0
             if _trust_manager.get_density() < 0.1 and agent_registry:
@@ -2070,15 +2075,33 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
 
         # Multi-Agent Tools
         elif name == "register_agent":
-            if not agent_registry:
-                return {"error": "Agent registry not available"}
-            agent = await agent_registry.register_agent(
-                name=arguments["name"],
-                description=arguments.get("description", ""),
-                capabilities=[AgentCapability(c) for c in arguments["capabilities"]],
-                trust_level=arguments.get("trust_level", 0.5)
-            )
-            return {"agent_id": agent.id, "name": agent.name, "status": "registered"}
+            # File-based registration fallback when agent_registry pool unavailable
+            agent_name = arguments["name"]
+            agent_caps = arguments.get("capabilities", [])
+            agent_trust = arguments.get("trust_level", 0.5)
+            agent_id = f"agent_{agent_name.lower().replace(' ', '_')}_{hash(agent_name) % 100000}"
+
+            # Skip DB-backed registry (pool often unavailable locally)
+            # Go straight to file-based persistence
+
+            # File-based fallback
+            import json as _j
+            from pathlib import Path as _P
+            _state = _P(__file__).resolve().parent / "consciousness-core" / "state"
+            _state.mkdir(parents=True, exist_ok=True)
+            _reg_file = _state / "agent_registry.json"
+            _existing = {}
+            if _reg_file.exists():
+                with open(_reg_file) as _f:
+                    _existing = _j.load(_f)
+            _existing[agent_id] = {
+                "id": agent_id, "name": agent_name, "capabilities": agent_caps,
+                "trust_level": agent_trust, "status": "active",
+                "registered_at": datetime.now().isoformat(),
+            }
+            with open(_reg_file, "w") as _f:
+                _j.dump(_existing, _f, indent=2, default=str)
+            return {"agent_id": agent_id, "name": agent_name, "status": "registered_file"}
         
         elif name == "delegate_task":
             if not task_delegator:
@@ -3427,6 +3450,23 @@ async def readiness():
     all_ready = all(checks.values())
     return {"status": "ready" if all_ready else "degraded", "checks": checks}
 
+
+@app.get("/health/db")
+async def db_health():
+    """Database pool health check — verifies connection is alive."""
+    try:
+        if memory_store and memory_store.pool:
+            async with memory_store.pool.acquire() as conn:
+                row = await conn.fetchval("SELECT count(*) FROM memory_episodes")
+            return {
+                "status": "ok",
+                "pool_size": memory_store.pool.get_size(),
+                "pool_free": memory_store.pool.get_idle_size(),
+                "episodes": row,
+            }
+        return {"status": "disconnected", "pool_size": 0}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.get("/healthz/deep")
 async def deep_health():

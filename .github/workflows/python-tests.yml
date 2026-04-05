@@ -1,0 +1,75 @@
+name: MEOK OS - Python Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: |
+            **/requirements*.txt
+            **/pyproject.toml
+      
+      - name: Install dependencies
+        run: |
+          cd clawd/meok
+          pip install -e . --quiet
+          pip install pytest pytest-asyncio pytest-cov --quiet
+      
+      - name: Run tests
+        run: |
+          cd clawd/meok
+          pytest tests/ --cov=. --cov-report=xml --cov-report=html -v
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install linters
+        run: |
+          pip install ruff mypy black isort
+      
+      - name: Run ruff
+        run: |
+          cd clawd/meok
+          ruff check .
+      
+      - name: Run black
+        run: |
+          cd clawd/meok
+          black --check .
+      
+      - name: Run mypy
+        run: |
+          cd clawd/meok
+          mypy . --ignore-missing-imports || true

@@ -1,0 +1,34 @@
+{
+  "model_name": "care_pattern_analyzer",
+  "metrics": {
+    "mse": 0.0023714787468849786,
+    "mae": 0.037174896272992836,
+    "training_samples": 600,
+    "input_features": 12,
+    "output_dimensions": 5,
+    "per_output": {
+      "burnout_risk": {
+        "mse": 0.0023559335852340797,
+        "mae": 0.03787959622104283
+      },
+      "care_imbalance": {
+        "mse": 0.0013646221402742408,
+        "mae": 0.024108633402072695
+      },
+      "compassion_fatigue": {
+        "mse": 0.0025322975981095473,
+        "mae": 0.040253613973708934
+      },
+      "sustainability": {
+        "mse": 0.00245051100245226,
+        "mae": 0.038852235120518955
+      },
+      "intervention_needed": {
+        "mse": 0.003154029408354766,
+        "mae": 0.04478040264762078
+      }
+    }
+  },
+  "is_trained": true,
+  "saved_at": "2026-04-04T06:31:24.072670"
+}

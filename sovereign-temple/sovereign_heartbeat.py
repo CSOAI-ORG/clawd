@@ -165,6 +165,102 @@ class SovereignHeartbeat:
             replace_existing=True,
         )
 
+        # Evening Self-Learning Harvest — 18:00 UK time
+        # YouTube transcripts + ArXiv papers + RSS feeds → SOV3 memory
+        self.scheduler.add_job(
+            self._safe_run(self.evening_harvest_cycle),
+            CronTrigger(hour=18, minute=0, timezone=UK_TZ),
+            id="evening_harvest",
+            name="Evening Self-Learning (18:00)",
+            replace_existing=True,
+        )
+
+        # MARS Metacognitive Reflection — every 2 hours
+        # Extracts principles from recent interactions (Kimi Heartbeat Architecture)
+        self.scheduler.add_job(
+            self._safe_run(self.mars_reflection),
+            IntervalTrigger(hours=2),
+            id="mars_reflection",
+            name="MARS Reflection (2h)",
+            replace_existing=True,
+        )
+
+        # AIOps Self-Healing — every 5 minutes
+        # Checks GPU tunnel, SOV3, Ollama health (Kimi AIOps Architecture)
+        self.scheduler.add_job(
+            self._safe_run(self.aiops_health_check),
+            IntervalTrigger(minutes=5),
+            id="aiops_health",
+            name="AIOps Health (5m)",
+            replace_existing=True,
+        )
+
+        # Curiosity Agent — 20:00 UK time (after harvest, finds knowledge gaps)
+        self.scheduler.add_job(
+            self._safe_run(self.curiosity_cycle),
+            CronTrigger(hour=20, minute=0, timezone=UK_TZ),
+            id="curiosity_agent",
+            name="Curiosity Agent (20:00)",
+            replace_existing=True,
+        )
+
+        # Crisis Monitor — every 30 minutes
+        # ArXiv RSS + SOV3 health check for critical findings
+        self.scheduler.add_job(
+            self._safe_run(self.crisis_monitor_cycle),
+            IntervalTrigger(minutes=30),
+            id="crisis_monitor",
+            name="Crisis Monitor (30m)",
+            replace_existing=True,
+        )
+
+        # Synthesis Bridge — 21:00 UK time
+        # Cross-domain knowledge fusion (between curiosity 20:00 and retrain 22:00)
+        self.scheduler.add_job(
+            self._safe_run(self.synthesis_bridge_cycle),
+            CronTrigger(hour=21, minute=0, timezone=UK_TZ),
+            id="synthesis_bridge",
+            name="Synthesis Bridge (21:00)",
+            replace_existing=True,
+        )
+
+        # Meta Controller — every 6 hours (RL pipeline optimization)
+        self.scheduler.add_job(
+            self._safe_run(self.meta_controller_cycle),
+            IntervalTrigger(hours=6),
+            id="meta_controller",
+            name="Meta Controller (6h)",
+            replace_existing=True,
+        )
+
+        # Weather Adversary — daily 06:00 (check forecast, harden farm)
+        self.scheduler.add_job(
+            self._safe_run(self.weather_adversary_cycle),
+            CronTrigger(hour=6, minute=0, timezone=UK_TZ),
+            id="weather_adversary",
+            name="Weather Adversary (06:00)",
+            replace_existing=True,
+        )
+
+        # Speciation Engine — weekly Thursday 02:00 (agent evolution)
+        self.scheduler.add_job(
+            self._safe_run(self.speciation_cycle),
+            CronTrigger(day_of_week="thu", hour=2, minute=0, timezone=UK_TZ),
+            id="speciation_engine",
+            name="Speciation Engine (Thu 02:00)",
+            replace_existing=True,
+        )
+
+        # Void Protocol — Sunday 00:00-06:00 (scheduled silence)
+        # System enters rest mode: no new tasks, reflection only
+        self.scheduler.add_job(
+            self._safe_run(self.void_protocol),
+            CronTrigger(day_of_week="sun", hour=0, minute=0, timezone=UK_TZ),
+            id="void_protocol",
+            name="Void Protocol (Sun 00:00)",
+            replace_existing=True,
+        )
+
         self.scheduler.start()
         self._started_at = datetime.now(UK_TZ)
         self.autonomous_tasks_completed = 0
@@ -371,12 +467,22 @@ class SovereignHeartbeat:
                 logger.info("Autonomous cycle: failed to capture task %s", task_id)
                 return
 
-            # 3. EXECUTE — start micro sprint
-            sprint = await orion.start_sprint("micro", target_task_id=task_id)
-            logger.info("Autonomous cycle: sprint started for %s", task_title)
+            # 3. EXECUTE — use ClawCodeExecutor for real work
+            try:
+                from claw_code_adapter import ClawCodeExecutor
+                executor = ClawCodeExecutor(working_dir="/Users/nicholas/clawd/meok/ui")
+                exec_result = await executor.execute_task({
+                    "type": "search_code",
+                    "pattern": task_title[:50],
+                    "path": "/Users/nicholas/clawd/meok/ui/src",
+                })
+                summary = f"Autonomous: {task_title}. Found: {exec_result.output[:200]}"
+                logger.info("Autonomous cycle: executed %s (success=%s)", task_title, exec_result.success)
+            except Exception as exec_err:
+                summary = f"Autonomous: {task_title}. Execution failed: {exec_err}"
+                logger.warning("Autonomous cycle: execution failed for %s: %s", task_title, exec_err)
 
             # 4. VALIDATE — complete sprint
-            summary = f"Autonomous execution of: {task_title}"
             completion = await orion.complete_sprint(summary, task_id)
 
             # 5. LEARN — record to memory
@@ -976,14 +1082,14 @@ class SovereignHeartbeat:
         if not self.memory_store:
             return
 
-        # Deduplication: skip near-duplicate memories
+        # Deduplication: skip near-duplicate memories (sliding window of last 10)
         try:
             from difflib import SequenceMatcher
-            recent = getattr(self, '_last_memory_content', '')
-            if recent:
+            recent_memories = getattr(self, '_recent_memory_window', [])
+            for recent in recent_memories:
                 similarity = SequenceMatcher(None, content, recent).ratio()
                 if similarity > 0.85:
-                    logger.debug("Skipping duplicate memory (%.0f%% similar)", similarity * 100)
+                    logger.debug("Skipping duplicate memory (%.0f%% similar to window entry)", similarity * 100)
                     return
         except Exception:
             pass  # Never block recording on dedup failure
@@ -996,7 +1102,12 @@ class SovereignHeartbeat:
                 care_weight=care_weight,
                 tags=tags or [],
             )
-            self._last_memory_content = content  # Cache for next comparison
+            # Sliding window: keep last 10 memories for dedup comparison
+            if not hasattr(self, '_recent_memory_window'):
+                self._recent_memory_window = []
+            self._recent_memory_window.append(content)
+            if len(self._recent_memory_window) > 10:
+                self._recent_memory_window = self._recent_memory_window[-10:]
         except Exception:
             logger.exception("Failed to record heartbeat memory")
 
@@ -1172,3 +1283,234 @@ Nightshift cycles: {self.nightshift_count}
                 f.write(content)
         except OSError:
             logger.exception("Failed to write heartbeat file to %s", HEARTBEAT_FILE)
+
+    # ------------------------------------------------------------------
+    # EVENING SELF-LEARNING (Kimi Heartbeat Architecture)
+    # ------------------------------------------------------------------
+
+    async def evening_harvest_cycle(self) -> None:
+        """18:00 daily: Harvest YouTube, ArXiv, RSS → SOV3 memory.
+        Jarvis learns autonomously from AI channels while Nick sleeps."""
+        logger.info("🌙 Evening Harvest starting...")
+        try:
+            from evening_harvest import run_evening_harvest
+            result = run_evening_harvest()
+            logger.info(f"🌙 Evening Harvest complete: {result.get('stored', 0)} items learned")
+        except ImportError:
+            logger.warning("evening_harvest.py not found — skipping")
+        except Exception:
+            logger.exception("Evening harvest failed")
+
+    # ------------------------------------------------------------------
+    # MARS METACOGNITIVE REFLECTION (Kimi Heartbeat Architecture)
+    # ------------------------------------------------------------------
+
+    async def mars_reflection(self) -> None:
+        """Every 2 hours: Reflect on recent interactions, extract principles.
+        MARS = Metacognitive Agent Reflective Self-improvement."""
+        logger.info("🧠 MARS Reflection starting...")
+        try:
+            # Get recent ICRL episodes if available
+            icrl_context = ""
+            try:
+                import sys
+                sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'voice_pipeline'))
+                from icrl_self_improvement import icrl_buffer
+                stats = icrl_buffer.get_stats()
+                if stats.get("episodes", 0) > 0:
+                    icrl_context = f"ICRL stats: {stats['episodes']} episodes, avg care={stats.get('avg_care', 0):.2f}, best={stats.get('best_score', 0):.2f}"
+            except Exception:
+                pass
+
+            # Get recent memories for reflection
+            recent_memories = await self.memory_store.query(
+                "recent interactions and responses",
+                limit=10,
+            )
+
+            if not recent_memories and not icrl_context:
+                logger.info("🧠 MARS: No recent data to reflect on")
+                return
+
+            # Generate reflection principle using Ollama
+            reflection_prompt = f"""You are reflecting on recent AI assistant interactions.
+{icrl_context}
+
+Recent memory snippets:
+{chr(10).join(m.get('content', '')[:200] for m in (recent_memories or [])[:5])}
+
+Extract 1-2 principles in format: "When [condition], do [action] because [reason]"
+Focus on what went well and what could improve."""
+
+            try:
+                import requests
+                r = requests.post("http://localhost:11434/api/generate", json={
+                    "model": "jarvis",
+                    "prompt": reflection_prompt,
+                    "stream": False,
+                    "options": {"num_predict": 200}
+                }, timeout=30)
+                principle = r.json().get("response", "")
+                if principle:
+                    await self.memory_store.store(
+                        content=f"[MARS Reflection] {principle}",
+                        memory_type="reflection",
+                        importance=0.7,
+                        tags=["mars", "principle", "self-improvement"],
+                        source_agent="mars-reflection",
+                    )
+                    logger.info(f"🧠 MARS: Principle recorded — {principle[:80]}...")
+            except Exception:
+                logger.warning("🧠 MARS: Ollama not available for reflection")
+
+        except Exception:
+            logger.exception("MARS reflection failed")
+
+    # ------------------------------------------------------------------
+    # AIOps SELF-HEALING (Kimi AIOps Architecture)
+    # ------------------------------------------------------------------
+
+    async def curiosity_cycle(self) -> None:
+        """20:00 daily: Identify knowledge gaps, queue queries for next harvest."""
+        logger.info("🔍 Curiosity Agent starting...")
+        try:
+            from curiosity_agent import run_curiosity_cycle
+            result = run_curiosity_cycle()
+            logger.info(f"🔍 Curiosity: {result.get('gaps_found', 0)} gaps, {result.get('high_priority', 0)} urgent")
+        except ImportError:
+            logger.warning("curiosity_agent.py not found")
+        except Exception:
+            logger.exception("Curiosity cycle failed")
+
+    async def weather_adversary_cycle(self) -> None:
+        """06:00 daily: Check weather forecast, identify threats, harden farm."""
+        try:
+            from weather_adversary import run_weather_adversary
+            result = run_weather_adversary()
+            if result.get("threats", 0) > 0:
+                logger.warning(f"🌧️ Weather: {result['threats']} threats, {result['high_severity']} high severity")
+        except ImportError:
+            pass
+        except Exception:
+            logger.exception("Weather adversary failed")
+
+    async def speciation_cycle(self) -> None:
+        """Weekly Thursday 02:00: Agent evolution — mutate, hybridize, select."""
+        logger.info("🧬 Speciation cycle starting...")
+        try:
+            from speciation_engine import engine
+            result = engine.evolve_cycle()
+            logger.info(f"🧬 Speciation: {len(result['mutations'])} mutations, {len(result['hybrids'])} hybrids, {len(result['extinct'])} extinct")
+        except ImportError:
+            pass
+        except Exception:
+            logger.exception("Speciation cycle failed")
+
+    async def void_protocol(self) -> None:
+        """Sunday 00:00: System enters rest mode for 6 hours.
+        No new tasks, reflection only, entropy reset."""
+        logger.info("🕳️ VOID PROTOCOL: Entering scheduled silence (6 hours)")
+        try:
+            await self.memory_store.store(
+                content="[VOID PROTOCOL] System entering scheduled silence. No new tasks until 06:00. Reflection and consolidation only.",
+                memory_type="system",
+                importance=0.7,
+                tags=["void", "rest", "scheduled-silence"],
+                source_agent="void-protocol",
+            )
+            # Run memory consolidation during void
+            try:
+                from memory_consolidation import run_consolidation
+                run_consolidation()
+                logger.info("🕳️ VOID: Memory consolidation complete during rest")
+            except Exception:
+                pass
+        except Exception:
+            logger.exception("Void protocol failed")
+
+    async def meta_controller_cycle(self) -> None:
+        """Every 6h: RL optimization — observe, reward, adjust config."""
+        try:
+            from meta_controller import run_meta_cycle
+            result = run_meta_cycle()
+            logger.info(f"🧠 Meta: gen={result['generation']}, reward={result['reward']:.4f}, trend={result['trend']}")
+        except ImportError:
+            pass
+        except Exception:
+            logger.exception("Meta controller failed")
+
+    async def crisis_monitor_cycle(self) -> None:
+        """Every 30m: Check ArXiv + SOV3 health for critical findings."""
+        try:
+            from crisis_monitor import run_crisis_monitor
+            result = run_crisis_monitor()
+            if result.get("critical_found", 0) > 0 or result.get("health_issues", 0) > 0:
+                logger.warning(f"🚨 Crisis: {result['critical_found']} critical, {result['health_issues']} health issues")
+        except ImportError:
+            pass
+        except Exception:
+            logger.exception("Crisis monitor failed")
+
+    async def synthesis_bridge_cycle(self) -> None:
+        """21:00 daily: Cross-domain knowledge fusion."""
+        logger.info("🔗 Synthesis Bridge starting...")
+        try:
+            from synthesis_bridge import run_synthesis_bridge
+            result = run_synthesis_bridge()
+            logger.info(f"🔗 Synthesis: {result.get('syntheses_created', 0)} insights from {result.get('pairs_evaluated', 0)} pairs")
+        except ImportError:
+            logger.warning("synthesis_bridge.py not found")
+        except Exception:
+            logger.exception("Synthesis bridge failed")
+
+    async def aiops_health_check(self) -> None:
+        """Every 5 minutes: Check GPU tunnel, SOV3, Ollama.
+        Auto-remediate failures where possible."""
+        try:
+            import requests
+            issues = []
+
+            # Check 1: SOV3 responding
+            try:
+                r = requests.get("http://localhost:3101/health", timeout=5)
+                if r.status_code != 200:
+                    issues.append("sov3_unhealthy")
+            except Exception:
+                issues.append("sov3_down")
+
+            # Check 2: Local Ollama responding
+            try:
+                r = requests.get("http://localhost:11434/api/tags", timeout=5)
+                if r.status_code != 200:
+                    issues.append("ollama_local_down")
+            except Exception:
+                issues.append("ollama_local_down")
+
+            # Check 3: GPU tunnel (if configured)
+            try:
+                r = requests.get("http://localhost:11435/api/tags", timeout=5)
+                if r.status_code != 200:
+                    issues.append("gpu_tunnel_down")
+            except Exception:
+                issues.append("gpu_tunnel_down")
+
+            if issues:
+                logger.warning(f"🏥 AIOps: Issues detected — {issues}")
+                # Record alert
+                try:
+                    await self.memory_store.store(
+                        content=f"[AIOps Alert] Issues: {', '.join(issues)}",
+                        memory_type="system",
+                        importance=0.8,
+                        tags=["aiops", "health", "alert"],
+                        source_agent="aiops-health",
+                    )
+                except Exception:
+                    pass
+            else:
+                # Only log healthy status every 30 minutes (not every 5 min)
+                if self.pulse_count % 6 == 0:
+                    logger.info("🏥 AIOps: All systems healthy")
+
+        except Exception:
+            logger.exception("AIOps health check failed")

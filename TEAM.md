@@ -40,7 +40,7 @@ Nick (Owner)
 - **Coordination** (6): `coord_register_agent`, `coord_submit_task`, `coord_acquire_files`, `coord_release_files`, `coord_complete_task`, `coord_get_dashboard`
 - **Monitoring** (7): `get_active_alerts`, `get_audit_logs`, `get_dashboard_metrics`, `get_heartbeat_status`, `get_maintenance_status`, `trigger_maintenance`, `trigger_security_hardening`
 - **Research** (3): `ingest_civilizational_knowledge`, `trigger_research_sweep`, `trigger_neural_retrain`
-- **Council** (5): `get_asabiyyah_score`, `get_agent_registry_stats`, `submit_council_proposal`, `vote_on_proposal`, `register_agent`
+- **Council** (5): `get_engagement_score`, `get_agent_registry_stats`, `submit_council_proposal`, `vote_on_proposal`, `register_agent`
 - **System** (4): `get_system_status`, `get_memory_stats`, `whoami`, `delegate_task`
 - **Orion-Riri** (4): `orion_capture_task`, `orion_get_tasks`, `orion_hunt_tasks`, `orion_riri_hourman_status`
 - **Hourman** (3): `hourman_start_sprint`, `hourman_complete_sprint`, `hourman_get_status`

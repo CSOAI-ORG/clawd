@@ -19,21 +19,34 @@ from typing import Optional, Dict, Any, List, Tuple
 from contextlib import asynccontextmanager
 
 # Add module paths
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'neural_core'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'rag_core'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'monitoring'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'multi_agent'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'consciousness'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "neural_core"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "rag_core"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "monitoring"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "multi_agent"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "consciousness"))
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Response
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Response, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+
+try:
+    from prometheus_fastapi_instrumentator import Instrumentator
+
+    PROMETHEUS_AVAILABLE = True
+except ImportError:
+    PROMETHEUS_AVAILABLE = False
 from pydantic import BaseModel
 import uvicorn
 
 # Import our modules
 from neural_core import create_default_registry, NeuralModelRegistry
-from alert_system import AlertManager, AlertSeverity, AlertChannel, console_alert_handler
+from alert_system import (
+    AlertManager,
+    AlertSeverity,
+    AlertChannel,
+    console_alert_handler,
+)
 from audit_logger import AuditLogger, AuditEventType
 from metrics_collector import MetricsCollector
 from enhanced_memory import EnhancedMemoryStore
@@ -44,9 +57,19 @@ from tool_dispatcher import ToolDispatcher
 from safety_classifier import create_safety_router, SafetyClassifier
 from sycophancy_detector import create_sycophancy_router, SycophancyDetector
 
+# Genesis → G-code Pipeline
+try:
+    from genesis_pipeline import genesis_pipeline
+
+    GENESIS_PIPELINE_AVAILABLE = True
+except ImportError:
+    GENESIS_PIPELINE_AVAILABLE = False
+    genesis_pipeline = None
+
 # Project Heartbeat — Autonomous Self-Improvement
 try:
     from sovereign_heartbeat import SovereignHeartbeat
+
     HEARTBEAT_AVAILABLE = True
 except ImportError:
     HEARTBEAT_AVAILABLE = False
@@ -54,24 +77,28 @@ except ImportError:
 
 try:
     from sovereign_research_agent import AutonomousResearchAgent
+
     RESEARCH_AVAILABLE = True
 except ImportError:
     RESEARCH_AVAILABLE = False
 
 try:
     from sovereign_security_hardening import SecurityHardeningEngine
+
     SECURITY_HARDENING_AVAILABLE = True
 except ImportError:
     SECURITY_HARDENING_AVAILABLE = False
 
 try:
     from sovereign_continual_learning import ContinualLearningTrainer
+
     CONTINUAL_LEARNING_AVAILABLE = True
 except ImportError:
     CONTINUAL_LEARNING_AVAILABLE = False
 
 try:
     from lightgbm_fallback import LightGBMFallback
+
     LGBM_FALLBACK_AVAILABLE = True
 except ImportError:
     LGBM_FALLBACK_AVAILABLE = False
@@ -80,9 +107,14 @@ except ImportError:
 # Civilizational Creativity Engine
 try:
     from creativity_engine import (
-        CreativityAssessmentNN, CreativityTrainingPipeline,
-        kolmogorov_novelty, CORPUS, get_corpus_stats, ingest_corpus,
+        CreativityAssessmentNN,
+        CreativityTrainingPipeline,
+        kolmogorov_novelty,
+        CORPUS,
+        get_corpus_stats,
+        ingest_corpus,
     )
+
     CREATIVITY_ENGINE_AVAILABLE = True
 except ImportError:
     CREATIVITY_ENGINE_AVAILABLE = False
@@ -91,8 +123,12 @@ except ImportError:
 # Tier 2: Cross-Domain Bisociation, Stochastic Resonance, Quality-Diversity
 try:
     from creativity_engine.cross_domain_linker import CrossDomainLinker
-    from creativity_engine.stochastic_resonance import StochasticResonanceEngine, apply_stochastic_resonance
+    from creativity_engine.stochastic_resonance import (
+        StochasticResonanceEngine,
+        apply_stochastic_resonance,
+    )
     from creativity_engine.quality_diversity import QualityDiversityArchive
+
     TIER2_CREATIVITY_AVAILABLE = True
 except ImportError:
     TIER2_CREATIVITY_AVAILABLE = False
@@ -103,6 +139,7 @@ except ImportError:
 # Kimi Agent (Moonshot AI)
 try:
     from creativity_engine.kimi_agent import KimiAgent
+
     KIMI_AVAILABLE = True
 except ImportError:
     KIMI_AVAILABLE = False
@@ -111,14 +148,15 @@ except ImportError:
 # Orion-Riri-Hourman Agent
 # Try bundled ext_agents first (inside Docker), fallback to sovereign-temple-live on host
 _orion_paths = [
-    os.path.join(os.path.dirname(__file__), 'ext_agents'),
-    os.path.join(os.path.dirname(__file__), '..', 'sovereign-temple-live', 'agents'),
+    os.path.join(os.path.dirname(__file__), "ext_agents"),
+    os.path.join(os.path.dirname(__file__), "..", "sovereign-temple-live", "agents"),
 ]
 for _p in _orion_paths:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 try:
     from orion_riri_hourman import HunterBuilderAgent, get_agent as get_orion_agent
+
     ORION_AGENT_AVAILABLE = True
 except ImportError as _e:
     print(f"[startup] Orion import failed: {_e}")
@@ -128,19 +166,27 @@ except ImportError as _e:
 # Multi-Agent Coordination Hub
 # Try bundled ext_coordination first (inside Docker), fallback to sovereign-temple-live on host
 _coord_paths = [
-    os.path.dirname(__file__),  # /app — so ext_coordination is importable as ext_coordination
-    os.path.join(os.path.dirname(__file__), 'ext_coordination'),  # direct files
-    os.path.join(os.path.dirname(__file__), '..', 'sovereign-temple-live'),  # host: coordination pkg
+    os.path.dirname(
+        __file__
+    ),  # /app — so ext_coordination is importable as ext_coordination
+    os.path.join(os.path.dirname(__file__), "ext_coordination"),  # direct files
+    os.path.join(
+        os.path.dirname(__file__), "..", "sovereign-temple-live"
+    ),  # host: coordination pkg
 ]
 for _p in _coord_paths:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 try:
     from coordination import get_hub as get_coordination_hub
+
     COORDINATION_AVAILABLE = True
 except ImportError:
     try:
-        from ext_coordination import get_hub as get_coordination_hub  # Docker volume mount
+        from ext_coordination import (
+            get_hub as get_coordination_hub,
+        )  # Docker volume mount
+
         COORDINATION_AVAILABLE = True
     except ImportError as _e:
         print(f"[startup] Coordination import failed: {_e}")
@@ -149,7 +195,13 @@ except ImportError:
 
 # Task Execution Loop — Compass doc: heartbeat → queue → execute → trust
 try:
-    from task_execution_loop import TaskQueue, AgentTrustManager, run_heartbeat_tick, run_pairwise_bootstrap
+    from task_execution_loop import (
+        TaskQueue,
+        AgentTrustManager,
+        run_heartbeat_tick,
+        run_pairwise_bootstrap,
+    )
+
     TASK_LOOP_AVAILABLE = True
 except ImportError as _e:
     print(f"[startup] Task execution loop import failed: {_e}")
@@ -158,6 +210,7 @@ except ImportError as _e:
 # HARV — Holistic Ambient Reality Vectoriser (Phase 1)
 try:
     from harv_context import get_harv, HARVContext
+
     HARV_AVAILABLE = True
 except ImportError:
     HARV_AVAILABLE = False
@@ -165,6 +218,7 @@ except ImportError:
 # StreamAggregator — multi-stream terminal/screen/app context hub
 try:
     from stream_aggregator import get_aggregator, StreamAggregator
+
     STREAM_AGG_AVAILABLE = True
 except ImportError:
     STREAM_AGG_AVAILABLE = False
@@ -172,21 +226,25 @@ except ImportError:
 # NVIDIA Nemotron 3 Nano 30B API Client
 try:
     from neural_core.nemotron_client import get_nemotron_client, NemotronClient
+
     NEMOTRON_AVAILABLE = True
 except ImportError:
     NEMOTRON_AVAILABLE = False
     NemotronClient = None
+
 
 # MCP Models
 class ToolCall(BaseModel):
     name: str
     arguments: Dict[str, Any]
 
+
 class McpRequest(BaseModel):
     jsonrpc: str = "2.0"
     id: Optional[str] = None
     method: str
     params: Optional[Dict[str, Any]] = None
+
 
 # Global state
 model_registry: Optional[NeuralModelRegistry] = None
@@ -227,7 +285,9 @@ class ModelOrchestrator:
 
     def __init__(self, registry, executor=None):
         self._registry = registry
-        self._executor = executor or ThreadPoolExecutor(max_workers=6, thread_name_prefix="model_")
+        self._executor = executor or ThreadPoolExecutor(
+            max_workers=6, thread_name_prefix="model_"
+        )
 
     async def predict_all(self, message_text: str, features: dict = None) -> dict:
         """Run all available models concurrently. Returns dict of model_name -> result."""
@@ -235,13 +295,13 @@ class ModelOrchestrator:
         tasks = {}
         if not self._registry:
             return {}
-        models = self._registry.models if hasattr(self._registry, 'models') else {}
+        models = self._registry.models if hasattr(self._registry, "models") else {}
         for name, model in models.items():
-            if model and getattr(model, 'is_trained', False):
+            if model and getattr(model, "is_trained", False):
                 tasks[name] = loop.run_in_executor(
                     self._executor,
                     model.predict,
-                    features.get(name, message_text) if features else message_text
+                    features.get(name, message_text) if features else message_text,
                 )
         results = {}
         for name, task in tasks.items():
@@ -263,8 +323,8 @@ MCP_TOOLS = [
             "properties": {
                 "text": {"type": "string", "description": "Text to validate"}
             },
-            "required": ["text"]
-        }
+            "required": ["text"],
+        },
     },
     {
         "name": "detect_partnership_opportunities",
@@ -274,8 +334,8 @@ MCP_TOOLS = [
             "properties": {
                 "text": {"type": "string", "description": "Text to analyze"}
             },
-            "required": ["text"]
-        }
+            "required": ["text"],
+        },
     },
     {
         "name": "detect_threats",
@@ -285,8 +345,8 @@ MCP_TOOLS = [
             "properties": {
                 "text": {"type": "string", "description": "Text to analyze for threats"}
             },
-            "required": ["text"]
-        }
+            "required": ["text"],
+        },
     },
     {
         "name": "predict_relationship_evolution",
@@ -303,10 +363,10 @@ MCP_TOOLS = [
                 "reciprocity_score": {"type": "number"},
                 "vulnerability_sharing": {"type": "number"},
                 "boundary_respect": {"type": "number"},
-                "shared_value_alignment": {"type": "number"}
+                "shared_value_alignment": {"type": "number"},
             },
-            "required": ["current_trust"]
-        }
+            "required": ["current_trust"],
+        },
     },
     {
         "name": "analyze_care_patterns",
@@ -325,17 +385,16 @@ MCP_TOOLS = [
                 "relationship_satisfaction": {"type": "number"},
                 "energy_level": {"type": "number"},
                 "sleep_quality": {"type": "number"},
-                "work_life_balance": {"type": "number"}
+                "work_life_balance": {"type": "number"},
             },
-            "required": ["care_given_per_day"]
-        }
+            "required": ["care_given_per_day"],
+        },
     },
     {
         "name": "get_neural_model_info",
         "description": "Get information about all neural models",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
-    
     # Memory Tools
     {
         "name": "record_memory",
@@ -345,13 +404,16 @@ MCP_TOOLS = [
             "properties": {
                 "content": {"type": "string"},
                 "source_agent": {"type": "string"},
-                "memory_type": {"type": "string", "enum": ["interaction", "insight", "decision", "emotion"]},
+                "memory_type": {
+                    "type": "string",
+                    "enum": ["interaction", "insight", "decision", "emotion"],
+                },
                 "care_weight": {"type": "number"},
                 "tags": {"type": "array", "items": {"type": "string"}},
-                "emotional_valence": {"type": "number"}
+                "emotional_valence": {"type": "number"},
             },
-            "required": ["content", "source_agent"]
-        }
+            "required": ["content", "source_agent"],
+        },
     },
     {
         "name": "query_memories",
@@ -362,10 +424,10 @@ MCP_TOOLS = [
                 "query": {"type": "string"},
                 "care_weight_min": {"type": "number"},
                 "tags": {"type": "array", "items": {"type": "string"}},
-                "limit": {"type": "integer"}
+                "limit": {"type": "integer"},
             },
-            "required": ["query"]
-        }
+            "required": ["query"],
+        },
     },
     {
         "name": "get_temporal_chain",
@@ -374,16 +436,19 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "episode_id": {"type": "string"},
-                "direction": {"type": "string", "enum": ["forward", "backward", "both"]},
-                "max_steps": {"type": "integer"}
+                "direction": {
+                    "type": "string",
+                    "enum": ["forward", "backward", "both"],
+                },
+                "max_steps": {"type": "integer"},
             },
-            "required": ["episode_id"]
-        }
+            "required": ["episode_id"],
+        },
     },
     {
         "name": "get_memory_stats",
         "description": "Get memory system statistics",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "list_memories",
@@ -391,16 +456,19 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "limit": {"type": "integer", "description": "Maximum memories to return", "default": 50}
-            }
-        }
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum memories to return",
+                    "default": 50,
+                }
+            },
+        },
     },
-    
     # Monitoring Tools
     {
         "name": "get_dashboard_metrics",
         "description": "Get real-time dashboard metrics",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_audit_logs",
@@ -410,9 +478,9 @@ MCP_TOOLS = [
             "properties": {
                 "event_type": {"type": "string"},
                 "source_agent": {"type": "string"},
-                "limit": {"type": "integer"}
-            }
-        }
+                "limit": {"type": "integer"},
+            },
+        },
     },
     {
         "name": "get_active_alerts",
@@ -420,11 +488,13 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "min_severity": {"type": "string", "enum": ["info", "warning", "critical", "emergency"]}
-            }
-        }
+                "min_severity": {
+                    "type": "string",
+                    "enum": ["info", "warning", "critical", "emergency"],
+                }
+            },
+        },
     },
-    
     # Multi-Agent Tools
     {
         "name": "register_agent",
@@ -435,10 +505,10 @@ MCP_TOOLS = [
                 "name": {"type": "string"},
                 "description": {"type": "string"},
                 "capabilities": {"type": "array", "items": {"type": "string"}},
-                "trust_level": {"type": "number"}
+                "trust_level": {"type": "number"},
             },
-            "required": ["name", "capabilities"]
-        }
+            "required": ["name", "capabilities"],
+        },
     },
     {
         "name": "delegate_task",
@@ -449,10 +519,10 @@ MCP_TOOLS = [
                 "description": {"type": "string"},
                 "required_capabilities": {"type": "array", "items": {"type": "string"}},
                 "priority": {"type": "integer"},
-                "care_weight": {"type": "number"}
+                "care_weight": {"type": "number"},
             },
-            "required": ["description", "required_capabilities"]
-        }
+            "required": ["description", "required_capabilities"],
+        },
     },
     {
         "name": "submit_council_proposal",
@@ -464,10 +534,10 @@ MCP_TOOLS = [
                 "description": {"type": "string"},
                 "proposed_by": {"type": "string"},
                 "action_type": {"type": "string"},
-                "action_params": {"type": "object"}
+                "action_params": {"type": "object"},
             },
-            "required": ["title", "description", "proposed_by"]
-        }
+            "required": ["title", "description", "proposed_by"],
+        },
     },
     {
         "name": "vote_on_proposal",
@@ -478,66 +548,59 @@ MCP_TOOLS = [
                 "proposal_id": {"type": "string"},
                 "agent_id": {"type": "string"},
                 "vote": {"type": "string", "enum": ["for", "against", "abstain"]},
-                "reasoning": {"type": "string"}
+                "reasoning": {"type": "string"},
             },
-            "required": ["proposal_id", "agent_id", "vote"]
-        }
+            "required": ["proposal_id", "agent_id", "vote"],
+        },
     },
     {
         "name": "get_agent_registry_stats",
         "description": "Get agent registry statistics",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
-    
     # Consciousness Tools
     {
         "name": "get_consciousness_state",
         "description": "Get current consciousness state including emotions",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "trigger_reflection",
         "description": "Trigger a reflection cycle",
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "trigger": {"type": "string"}
-            }
-        }
+            "properties": {"trigger": {"type": "string"}},
+        },
     },
     {
         "name": "enter_dream_state",
         "description": "Enter dream state for background processing",
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "duration_seconds": {"type": "integer"}
-            }
-        }
+            "properties": {"duration_seconds": {"type": "integer"}},
+        },
     },
-    
     # System Tools
     {
         "name": "sovereign_health_check",
         "description": "Check overall system health",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_system_status",
         "description": "Get complete system status",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "trigger_maintenance",
         "description": "Manually trigger autonomous maintenance cycle",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_maintenance_status",
         "description": "Get autonomous maintenance system status",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
-    
     # Orion-Riri-Hourman Agent Tools
     {
         "name": "orion_hunt_tasks",
@@ -545,11 +608,22 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "max_files": {"type": "integer", "description": "Max files to scan (default 100, use 500 for deep scan)", "default": 100},
-                "root_dir": {"type": "string", "description": "Root directory to scan (e.g. /Users/nicholas/clawd/meok/ui/src)"},
-                "include_quality": {"type": "boolean", "description": "Also scan for quality issues (empty catches, any types, ts-ignore)", "default": False}
-            }
-        }
+                "max_files": {
+                    "type": "integer",
+                    "description": "Max files to scan (default 100, use 500 for deep scan)",
+                    "default": 100,
+                },
+                "root_dir": {
+                    "type": "string",
+                    "description": "Root directory to scan (e.g. /Users/nicholas/clawd/meok/ui/src)",
+                },
+                "include_quality": {
+                    "type": "boolean",
+                    "description": "Also scan for quality issues (empty catches, any types, ts-ignore)",
+                    "default": False,
+                },
+            },
+        },
     },
     {
         "name": "orion_get_tasks",
@@ -557,9 +631,13 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "limit": {"type": "integer", "description": "Number of tasks to return", "default": 10}
-            }
-        }
+                "limit": {
+                    "type": "integer",
+                    "description": "Number of tasks to return",
+                    "default": 10,
+                }
+            },
+        },
     },
     {
         "name": "orion_capture_task",
@@ -569,8 +647,8 @@ MCP_TOOLS = [
             "properties": {
                 "task_id": {"type": "string", "description": "Task ID to capture"}
             },
-            "required": ["task_id"]
-        }
+            "required": ["task_id"],
+        },
     },
     {
         "name": "hourman_start_sprint",
@@ -578,16 +656,23 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "sprint_type": {"type": "string", "enum": ["micro", "power", "deep"], "description": "Sprint duration type"},
-                "task_id": {"type": "string", "description": "Optional task ID to focus on"}
+                "sprint_type": {
+                    "type": "string",
+                    "enum": ["micro", "power", "deep"],
+                    "description": "Sprint duration type",
+                },
+                "task_id": {
+                    "type": "string",
+                    "description": "Optional task ID to focus on",
+                },
             },
-            "required": ["sprint_type"]
-        }
+            "required": ["sprint_type"],
+        },
     },
     {
         "name": "hourman_get_status",
         "description": "Get sprint controller status and energy levels",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "hourman_complete_sprint",
@@ -595,16 +680,22 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "summary": {"type": "string", "description": "Summary of what was accomplished"},
-                "task_id": {"type": "string", "description": "Optional task ID to mark complete"}
+                "summary": {
+                    "type": "string",
+                    "description": "Summary of what was accomplished",
+                },
+                "task_id": {
+                    "type": "string",
+                    "description": "Optional task ID to mark complete",
+                },
             },
-            "required": ["summary"]
-        }
+            "required": ["summary"],
+        },
     },
     {
         "name": "riri_list_templates",
         "description": "List available tool templates for rapid building",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "riri_build_tool",
@@ -615,17 +706,19 @@ MCP_TOOLS = [
                 "template": {"type": "string", "description": "Template name"},
                 "name": {"type": "string", "description": "Tool name"},
                 "description": {"type": "string", "description": "Tool description"},
-                "params": {"type": "object", "description": "Template-specific parameters"}
+                "params": {
+                    "type": "object",
+                    "description": "Template-specific parameters",
+                },
             },
-            "required": ["template", "name", "description"]
-        }
+            "required": ["template", "name", "description"],
+        },
     },
     {
         "name": "orion_riri_hourman_status",
         "description": "Get complete Orion-Riri-Hourman agent status",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
-    
     # Multi-Agent Coordination Tools
     {
         "name": "coord_register_agent",
@@ -634,11 +727,20 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "agent_id": {"type": "string"},
-                "agent_type": {"type": "string", "enum": ["claude-desktop", "claude-code", "kimi-cli", "orion-agent", "openhands"]},
-                "capabilities": {"type": "array", "items": {"type": "string"}}
+                "agent_type": {
+                    "type": "string",
+                    "enum": [
+                        "claude-desktop",
+                        "claude-code",
+                        "kimi-cli",
+                        "orion-agent",
+                        "openhands",
+                    ],
+                },
+                "capabilities": {"type": "array", "items": {"type": "string"}},
             },
-            "required": ["agent_id", "agent_type", "capabilities"]
-        }
+            "required": ["agent_id", "agent_type", "capabilities"],
+        },
     },
     {
         "name": "coord_submit_task",
@@ -649,10 +751,10 @@ MCP_TOOLS = [
                 "title": {"type": "string"},
                 "description": {"type": "string"},
                 "files": {"type": "array", "items": {"type": "string"}},
-                "care_score": {"type": "number", "minimum": 0, "maximum": 1}
+                "care_score": {"type": "number", "minimum": 0, "maximum": 1},
             },
-            "required": ["title", "description", "files"]
-        }
+            "required": ["title", "description", "files"],
+        },
     },
     {
         "name": "coord_acquire_files",
@@ -663,10 +765,10 @@ MCP_TOOLS = [
                 "agent_id": {"type": "string"},
                 "files": {"type": "array", "items": {"type": "string"}},
                 "task_id": {"type": "string"},
-                "exclusive": {"type": "boolean", "default": False}
+                "exclusive": {"type": "boolean", "default": False},
             },
-            "required": ["agent_id", "files", "task_id"]
-        }
+            "required": ["agent_id", "files", "task_id"],
+        },
     },
     {
         "name": "coord_release_files",
@@ -675,10 +777,10 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "agent_id": {"type": "string"},
-                "files": {"type": "array", "items": {"type": "string"}}
+                "files": {"type": "array", "items": {"type": "string"}},
             },
-            "required": ["agent_id", "files"]
-        }
+            "required": ["agent_id", "files"],
+        },
     },
     {
         "name": "coord_complete_task",
@@ -689,56 +791,82 @@ MCP_TOOLS = [
                 "task_id": {"type": "string"},
                 "agent_id": {"type": "string"},
                 "result_summary": {"type": "string"},
-                "care_score": {"type": "number"}
+                "care_score": {"type": "number"},
             },
-            "required": ["task_id", "agent_id", "result_summary"]
-        }
+            "required": ["task_id", "agent_id", "result_summary"],
+        },
     },
     {
         "name": "coord_get_dashboard",
         "description": "Get coordination dashboard with all agents and tasks",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     # Project Heartbeat — Autonomous Self-Improvement Tools
     {
         "name": "get_heartbeat_status",
         "description": "Get Sovereign heartbeat scheduler status, running jobs, and next run times",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_nightshift_digest",
         "description": "Get the latest morning intelligence digest compiled during nightshift",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "trigger_research_sweep",
         "description": "Manually trigger an autonomous research sweep (RSS + web + Ollama summarization)",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "trigger_security_hardening",
         "description": "Manually trigger a security self-hardening cycle",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "run_quantum_batch",
         "description": "Run the full quantum batch on M2: QAOA care optimisation + VQE memory scoring + Grover search. Results pushed to SOV3 memory.",
-        "inputSchema": {"type": "object", "properties": {"qaoa_only": {"type": "boolean", "description": "Run only QAOA care weight optimisation"}}}
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "qaoa_only": {
+                    "type": "boolean",
+                    "description": "Run only QAOA care weight optimisation",
+                }
+            },
+        },
     },
     {
         "name": "quantum_memory_search",
         "description": "Quantum-accelerated Grover search over SOV3 memory episodes",
-        "inputSchema": {"type": "object", "properties": {"query": {"type": "string", "description": "Search query"}, "top_k": {"type": "integer", "description": "Number of results (default 5)"}}, "required": ["query"]}
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Search query"},
+                "top_k": {
+                    "type": "integer",
+                    "description": "Number of results (default 5)",
+                },
+            },
+            "required": ["query"],
+        },
     },
     {
         "name": "quantum_score_memories",
         "description": "VQE importance scoring for memory episodes. Returns top-k most important episodes.",
-        "inputSchema": {"type": "object", "properties": {"top_k": {"type": "integer", "description": "Number of top episodes to return (default 10)"}}}
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "top_k": {
+                    "type": "integer",
+                    "description": "Number of top episodes to return (default 10)",
+                }
+            },
+        },
     },
     {
         "name": "trigger_neural_retrain",
         "description": "Manually trigger neural model retraining cycle",
-        "inputSchema": {"type": "object", "properties": {}}
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "pause_heartbeat_job",
@@ -746,10 +874,13 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "job_id": {"type": "string", "description": "Job ID to pause (e.g., heartbeat_pulse, nightshift_deep, research_sweep)"}
+                "job_id": {
+                    "type": "string",
+                    "description": "Job ID to pause (e.g., heartbeat_pulse, nightshift_deep, research_sweep)",
+                }
             },
-            "required": ["job_id"]
-        }
+            "required": ["job_id"],
+        },
     },
     {
         "name": "resume_heartbeat_job",
@@ -759,8 +890,8 @@ MCP_TOOLS = [
             "properties": {
                 "job_id": {"type": "string", "description": "Job ID to resume"}
             },
-            "required": ["job_id"]
-        }
+            "required": ["job_id"],
+        },
     },
     # Civilizational Creativity Engine Tools
     {
@@ -769,9 +900,13 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "force": {"type": "boolean", "description": "Force re-ingestion even if already present", "default": False}
-            }
-        }
+                "force": {
+                    "type": "boolean",
+                    "description": "Force re-ingestion even if already present",
+                    "default": False,
+                }
+            },
+        },
     },
     {
         "name": "assess_creativity",
@@ -779,29 +914,35 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "text": {"type": "string", "description": "Content to assess for creativity"},
-                "novelty_score": {"type": "number", "description": "Pre-computed novelty score (0-1)"},
-                "domain_distance": {"type": "number", "description": "Cross-domain distance (0-1)"},
-                "care_alignment": {"type": "number", "description": "Care principle alignment (0-1)"}
+                "text": {
+                    "type": "string",
+                    "description": "Content to assess for creativity",
+                },
+                "novelty_score": {
+                    "type": "number",
+                    "description": "Pre-computed novelty score (0-1)",
+                },
+                "domain_distance": {
+                    "type": "number",
+                    "description": "Cross-domain distance (0-1)",
+                },
+                "care_alignment": {
+                    "type": "number",
+                    "description": "Care principle alignment (0-1)",
+                },
             },
-            "required": ["text"]
-        }
+            "required": ["text"],
+        },
     },
     {
         "name": "get_engagement_score",
         "description": "Get Ibn Khaldun's engagement (group cohesion) metric for the agent ecosystem",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_consciousness_mode",
         "description": "Get the current Vedantic consciousness mode: Jagrat (waking), Svapna (dreaming), Susupti (deep sleep), or Turiya (meta-monitoring)",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "compute_novelty",
@@ -810,26 +951,24 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "text": {"type": "string", "description": "Text to score for novelty"},
-                "reference_texts": {"type": "array", "items": {"type": "string"}, "description": "Reference corpus (optional — uses recent memories if empty)"}
+                "reference_texts": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Reference corpus (optional — uses recent memories if empty)",
+                },
             },
-            "required": ["text"]
-        }
+            "required": ["text"],
+        },
     },
     {
         "name": "trigger_creativity_cycle",
         "description": "Manually trigger the creativity nightshift cycle: Susupti consolidation → NREM/REM dreaming → novelty scoring → creative assessment",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_meta_observations",
         "description": "Get Turiya meta-monitor observations — meta-cognitive assessment of system coherence across all subsystems",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     # Tier 2: Cross-Domain Bisociation
     {
@@ -838,10 +977,16 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "min_distance": {"type": "number", "description": "Minimum semantic distance threshold (0-1, default 0.4)"},
-                "top_k": {"type": "integer", "description": "Number of top links to return (default 15)"}
-            }
-        }
+                "min_distance": {
+                    "type": "number",
+                    "description": "Minimum semantic distance threshold (0-1, default 0.4)",
+                },
+                "top_k": {
+                    "type": "integer",
+                    "description": "Number of top links to return (default 15)",
+                },
+            },
+        },
     },
     {
         "name": "get_dream_targets",
@@ -849,17 +994,17 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "n": {"type": "integer", "description": "Number of dream targets (default 5)"}
-            }
-        }
+                "n": {
+                    "type": "integer",
+                    "description": "Number of dream targets (default 5)",
+                }
+            },
+        },
     },
     {
         "name": "get_bridge_concepts",
         "description": "Rank traditions by cross-domain connectivity. Bridge concepts connect many disparate domains and are especially valuable for creative synthesis.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     # Tier 2: Stochastic Resonance
     {
@@ -868,19 +1013,22 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "features": {"type": "object", "description": "Feature dict (novelty_score, domain_distance, care_alignment, etc.)"},
-                "temperature": {"type": "number", "description": "Noise scaling (>1 more noise, <1 less, default auto)"}
+                "features": {
+                    "type": "object",
+                    "description": "Feature dict (novelty_score, domain_distance, care_alignment, etc.)",
+                },
+                "temperature": {
+                    "type": "number",
+                    "description": "Noise scaling (>1 more noise, <1 less, default auto)",
+                },
             },
-            "required": ["features"]
-        }
+            "required": ["features"],
+        },
     },
     {
         "name": "get_resonance_profile",
         "description": "Get the current noise resonance profile — per-feature sigma values and optimal temperature.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     # StreamAggregator — unified multi-stream context
     {
@@ -889,18 +1037,18 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "include_screens": {"type": "boolean", "description": "Include screen pixel data (default false)"}
-            }
-        }
+                "include_screens": {
+                    "type": "boolean",
+                    "description": "Include screen pixel data (default false)",
+                }
+            },
+        },
     },
     # Tier 2: Quality-Diversity Archive
     {
         "name": "get_qd_archive_stats",
         "description": "Get MAP-Elites quality-diversity archive statistics — coverage, quality distribution, domain breakdown.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "get_empty_niches",
@@ -908,9 +1056,12 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "limit": {"type": "integer", "description": "Max niches to return (default 20)"}
-            }
-        }
+                "limit": {
+                    "type": "integer",
+                    "description": "Max niches to return (default 20)",
+                }
+            },
+        },
     },
     {
         "name": "suggest_exploration",
@@ -918,17 +1069,17 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "n": {"type": "integer", "description": "Number of suggestions (default 5)"}
-            }
-        }
+                "n": {
+                    "type": "integer",
+                    "description": "Number of suggestions (default 5)",
+                }
+            },
+        },
     },
     {
         "name": "get_domain_distances",
         "description": "Get average semantic distance between each pair of civilizational domains. Shows which domains are most/least related.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     # Kimi Agent
     {
@@ -938,11 +1089,17 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "task": {"type": "string", "description": "Task description"},
-                "context": {"type": "string", "description": "Additional context (code, specs)"},
-                "model": {"type": "string", "description": "Model: 8k, 32k, or 128k (default 32k)"}
+                "context": {
+                    "type": "string",
+                    "description": "Additional context (code, specs)",
+                },
+                "model": {
+                    "type": "string",
+                    "description": "Model: 8k, 32k, or 128k (default 32k)",
+                },
             },
-            "required": ["task"]
-        }
+            "required": ["task"],
+        },
     },
     {
         "name": "kimi_build_frontend",
@@ -951,11 +1108,17 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "spec": {"type": "string", "description": "What to build"},
-                "framework": {"type": "string", "description": "Framework (default: Next.js + TypeScript)"},
-                "files": {"type": "object", "description": "Existing files as {filename: content}"}
+                "framework": {
+                    "type": "string",
+                    "description": "Framework (default: Next.js + TypeScript)",
+                },
+                "files": {
+                    "type": "object",
+                    "description": "Existing files as {filename: content}",
+                },
             },
-            "required": ["spec"]
-        }
+            "required": ["spec"],
+        },
     },
     {
         "name": "kimi_review_code",
@@ -964,38 +1127,31 @@ MCP_TOOLS = [
             "type": "object",
             "properties": {
                 "code": {"type": "string", "description": "Code to review"},
-                "language": {"type": "string", "description": "Language (default: typescript)"},
-                "focus": {"type": "string", "description": "Review focus areas"}
+                "language": {
+                    "type": "string",
+                    "description": "Language (default: typescript)",
+                },
+                "focus": {"type": "string", "description": "Review focus areas"},
             },
-            "required": ["code"]
-        }
+            "required": ["code"],
+        },
     },
     {
         "name": "kimi_status",
         "description": "Get Kimi agent status — connection, task history, success rate",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "kimi_list_models",
         "description": "List available Kimi (Moonshot AI) models",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     # Sovereign Rundown
     {
         "name": "sovereign_rundown",
         "description": "Comprehensive system rundown — all subsystems, agents, creativity engine, memory, consciousness state in one call",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
-    
     # NVIDIA Nemotron 3 Nano 30B Tools
     {
         "name": "nemotron_chat",
@@ -1003,13 +1159,25 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "message": {"type": "string", "description": "User message to send to Nemotron"},
-                "system_prompt": {"type": "string", "description": "Optional system instructions"},
-                "temperature": {"type": "number", "description": "Sampling temperature (0.0-1.0, default: 0.7)"},
-                "max_tokens": {"type": "integer", "description": "Maximum tokens to generate (default: 1024)"}
+                "message": {
+                    "type": "string",
+                    "description": "User message to send to Nemotron",
+                },
+                "system_prompt": {
+                    "type": "string",
+                    "description": "Optional system instructions",
+                },
+                "temperature": {
+                    "type": "number",
+                    "description": "Sampling temperature (0.0-1.0, default: 0.7)",
+                },
+                "max_tokens": {
+                    "type": "integer",
+                    "description": "Maximum tokens to generate (default: 1024)",
+                },
             },
-            "required": ["message"]
-        }
+            "required": ["message"],
+        },
     },
     {
         "name": "nemotron_care_response",
@@ -1017,10 +1185,13 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "message": {"type": "string", "description": "User message requesting care-centered response"}
+                "message": {
+                    "type": "string",
+                    "description": "User message requesting care-centered response",
+                }
             },
-            "required": ["message"]
-        }
+            "required": ["message"],
+        },
     },
     {
         "name": "nemotron_analyze_care",
@@ -1028,19 +1199,308 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "text": {"type": "string", "description": "Text to analyze for care patterns"}
+                "text": {
+                    "type": "string",
+                    "description": "Text to analyze for care patterns",
+                }
             },
-            "required": ["text"]
-        }
+            "required": ["text"],
+        },
     },
     {
         "name": "nemotron_info",
         "description": "Get information about the NVIDIA Nemotron model and API configuration status",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "get_voice_pipeline_status",
+        "description": "Get Jarvis voice pipeline status — which components are available (VAD, wake word, STT, TTS)",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "execute_with_claw_code",
+        "description": "Execute a task using the ClawCodeExecutor — read/write files, run commands, run tests, search code, git commit. Tier 0 (read) auto-approved, Tier 1 (write) needs care check, Tier 2 (commit/deploy) needs council.",
         "inputSchema": {
             "type": "object",
-            "properties": {}
-        }
-    }
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "read_file",
+                        "write_file",
+                        "run_command",
+                        "run_tests",
+                        "search_code",
+                        "git_commit",
+                        "memory_consolidation",
+                        "research_sweep",
+                        "care_validation_sweep",
+                    ],
+                    "description": "The action to execute",
+                },
+                "path": {"type": "string", "description": "File path (for read/write)"},
+                "content": {
+                    "type": "string",
+                    "description": "File content (for write)",
+                },
+                "command": {
+                    "type": "string",
+                    "description": "Shell command (for run_command)",
+                },
+                "pattern": {
+                    "type": "string",
+                    "description": "Search pattern (for search_code)",
+                },
+                "test_path": {
+                    "type": "string",
+                    "description": "Test file path (for run_tests)",
+                },
+                "files": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Files to commit (for git_commit)",
+                },
+                "message": {
+                    "type": "string",
+                    "description": "Commit message (for git_commit)",
+                },
+                "working_dir": {
+                    "type": "string",
+                    "description": "Working directory override",
+                },
+            },
+            "required": ["action"],
+        },
+    },
+    # Genesis → G-code Pipeline (Robotics Manufacturing)
+    {
+        "name": "design_robot",
+        "description": "Complete pipeline: voice command → robot simulation → 3D printable G-code files",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "voice_command": {
+                    "type": "string",
+                    "description": "Natural language description of robot requirements",
+                }
+            },
+            "required": ["voice_command"],
+        },
+    },
+    {
+        "name": "list_print_queue",
+        "description": "List all robots queued for 3D printing",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "get_genesis_cluster_status",
+        "description": "Get status of 8-node simulation cluster",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "simulate_robot_design",
+        "description": "Simulate a specific robot design in Genesis physics engine",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "design": {"type": "object", "description": "Robot design parameters"},
+                "test_scenarios": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Test scenarios to run",
+                },
+            },
+            "required": ["design"],
+        },
+    },
+    {
+        "name": "export_robot_stl",
+        "description": "Export robot design to STL files for 3D printing",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "design_id": {
+                    "type": "string",
+                    "description": "ID of robot design to export",
+                }
+            },
+            "required": ["design_id"],
+        },
+    },
+    {
+        "name": "generate_gcode",
+        "description": "Generate G-code files for FibreSeeker (carbon fiber) and Raise3D (metal) printers",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "stl_files": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "STL file paths",
+                },
+                "printer": {
+                    "type": "string",
+                    "enum": ["fibreseeker", "raise3d", "both"],
+                    "default": "both",
+                },
+            },
+            "required": ["stl_files"],
+        },
+    },
+    # ═══ DEPARTMENT AGENT TOOLS (Autonomous Business OS) ═══
+    {
+        "name": "delegate_to_department",
+        "description": "Delegate a task to a department (content, sales, finance, support, research, operations)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "type": "string",
+                    "enum": [
+                        "content",
+                        "sales",
+                        "finance",
+                        "support",
+                        "research",
+                        "operations",
+                    ],
+                },
+                "task": {"type": "string"},
+                "priority": {"type": "integer", "default": 5},
+            },
+            "required": ["department", "task"],
+        },
+    },
+    {
+        "name": "get_department_status",
+        "description": "Get status of all department agents",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "get_department_task_queue",
+        "description": "Get pending tasks for a department",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "type": "string",
+                    "enum": [
+                        "content",
+                        "sales",
+                        "finance",
+                        "support",
+                        "research",
+                        "operations",
+                    ],
+                }
+            },
+            "required": ["department"],
+        },
+    },
+    # Sales & Marketing Tools
+    {
+        "name": "initiate_sales_call",
+        "description": "Initiate an AI-powered sales call via Vapi.ai",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "phone_number": {"type": "string"},
+                "script": {"type": "string"},
+                "voice_id": {"type": "string", "default": "sarah"},
+            },
+            "required": ["phone_number", "script"],
+        },
+    },
+    {
+        "name": "generate_marketing_content",
+        "description": "Generate marketing content (blog, social, PR)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "content_type": {
+                    "type": "string",
+                    "enum": ["blog", "social", "press_release", "newsletter"],
+                },
+                "topic": {"type": "string"},
+                "tone": {"type": "string", "default": "professional"},
+            },
+            "required": ["content_type", "topic"],
+        },
+    },
+    # Finance & Accounting Tools
+    {
+        "name": "generate_invoice",
+        "description": "Generate an invoice (requires Xero connection)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "customer": {"type": "string"},
+                "items": {"type": "array", "items": {"type": "object"}},
+            },
+            "required": ["customer", "items"],
+        },
+    },
+    {
+        "name": "get_financial_summary",
+        "description": "Get complete financial summary (Xero + Mercury)",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    # SEO & AEO Tools
+    {
+        "name": "get_seo_analysis",
+        "description": "Get SEO analysis (Ahrefs) + AI citation tracking (AEO)",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "optimize_for_ai_citation",
+        "description": "Get suggestions to improve AI engine citation",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"content": {"type": "string"}},
+            "required": ["content"],
+        },
+    },
+    # Video Generation Tools
+    {
+        "name": "generate_video_ad",
+        "description": "Generate a video ad (Runway/Kling/HeyGen)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "product": {"type": "string"},
+                "style": {"type": "string", "default": "cinematic"},
+            },
+            "required": ["product"],
+        },
+    },
+    {
+        "name": "generate_neuro6_ad",
+        "description": "Generate a Neuro 6 style AI person ad",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"persona_name": {"type": "string"}},
+            "required": ["persona_name"],
+        },
+    },
+    # Customer Support Tools
+    {
+        "name": "triage_support_ticket",
+        "description": "AI triage and categorize support ticket",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"ticket_content": {"type": "string"}},
+            "required": ["ticket_content"],
+        },
+    },
+    {
+        "name": "generate_faq_response",
+        "description": "Generate FAQ response to a question",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"question": {"type": "string"}},
+            "required": ["question"],
+        },
+    },
 ]
 
 # =============================================================================
@@ -1111,8 +1571,9 @@ def sanitize_input(text: str) -> Tuple[str, bool]:
         if audit_logger is not None:
             try:
                 event_type = getattr(
-                    AuditEventType, "SECURITY_EVENT",
-                    getattr(AuditEventType, "SYSTEM_EVENT", None)
+                    AuditEventType,
+                    "SECURITY_EVENT",
+                    getattr(AuditEventType, "SYSTEM_EVENT", None),
                 )
                 asyncio.get_event_loop().create_task(
                     audit_logger.log_event(
@@ -1144,6 +1605,21 @@ _RATE_LIMIT_MAX_CALLS: int = 50
 _RATE_LIMIT_WINDOW_SECS: float = 60.0
 _tool_call_timestamps: deque = deque()  # stores float timestamps
 
+# MCP endpoint authentication
+_security = HTTPBearer(auto_error=False)
+_MCP_TOKEN = os.environ.get("SOV3_MCP_TOKEN", "")
+
+
+async def _verify_mcp_token(
+    credentials: HTTPAuthorizationCredentials = Depends(_security),
+) -> bool:
+    """Verify Bearer token for MCP endpoint. No-op if SOV3_MCP_TOKEN not set."""
+    if not _MCP_TOKEN:
+        return True  # Auth disabled in dev
+    if credentials is None or credentials.credentials != _MCP_TOKEN:
+        raise HTTPException(status_code=401, detail="Invalid or missing MCP token")
+    return True
+
 
 def check_excessive_agency(tool_name: str, args: dict) -> bool:
     """
@@ -1160,7 +1636,10 @@ def check_excessive_agency(tool_name: str, args: dict) -> bool:
     now = datetime.now().timestamp()
 
     # Evict entries older than the window
-    while _tool_call_timestamps and (now - _tool_call_timestamps[0]) > _RATE_LIMIT_WINDOW_SECS:
+    while (
+        _tool_call_timestamps
+        and (now - _tool_call_timestamps[0]) > _RATE_LIMIT_WINDOW_SECS
+    ):
         _tool_call_timestamps.popleft()
 
     # Check rate limit
@@ -1168,8 +1647,9 @@ def check_excessive_agency(tool_name: str, args: dict) -> bool:
         if audit_logger is not None:
             try:
                 event_type = getattr(
-                    AuditEventType, "SECURITY_EVENT",
-                    getattr(AuditEventType, "SYSTEM_EVENT", None)
+                    AuditEventType,
+                    "SECURITY_EVENT",
+                    getattr(AuditEventType, "SYSTEM_EVENT", None),
                 )
                 asyncio.get_event_loop().create_task(
                     audit_logger.log_event(
@@ -1192,17 +1672,17 @@ def check_excessive_agency(tool_name: str, args: dict) -> bool:
     _tool_call_timestamps.append(now)
 
     # Warn on high-risk tools
-    is_high_risk = (
-        tool_name in _HIGH_RISK_TOOLS
-        or any(tool_name.startswith(p) for p in _HIGH_RISK_PREFIXES)
+    is_high_risk = tool_name in _HIGH_RISK_TOOLS or any(
+        tool_name.startswith(p) for p in _HIGH_RISK_PREFIXES
     )
     if is_high_risk:
         print(f"[security] LLM06 high-risk tool invoked: {tool_name}")
         if audit_logger is not None:
             try:
                 event_type = getattr(
-                    AuditEventType, "SECURITY_EVENT",
-                    getattr(AuditEventType, "SYSTEM_EVENT", None)
+                    AuditEventType,
+                    "SECURITY_EVENT",
+                    getattr(AuditEventType, "SYSTEM_EVENT", None),
                 )
                 asyncio.get_event_loop().create_task(
                     audit_logger.log_event(
@@ -1224,16 +1704,23 @@ def check_excessive_agency(tool_name: str, args: dict) -> bool:
 async def initialize_system():
     """Initialize all subsystems"""
     global model_registry, memory_store, audit_logger, metrics, alert_manager
-    global agent_registry, task_delegator, agent_council, consciousness, maintenance_system
-    
+    global \
+        agent_registry, \
+        task_delegator, \
+        agent_council, \
+        consciousness, \
+        maintenance_system
+
     print("🚀 Initializing Sovereign Temple MCP Server...")
-    
+
     # Initialize neural models
     print("  📊 Loading neural models...")
     # Use absolute path so models load correctly regardless of process CWD
     _server_dir = os.path.dirname(os.path.abspath(__file__))
-    model_registry = create_default_registry(model_dir=os.path.join(_server_dir, "models"))
-    
+    model_registry = create_default_registry(
+        model_dir=os.path.join(_server_dir, "models")
+    )
+
     # Try to load existing models, train if not available
     for name, model in model_registry.models.items():
         if not model.load_model():
@@ -1242,9 +1729,13 @@ async def initialize_system():
                 model.train_model()
                 model.save_model()
             except NotImplementedError:
-                print(f"    ⚠️  {name}: GPU training not available locally — using heuristic fallback")
+                print(
+                    f"    ⚠️  {name}: GPU training not available locally — using heuristic fallback"
+                )
             except Exception as train_err:
-                print(f"    ⚠️  {name}: training failed ({train_err}) — using heuristic fallback")
+                print(
+                    f"    ⚠️  {name}: training failed ({train_err}) — using heuristic fallback"
+                )
         else:
             print(f"    Loaded {name}")
 
@@ -1252,37 +1743,45 @@ async def initialize_system():
     global _model_orchestrator
     _model_orchestrator = ModelOrchestrator(model_registry)
     print("    ModelOrchestrator ready (concurrent inference)")
-    
+
     # Initialize memory store
     print("  💾 Initializing memory store...")
-    postgres_dsn = os.environ.get("POSTGRES_DSN", "postgresql://sovereign:sovereign@localhost:5432/sovereign_memory")
+    postgres_dsn = os.environ.get(
+        "POSTGRES_DSN",
+        "postgresql://sovereign:sovereign@localhost:5432/sovereign_memory",
+    )
     weaviate_url = os.environ.get("WEAVIATE_URL", "http://localhost:8080")
-    memory_store = EnhancedMemoryStore(postgres_dsn=postgres_dsn, weaviate_url=weaviate_url)
+    memory_store = EnhancedMemoryStore(
+        postgres_dsn=postgres_dsn, weaviate_url=weaviate_url
+    )
     try:
         await memory_store.initialize()
         print("    Memory store ready")
     except Exception as e:
         print(f"    Memory store initialization failed (will retry): {e}")
-    
+
     # Initialize monitoring
     print("  📡 Initializing monitoring...")
-    postgres_dsn = os.environ.get("POSTGRES_DSN", "postgresql://sovereign:sovereign@localhost:5432/sovereign_memory")
+    postgres_dsn = os.environ.get(
+        "POSTGRES_DSN",
+        "postgresql://sovereign:sovereign@localhost:5432/sovereign_memory",
+    )
     audit_logger = AuditLogger(postgres_dsn=postgres_dsn)
     try:
         await audit_logger.initialize()
         print("    Audit logger ready")
     except Exception as e:
         print(f"    Audit logger initialization failed: {e}")
-    
+
     metrics = MetricsCollector()
     await metrics.start_collection()
     print("    Metrics collection started")
-    
+
     alert_manager = AlertManager()
     alert_manager.add_handler(AlertChannel.CONSOLE, console_alert_handler)
     alert_manager.setup_default_rules()
     print("    Alert manager ready")
-    
+
     # Initialize multi-agent system
     print("  🤖 Initializing multi-agent system...")
     agent_registry = AgentRegistry(postgres_dsn=postgres_dsn)
@@ -1291,17 +1790,17 @@ async def initialize_system():
         print("    Agent registry ready")
     except Exception as e:
         print(f"    Agent registry initialization failed: {e}")
-    
+
     task_delegator = TaskDelegator(agent_registry)
     agent_council = AgentCouncil(agent_registry)
     print("    Task delegation ready")
-    
+
     # Initialize consciousness
     print("  🧠 Initializing consciousness module...")
     consciousness = ConsciousnessOrchestrator(memory_store)
     await consciousness.initialize()
     print("    Consciousness module ready")
-    
+
     # Initialize NVIDIA Nemotron client
     global nemotron_client
     if NEMOTRON_AVAILABLE:
@@ -1311,18 +1810,20 @@ async def initialize_system():
             if nemotron_client.is_available:
                 print("    Nemotron client ready (API configured)")
             else:
-                print("    Nemotron client initialized (API key not set — set NVIDIA_API_KEY to enable)")
+                print(
+                    "    Nemotron client initialized (API key not set — set NVIDIA_API_KEY to enable)"
+                )
         except Exception as e:
             print(f"    Nemotron client initialization failed: {e}")
     else:
         print("  🤖 Nemotron client not available (module not installed)")
-    
+
     # Initialize autonomous maintenance
     print("  🔄 Initializing autonomous maintenance...")
     maintenance_system = AutonomousMaintenanceSystem(memory_store, consciousness)
     await maintenance_system.start()
     print("    Autonomous maintenance running (care floor: 0.3)")
-    
+
     # Initialize Project Heartbeat — autonomous self-improvement scheduler
     global heartbeat, research_agent, security_engine, continual_trainer
     if HEARTBEAT_AVAILABLE:
@@ -1357,7 +1858,7 @@ async def initialize_system():
                 agent_registry=agent_registry,
                 alert_manager=alert_manager,
                 memory_store=memory_store,
-                audit_logger=audit_logger
+                audit_logger=audit_logger,
             )
             print("    Security hardening engine ready")
         except Exception as e:
@@ -1382,12 +1883,16 @@ async def initialize_system():
             )
             # Train creativity model on first boot
             creativity_result = await creativity_pipeline.train_creativity_model()
-            print(f"    CreativityAssessmentNN trained (MSE: {creativity_result.get('metrics', {}).get('mse', '?')})")
+            print(
+                f"    CreativityAssessmentNN trained (MSE: {creativity_result.get('metrics', {}).get('mse', '?')})"
+            )
 
             # Ingest civilizational corpus into memory (idempotent)
             corpus_result = await ingest_corpus(memory_store)
             if corpus_result.get("status") == "complete":
-                print(f"    Civilizational corpus ingested: {corpus_result.get('traditions_ingested', 0)} traditions")
+                print(
+                    f"    Civilizational corpus ingested: {corpus_result.get('traditions_ingested', 0)} traditions"
+                )
             elif corpus_result.get("status") == "already_ingested":
                 print("    Civilizational corpus already in memory")
             else:
@@ -1405,15 +1910,21 @@ async def initialize_system():
             cross_domain_linker.compute_distances()
             cross_domain_linker.find_bisociations(top_k=30)
             stats = cross_domain_linker.get_stats()
-            print(f"    CrossDomainLinker: {stats.get('total_links', 0)} bisociation links found")
+            print(
+                f"    CrossDomainLinker: {stats.get('total_links', 0)} bisociation links found"
+            )
 
             # Stochastic resonance engine
             resonance_engine = StochasticResonanceEngine(n_features=12)
-            print(f"    StochasticResonance: σ={resonance_engine.get_stats()['mean_sigma']}")
+            print(
+                f"    StochasticResonance: σ={resonance_engine.get_stats()['mean_sigma']}"
+            )
 
             # Quality-Diversity archive (MAP-Elites)
             qd_archive = QualityDiversityArchive()
-            print(f"    QD Archive: {qd_archive.total_cells} cells ({qd_archive.grid_shape})")
+            print(
+                f"    QD Archive: {qd_archive.total_cells} cells ({qd_archive.grid_shape})"
+            )
         except Exception as e:
             print(f"    Tier 2 creativity init failed: {e}")
 
@@ -1438,9 +1949,17 @@ async def initialize_system():
                     await agent_registry.register_agent(
                         name="Kimi",
                         description="Moonshot AI code agent — frontend builds, TypeScript, React",
-                        capabilities=[AgentCapability.CODE_EXECUTION, AgentCapability.CREATIVE, AgentCapability.ANALYSIS],
+                        capabilities=[
+                            AgentCapability.CODE_EXECUTION,
+                            AgentCapability.CREATIVE,
+                            AgentCapability.ANALYSIS,
+                        ],
                         trust_level=0.7,
-                        metadata={"type": "external_api", "provider": "moonshot", "model": "moonshot-v1-32k"}
+                        metadata={
+                            "type": "external_api",
+                            "provider": "moonshot",
+                            "model": "moonshot-v1-32k",
+                        },
                     )
                     print("    Kimi registered in agent registry")
                 except Exception as e:
@@ -1456,7 +1975,9 @@ async def initialize_system():
             coordination_hub = get_coordination_hub()
             # Force state_dir creation so the hub is confirmed live
             coordination_hub.state_dir.mkdir(parents=True, exist_ok=True)
-            print(f"    Coordination hub ready (state_dir: {coordination_hub.state_dir})")
+            print(
+                f"    Coordination hub ready (state_dir: {coordination_hub.state_dir})"
+            )
         except Exception as e:
             print(f"    Coordination hub init failed (logged): {e}")
             coordination_hub = None
@@ -1470,7 +1991,9 @@ async def initialize_system():
         try:
             orion_agent = get_orion_agent()
             status = orion_agent.get_full_status()
-            print(f"    Orion agent ready (tasks: {status.get('orion', {}).get('total_tasks', 0)})")
+            print(
+                f"    Orion agent ready (tasks: {status.get('orion', {}).get('total_tasks', 0)})"
+            )
         except Exception as e:
             print(f"    Orion agent init failed (logged): {e}")
             orion_agent = None
@@ -1489,7 +2012,12 @@ async def initialize_system():
                 for partner_id in partners:
                     agent = agent_registry.agents[aid]
                     import json as _json
-                    rels = agent.relationships if isinstance(agent.relationships, dict) else {}
+
+                    rels = (
+                        agent.relationships
+                        if isinstance(agent.relationships, dict)
+                        else {}
+                    )
                     if partner_id not in rels:
                         await agent_registry.update_relationship(aid, partner_id, 0.5)
                         seeded += 1
@@ -1519,13 +2047,17 @@ async def initialize_system():
                 # Wire Orion agent for autonomous task cycle
                 if ORION_AGENT_AVAILABLE and get_orion_agent:
                     heartbeat.orion_agent = get_orion_agent()
-                    print("    Orion agent wired into heartbeat (autonomous cycle enabled)")
+                    print(
+                        "    Orion agent wired into heartbeat (autonomous cycle enabled)"
+                    )
                 print("    Task loop wired into heartbeat pulse")
             # Bootstrap pairwise trust if density is 0
             if _trust_manager.get_density() < 0.1 and agent_registry:
-                agents = list(getattr(agent_registry, 'agents', {}).keys())[:5]
+                agents = list(getattr(agent_registry, "agents", {}).keys())[:5]
                 if agents:
-                    asyncio.create_task(run_pairwise_bootstrap(agents, _task_queue, _trust_manager))
+                    asyncio.create_task(
+                        run_pairwise_bootstrap(agents, _task_queue, _trust_manager)
+                    )
                     print("    Agent pairwise bootstrap: scheduled for 5 agents")
         except Exception as e:
             print(f"    Task execution loop init failed (non-fatal): {e}")
@@ -1534,15 +2066,20 @@ async def initialize_system():
     global lgbm_fallback
     if LGBM_FALLBACK_AVAILABLE and LightGBMFallback is not None:
         lgbm_fallback = LightGBMFallback()
-        print(f"  🧪 LightGBM fallback ready (lgbm_native={lgbm_fallback._lgbm_available})")
+        print(
+            f"  🧪 LightGBM fallback ready (lgbm_native={lgbm_fallback._lgbm_available})"
+        )
     else:
-        print("  ⚠️  LightGBM fallback import failed — predictions will return errors without registry")
+        print(
+            "  ⚠️  LightGBM fallback import failed — predictions will return errors without registry"
+        )
 
     if STREAM_AGG_AVAILABLE:
         get_aggregator()  # initialise singleton
         print("    StreamAggregator ready")
 
     print("✅ Sovereign Temple initialized successfully!")
+
 
 # Create FastAPI app
 app = FastAPI(title="Sovereign Temple MCP Server", version="2.0.0")
@@ -1553,14 +2090,25 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Authorization"],
 )
 
 app.include_router(create_safety_router(SafetyClassifier()))
 app.include_router(create_sycophancy_router(SycophancyDetector()))
 
+# Prometheus metrics — exposes /metrics endpoint for monitoring
+if PROMETHEUS_AVAILABLE:
+    Instrumentator(
+        should_group_status_codes=True,
+        should_ignore_untemplated=True,
+        excluded_handlers=["/metrics"],
+    ).instrument(app).expose(app, endpoint="/metrics")
+
+
 @app.on_event("startup")
 async def startup():
     await initialize_system()
+
 
 # === BUG 2 FIX: Production inference counter ===
 _production_calls_today: int = 0
@@ -1602,7 +2150,9 @@ async def _run_production_inference(message_text: str):
     for model_name, result in all_results.items():
         if isinstance(result, dict) and "error" not in result:
             if metrics:
-                metrics.increment_counter("neural_predictions_total", labels={"provider": model_name})
+                metrics.increment_counter(
+                    "neural_predictions_total", labels={"provider": model_name}
+                )
             if model_name == "threat_detection_nn":
                 threat_result = result
                 if result.get("threat_detected") and alert_manager:
@@ -1612,7 +2162,7 @@ async def _run_production_inference(message_text: str):
                             "security",
                             "Production Threat Detected",
                             f"Level: {result.get('overall_threat_level')}",
-                            channels=[AlertChannel.CONSOLE]
+                            channels=[AlertChannel.CONSOLE],
                         )
                     except Exception as e:
                         print(f"[production_inference] alert error: {e}")
@@ -1625,7 +2175,9 @@ async def _run_production_inference(message_text: str):
     # Memory query for relevant context (background, non-blocking)
     if memory_store:
         try:
-            await memory_store.query_memories(query=message_text[:200], care_weight_min=0.2, limit=3)
+            await memory_store.query_memories(
+                query=message_text[:200], care_weight_min=0.2, limit=3
+            )
         except Exception as e:
             print(f"[production_inference] memory query error: {e}")
 
@@ -1649,7 +2201,9 @@ async def _retrieve_memory_context(query: str, limit: int = 5) -> str:
             context_lines.append(f"[Memory, relevance={score:.2f}]: {content}")
         context = "\n".join(context_lines)
         if metrics:
-            metrics.increment_counter("memory_queries_total", labels={"query_type": "semantic"})
+            metrics.increment_counter(
+                "memory_queries_total", labels={"query_type": "semantic"}
+            )
         return context
     except Exception as e:
         print(f"[memory_context] retrieval error: {e}")
@@ -1657,6 +2211,7 @@ async def _retrieve_memory_context(query: str, limit: int = 5) -> str:
 
 
 # === Compass doc: QD archive seeding from bisociation links (Day 9) ===
+
 
 async def _seed_qd_archive_from_bisociations():
     """Seed MAP-Elites QD archive from existing bisociation links (Compass doc Day 9)."""
@@ -1692,12 +2247,15 @@ async def _seed_qd_archive_from_bisociations():
                 seeded += 1
         print(f"[QD Archive] Seeded {seeded} cells from bisociation links")
         if metrics:
-            metrics.increment_counter("qd_seeds_total", labels={"source": "bisociation"})
+            metrics.increment_counter(
+                "qd_seeds_total", labels={"source": "bisociation"}
+            )
     except Exception as e:
         print(f"[QD Archive] seed error: {e}")
 
 
 # === Compass doc: OCC appraisal engine — system events to emotional state ===
+
 
 async def _appraise_event(event_type: str, outcome: dict = None):
     """
@@ -1711,30 +2269,36 @@ async def _appraise_event(event_type: str, outcome: dict = None):
         # Map events to emotional dimension deltas
         if event_type == "task_completed":
             consciousness.emotional_state.update_from_dimensions(
-                pleasure_delta=0.1, care_delta=0.05)
+                pleasure_delta=0.1, care_delta=0.05
+            )
         elif event_type == "threat_detected":
             consciousness.emotional_state.update_from_dimensions(
-                arousal_delta=0.2, pleasure_delta=-0.05)
+                arousal_delta=0.2, pleasure_delta=-0.05
+            )
         elif event_type == "novel_bisociation":
             consciousness.emotional_state.update_from_dimensions(
-                curiosity_delta=0.15, aesthetics_delta=0.1)
+                curiosity_delta=0.15, aesthetics_delta=0.1
+            )
         elif event_type == "model_accuracy_drop":
             consciousness.emotional_state.update_from_dimensions(
-                pleasure_delta=-0.1, arousal_delta=0.1)
+                pleasure_delta=-0.1, arousal_delta=0.1
+            )
         elif event_type == "memory_consolidated":
-            consciousness.emotional_state.update_from_dimensions(
-                arousal_delta=-0.05)
+            consciousness.emotional_state.update_from_dimensions(arousal_delta=-0.05)
         elif event_type == "care_validated":
             consciousness.emotional_state.update_from_dimensions(
-                care_delta=0.08, pleasure_delta=0.05)
+                care_delta=0.08, pleasure_delta=0.05
+            )
         elif event_type == "prediction_success":
             consciousness.emotional_state.update_from_dimensions(
-                pleasure_delta=0.03, curiosity_delta=0.02)
+                pleasure_delta=0.03, curiosity_delta=0.02
+            )
     except Exception as e:
         print(f"[appraisal] error for {event_type}: {e}")
 
 
 # === Compass doc: Emotional modulation — state affects behavior ===
+
 
 def _get_emotional_modulation() -> dict:
     """
@@ -1780,8 +2344,16 @@ async def _probe_db(pool) -> str:
 @app.get("/health")
 async def health_check():
     """Health check endpoint — uses real DB probe, not object truthiness."""
-    coord_status = "available" if (COORDINATION_AVAILABLE and coordination_hub is not None) else "unavailable"
-    orion_status = "available" if (ORION_AGENT_AVAILABLE and orion_agent is not None) else "unavailable"
+    coord_status = (
+        "available"
+        if (COORDINATION_AVAILABLE and coordination_hub is not None)
+        else "unavailable"
+    )
+    orion_status = (
+        "available"
+        if (ORION_AGENT_AVAILABLE and orion_agent is not None)
+        else "unavailable"
+    )
     # Real DB probe — object truthiness only shows the store object exists, not that DB is reachable
     if memory_store and getattr(memory_store, "pool", None):
         db_status = await _probe_db(memory_store.pool)
@@ -1795,46 +2367,79 @@ async def health_check():
         "components": {
             "neural_models": model_registry.list_models() if model_registry else {},
             "memory_store": db_status,
-            "consciousness": consciousness.get_consciousness_state() if consciousness else {},
+            "consciousness": consciousness.get_consciousness_state()
+            if consciousness
+            else {},
             "coordination": coord_status,
             "orion_agent": orion_status,
-        }
+        },
     }
 
+
+@app.get("/health/db")
+async def db_health():
+    """Detailed database health with pool stats and query latency."""
+    import time as _time
+
+    pool = getattr(memory_store, "pool", None) if memory_store else None
+    if not pool:
+        return JSONResponse({"status": "no_pool", "connected": False}, status_code=503)
+    try:
+        start = _time.monotonic()
+        async with pool.acquire() as conn:
+            count = await conn.fetchval("SELECT count(*) FROM memory_episodes")
+        latency_ms = round((_time.monotonic() - start) * 1000, 1)
+        return {
+            "connected": True,
+            "latency_ms": latency_ms,
+            "pool_size": pool.get_size(),
+            "pool_idle": pool.get_idle_size(),
+            "pool_active": pool.get_size() - pool.get_idle_size(),
+            "memory_episodes": count,
+        }
+    except Exception as e:
+        return JSONResponse({"connected": False, "error": str(e)}, status_code=503)
+
+
 @app.post("/mcp")
-async def mcp_endpoint(request: Request):
-    """MCP endpoint for tool calls"""
-    body = await request.json()
-    
+async def mcp_endpoint(request: Request, _auth: bool = Depends(_verify_mcp_token)):
+    """MCP endpoint for tool calls — token-authenticated"""
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {
+                "jsonrpc": "2.0",
+                "id": None,
+                "error": {"code": -32700, "message": "Parse error: invalid JSON"},
+            },
+            status_code=400,
+        )
+
     method = body.get("method")
     params = body.get("params", {})
     req_id = body.get("id")
-    
+
     # Handle initialize
     if method == "initialize":
-        return JSONResponse({
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "result": {
-                "protocolVersion": "2024-11-05",
-                "serverInfo": {
-                    "name": "sovereign-temple-mcp",
-                    "version": "2.0.0"
+        return JSONResponse(
+            {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {
+                    "protocolVersion": "2024-11-05",
+                    "serverInfo": {"name": "sovereign-temple-mcp", "version": "2.0.0"},
+                    "capabilities": {"tools": {}},
                 },
-                "capabilities": {
-                    "tools": {}
-                }
             }
-        })
-    
+        )
+
     # Handle tools/list
     if method == "tools/list":
-        return JSONResponse({
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "result": {"tools": MCP_TOOLS}
-        })
-    
+        return JSONResponse(
+            {"jsonrpc": "2.0", "id": req_id, "result": {"tools": MCP_TOOLS}}
+        )
+
     # Handle tools/call
     if method == "tools/call":
         tool_name = params.get("name")
@@ -1849,22 +2454,31 @@ async def mcp_endpoint(request: Request):
                     arguments[_k] = _sanitized
                     _any_flagged = True
         if _any_flagged:
-            print(f"[security] LLM01 prompt injection detected in tool={tool_name}; args sanitized")
+            print(
+                f"[security] LLM01 prompt injection detected in tool={tool_name}; args sanitized"
+            )
 
         # --- LLM06: Excessive agency / rate-limit check ---
         if not check_excessive_agency(tool_name, arguments):
-            return JSONResponse({
-                "jsonrpc": "2.0",
-                "id": req_id,
-                "error": {
-                    "code": -32000,
-                    "message": "Request blocked by excessive-agency rate limiter (LLM06). "
-                               "Max 50 tool calls per 60 seconds.",
-                },
-            })
+            return JSONResponse(
+                {
+                    "jsonrpc": "2.0",
+                    "id": req_id,
+                    "error": {
+                        "code": -32000,
+                        "message": "Request blocked by excessive-agency rate limiter (LLM06). "
+                        "Max 50 tool calls per 60 seconds.",
+                    },
+                }
+            )
 
         # Run production inference on every message that has text content
-        message_text = arguments.get("text") or arguments.get("message") or arguments.get("content") or ""
+        message_text = (
+            arguments.get("text")
+            or arguments.get("message")
+            or arguments.get("content")
+            or ""
+        )
         if message_text:
             asyncio.create_task(_run_production_inference(str(message_text)))
 
@@ -1875,38 +2489,55 @@ async def mcp_endpoint(request: Request):
                 memory_context = await _retrieve_memory_context(str(message_text))
                 if memory_context:
                     original_prompt = arguments.get("system_prompt", "")
-                    arguments["system_prompt"] = f"<context>\n{memory_context}\n</context>\n\n{original_prompt}" if original_prompt else f"<context>\n{memory_context}\n</context>"
+                    arguments["system_prompt"] = (
+                        f"<context>\n{memory_context}\n</context>\n\n{original_prompt}"
+                        if original_prompt
+                        else f"<context>\n{memory_context}\n</context>"
+                    )
             except Exception as _mc_err:
                 print(f"[mcp_handler] memory context injection error: {_mc_err}")
 
-        result = await execute_tool(tool_name, arguments)
+        try:
+            result = await execute_tool(tool_name, arguments)
+        except Exception as _exec_err:
+            print(
+                f"[mcp_endpoint] execute_tool error: tool={tool_name} err={_exec_err}"
+            )
+            result = {"error": f"Tool execution error: {str(_exec_err)}"}
 
         # Track tool call in dispatcher
         if tool_dispatcher:
             success = "error" not in result
             tool_dispatcher.record_call(tool_name, success=success)
 
-        return JSONResponse({
+        try:
+            result_text = json.dumps(result, indent=2)
+        except Exception:
+            result_text = json.dumps(
+                {"error": "Result serialization error", "tool": tool_name}
+            )
+
+        return JSONResponse(
+            {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {"content": [{"type": "text", "text": result_text}]},
+            }
+        )
+
+    return JSONResponse(
+        {
             "jsonrpc": "2.0",
             "id": req_id,
-            "result": {
-                "content": [{
-                    "type": "text",
-                    "text": json.dumps(result, indent=2)
-                }]
-            }
-        })
-    
-    return JSONResponse({
-        "jsonrpc": "2.0",
-        "id": req_id,
-        "error": {"code": -32601, "message": f"Method not found: {method}"}
-    })
+            "error": {"code": -32601, "message": f"Method not found: {method}"},
+        }
+    )
+
 
 async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
     """Execute an MCP tool"""
     start_time = datetime.now()
-    
+
     try:
         # Neural Tools
         if name == "validate_care":
@@ -1914,34 +2545,38 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             if not model or not model.is_trained:
                 return {"error": "Model not available"}
             result = model.predict(arguments["text"])
-            
+
             # Update consciousness
-            consciousness.process_interaction({"care_score": result.get("overall_care_score", 0.5)})
+            consciousness.process_interaction(
+                {"care_score": result.get("overall_care_score", 0.5)}
+            )
             # OCC appraisal: care validated -> emotional state update
             asyncio.create_task(_appraise_event("care_validated"))
             return result
-        
+
         elif name == "detect_partnership_opportunities":
             model = model_registry.get("partnership_detection_ml")
             if not model or not model.is_trained:
                 return {"error": "Model not available"}
             return model.predict(arguments["text"])
-        
+
         elif name == "detect_threats":
             model = model_registry.get("threat_detection_nn")
             if not model or not model.is_trained:
                 return {"error": "Model not available"}
             result = model.predict(arguments["text"])
-            
+
             # Update consciousness
-            consciousness.process_interaction({"threat_detected": result.get("threat_detected", False)})
-            
+            consciousness.process_interaction(
+                {"threat_detected": result.get("threat_detected", False)}
+            )
+
             # OCC appraisal: threat detected -> arousal spike
             if result.get("threat_detected"):
                 asyncio.create_task(_appraise_event("threat_detected"))
             else:
                 asyncio.create_task(_appraise_event("prediction_success"))
-            
+
             # Fire alert if threat detected
             if result.get("threat_detected"):
                 await alert_manager.fire_alert(
@@ -1949,22 +2584,22 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     "security",
                     "Security Threat Detected",
                     f"Threat level: {result.get('overall_threat_level', 'unknown')}",
-                    channels=[AlertChannel.CONSOLE]
+                    channels=[AlertChannel.CONSOLE],
                 )
             return result
-        
+
         elif name == "predict_relationship_evolution":
             model = model_registry.get("relationship_evolution_nn")
             if not model or not model.is_trained:
                 return {"error": "Model not available"}
             return model.predict(arguments)
-        
+
         elif name == "analyze_care_patterns":
             model = model_registry.get("care_pattern_analyzer")
             if not model or not model.is_trained:
                 return {"error": "Model not available"}
             return model.predict(arguments)
-        
+
         elif name == "get_neural_model_info":
             registry_info = model_registry.list_models() if model_registry else {}
             # Augment each model entry with a fallback prediction when registry prediction is None/zero
@@ -1972,9 +2607,13 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 fallback_samples = {}
                 for model_type in lgbm_fallback.MODEL_TYPES:
                     fallback_samples[model_type] = lgbm_fallback.predict(model_type, {})
-                return {"models": registry_info, "fallback_predictions": fallback_samples, "fallback_stats": lgbm_fallback.get_stats()}
+                return {
+                    "models": registry_info,
+                    "fallback_predictions": fallback_samples,
+                    "fallback_stats": lgbm_fallback.get_stats(),
+                }
             return registry_info
-        
+
         # Memory Tools
         elif name == "record_memory":
             if not memory_store:
@@ -1985,10 +2624,10 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 memory_type=arguments.get("memory_type", "interaction"),
                 care_weight=float(arguments.get("care_weight", 0.5)),
                 tags=arguments.get("tags", []),
-                emotional_valence=float(arguments.get("emotional_valence", 0.5))
+                emotional_valence=float(arguments.get("emotional_valence", 0.5)),
             )
             return {"success": True, "episode_id": episode.id}
-        
+
         elif name == "query_memories":
             if not memory_store:
                 return {"error": "Memory store not available"}
@@ -1999,25 +2638,25 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 query=arguments["query"],
                 care_weight_min=arguments.get("care_weight_min", 0.0),
                 tags=arguments.get("tags"),
-                limit=_limit
+                limit=_limit,
             )
             return {"memories": results}
-        
+
         elif name == "get_temporal_chain":
             if not memory_store:
                 return {"error": "Memory store not available"}
             chain = await memory_store.get_temporal_chain(
                 episode_id=arguments["episode_id"],
                 direction=arguments.get("direction", "forward"),
-                max_steps=arguments.get("max_steps", 5)
+                max_steps=arguments.get("max_steps", 5),
             )
             return {"chain": chain}
-        
+
         elif name == "get_memory_stats":
             if not memory_store:
                 return {"error": "Memory store not available"}
             return await memory_store.get_stats()
-        
+
         elif name == "list_memories":
             if not memory_store:
                 return {"error": "Memory store not available"}
@@ -2025,21 +2664,25 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 limit=arguments.get("limit", 50)
             )
             return {"memories": memories, "count": len(memories)}
-        
+
         # Monitoring Tools
         elif name == "get_dashboard_metrics":
-            return metrics.get_dashboard_data() if metrics else {"error": "Metrics not available"}
-        
+            return (
+                metrics.get_dashboard_data()
+                if metrics
+                else {"error": "Metrics not available"}
+            )
+
         elif name == "get_audit_logs":
             if not audit_logger:
                 return {"error": "Audit logger not available"}
             logs = await audit_logger.query_logs(
                 event_type=arguments.get("event_type"),
                 source_agent=arguments.get("source_agent"),
-                limit=arguments.get("limit", 100)
+                limit=arguments.get("limit", 100),
             )
             return {"logs": logs}
-        
+
         elif name == "get_active_alerts":
             if not alert_manager:
                 return {"error": "Alert manager not available"}
@@ -2047,18 +2690,21 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 "info": AlertSeverity.INFO,
                 "warning": AlertSeverity.WARNING,
                 "critical": AlertSeverity.CRITICAL,
-                "emergency": AlertSeverity.EMERGENCY
+                "emergency": AlertSeverity.EMERGENCY,
             }
             min_sev = severity_map.get(arguments.get("min_severity"))
             alerts = alert_manager.get_active_alerts(min_severity=min_sev)
             return {
-                "alerts": [{
-                    "id": a.id,
-                    "severity": a.severity.value,
-                    "title": a.title,
-                    "message": a.message,
-                    "timestamp": a.timestamp.isoformat()
-                } for a in alerts]
+                "alerts": [
+                    {
+                        "id": a.id,
+                        "severity": a.severity.value,
+                        "title": a.title,
+                        "message": a.message,
+                        "timestamp": a.timestamp.isoformat(),
+                    }
+                    for a in alerts
+                ]
             }
 
         elif name == "resolve_alert":
@@ -2068,7 +2714,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             acknowledged_by = arguments.get("acknowledged_by", "operator")
             if not alert_id:
                 return {"error": "alert_id required"}
-            ok = alert_manager.acknowledge_alert(alert_id, acknowledged_by=acknowledged_by)
+            ok = alert_manager.acknowledge_alert(
+                alert_id, acknowledged_by=acknowledged_by
+            )
             if ok:
                 return {"status": "resolved", "alert_id": alert_id}
             return {"error": f"Alert {alert_id} not found or already resolved"}
@@ -2087,6 +2735,7 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             # File-based fallback
             import json as _j
             from pathlib import Path as _P
+
             _state = _P(__file__).resolve().parent / "consciousness-core" / "state"
             _state.mkdir(parents=True, exist_ok=True)
             _reg_file = _state / "agent_registry.json"
@@ -2095,27 +2744,40 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 with open(_reg_file) as _f:
                     _existing = _j.load(_f)
             _existing[agent_id] = {
-                "id": agent_id, "name": agent_name, "capabilities": agent_caps,
-                "trust_level": agent_trust, "status": "active",
+                "id": agent_id,
+                "name": agent_name,
+                "capabilities": agent_caps,
+                "trust_level": agent_trust,
+                "status": "active",
                 "registered_at": datetime.now().isoformat(),
             }
             with open(_reg_file, "w") as _f:
                 _j.dump(_existing, _f, indent=2, default=str)
-            return {"agent_id": agent_id, "name": agent_name, "status": "registered_file"}
-        
+            return {
+                "agent_id": agent_id,
+                "name": agent_name,
+                "status": "registered_file",
+            }
+
         elif name == "delegate_task":
             if not task_delegator:
                 return {"error": "Task delegator not available"}
             task = await task_delegator.delegate_task(
                 description=arguments["description"],
-                required_capabilities=[AgentCapability(c) for c in arguments["required_capabilities"]],
+                required_capabilities=[
+                    AgentCapability(c) for c in arguments["required_capabilities"]
+                ],
                 priority=arguments.get("priority", 5),
-                care_weight=arguments.get("care_weight", 0.5)
+                care_weight=arguments.get("care_weight", 0.5),
             )
             if task:
-                return {"task_id": task.id, "assigned_to": task.assigned_to, "status": "assigned"}
+                return {
+                    "task_id": task.id,
+                    "assigned_to": task.assigned_to,
+                    "status": "assigned",
+                }
             return {"error": "No suitable agent found"}
-        
+
         elif name == "submit_council_proposal":
             if not agent_council:
                 return {"error": "Agent council not available"}
@@ -2124,10 +2786,10 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 description=arguments["description"],
                 proposed_by=arguments["proposed_by"],
                 action_type=arguments.get("action_type", "generic"),
-                action_params=arguments.get("action_params", {})
+                action_params=arguments.get("action_params", {}),
             )
             return {"proposal_id": proposal_id, "status": "open"}
-        
+
         elif name == "vote_on_proposal":
             if not agent_council:
                 return {"error": "Agent council not available"}
@@ -2135,21 +2797,21 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 proposal_id=arguments["proposal_id"],
                 agent_id=arguments["agent_id"],
                 vote=arguments["vote"],
-                reasoning=arguments.get("reasoning", "")
+                reasoning=arguments.get("reasoning", ""),
             )
             return {"success": success}
-        
+
         elif name == "get_agent_registry_stats":
             if not agent_registry:
                 return {"error": "Agent registry not available"}
             return agent_registry.get_registry_stats()
-        
+
         # Consciousness Tools
         elif name == "get_consciousness_state":
             if not consciousness:
                 return {"error": "Consciousness module not available"}
             return consciousness.get_consciousness_state()
-        
+
         elif name == "trigger_reflection":
             if not consciousness:
                 return {"error": "Consciousness module not available"}
@@ -2157,7 +2819,7 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 trigger=arguments.get("trigger", "manual")
             )
             return reflection
-        
+
         elif name == "enter_dream_state":
             if not consciousness:
                 return {"error": "Consciousness module not available"}
@@ -2168,17 +2830,20 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             try:
                 import json as _json
                 from pathlib import Path as _Path
-                _dreams_dir = _Path("/Users/nicholas/clawd/sovereign-temple-live/consciousness_core/dreams")
+
+                _dreams_dir = _Path(
+                    "/Users/nicholas/clawd/sovereign-temple-live/consciousness_core/dreams"
+                )
                 _dreams_dir.mkdir(parents=True, exist_ok=True)
                 _ts = datetime.now().strftime("%Y%m%d_%H%M%S")
                 _dream_file = _dreams_dir / f"dream_{_ts}.json"
                 with open(_dream_file, "w") as _f:
                     _json.dump(dream, _f, indent=2, default=str)
-                logger.info(f"Dream log written to {_dream_file}")
+                print(f"Dream log written to {_dream_file}")
             except Exception as _e:
-                logger.warning(f"Dream persistence failed: {_e}")
+                print(f"Dream persistence failed: {_e}")
             return dream
-        
+
         # System Tools
         elif name == "sovereign_health_check":
             # Real DB probes — object truthiness only confirms the Python object exists, not DB reachability
@@ -2195,88 +2860,104 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             return {
                 "status": "healthy",
                 "components": {
-                    "neural_models": len(model_registry.models) if model_registry else 0,
+                    "neural_models": len(model_registry.models)
+                    if model_registry
+                    else 0,
                     "memory_store": mem_db_status,
                     "audit_logger": audit_db_status,
                     "metrics": "active" if metrics else "inactive",
                     "alert_manager": "active" if alert_manager else "inactive",
                     "agent_registry": "connected" if agent_registry else "disconnected",
-                    "consciousness": "active" if consciousness else "inactive"
-                }
+                    "consciousness": "active" if consciousness else "inactive",
+                },
             }
-        
+
         elif name == "get_system_status":
             return {
                 "neural": model_registry.list_models() if model_registry else {},
                 "memory": await memory_store.get_stats() if memory_store else {},
                 "monitoring": {
                     "alerts": alert_manager.get_alert_stats() if alert_manager else {},
-                    "metrics": metrics.get_dashboard_data() if metrics else {}
+                    "metrics": metrics.get_dashboard_data() if metrics else {},
                 },
                 "agents": agent_registry.get_registry_stats() if agent_registry else {},
-                "consciousness": consciousness.get_consciousness_state() if consciousness else {},
+                "consciousness": consciousness.get_consciousness_state()
+                if consciousness
+                else {},
                 "maintenance": {
-                    "running": maintenance_system.running if maintenance_system else False,
-                    "care_floor": maintenance_system.care_floor if maintenance_system else None
+                    "running": maintenance_system.running
+                    if maintenance_system
+                    else False,
+                    "care_floor": maintenance_system.care_floor
+                    if maintenance_system
+                    else None,
                 },
-                "nemotron": nemotron_client.get_model_info() if nemotron_client else {"available": False}
+                "nemotron": nemotron_client.get_model_info()
+                if nemotron_client
+                else {"available": False},
             }
-        
+
         # NVIDIA Nemotron Tools
         elif name == "nemotron_chat":
             if not nemotron_client or not nemotron_client.is_available:
-                return {"error": "Nemotron client not available. Set NVIDIA_API_KEY environment variable."}
+                return {
+                    "error": "Nemotron client not available. Set NVIDIA_API_KEY environment variable."
+                }
             try:
                 response = nemotron_client.chat(
                     message=arguments.get("message", ""),
                     system_prompt=arguments.get("system_prompt"),
                     temperature=arguments.get("temperature", 0.7),
-                    max_tokens=arguments.get("max_tokens", 1024)
+                    max_tokens=arguments.get("max_tokens", 1024),
                 )
                 return {
                     "success": True,
                     "response": response.text,
                     "model": response.model,
                     "usage": response.usage,
-                    "finish_reason": response.finish_reason
+                    "finish_reason": response.finish_reason,
                 }
             except Exception as e:
                 return {"error": str(e)}
-        
+
         elif name == "nemotron_care_response":
             if not nemotron_client or not nemotron_client.is_available:
-                return {"error": "Nemotron client not available. Set NVIDIA_API_KEY environment variable."}
+                return {
+                    "error": "Nemotron client not available. Set NVIDIA_API_KEY environment variable."
+                }
             return nemotron_client.generate_care_response(
                 user_message=arguments.get("message", "")
             )
-        
+
         elif name == "nemotron_analyze_care":
             if not nemotron_client or not nemotron_client.is_available:
-                return {"error": "Nemotron client not available. Set NVIDIA_API_KEY environment variable."}
-            return nemotron_client.analyze_for_care(
-                text=arguments.get("text", "")
-            )
-        
+                return {
+                    "error": "Nemotron client not available. Set NVIDIA_API_KEY environment variable."
+                }
+            return nemotron_client.analyze_for_care(text=arguments.get("text", ""))
+
         elif name == "nemotron_info":
             if not nemotron_client:
                 return {"available": False, "error": "Nemotron module not loaded"}
             return nemotron_client.get_model_info()
-        
+
         elif name == "trigger_maintenance":
             if not maintenance_system:
                 return {"error": "Maintenance system not available"}
             await maintenance_system.force_maintenance()
             return {"status": "maintenance_cycle_triggered"}
-        
+
         elif name == "get_maintenance_status":
             if not maintenance_system:
                 return {"error": "Maintenance system not available"}
             return {
                 "running": maintenance_system.running,
                 "care_floor": maintenance_system.care_floor,
-                "last_reflection": maintenance_system.reflection.last_reflection.isoformat() if maintenance_system.reflection.last_reflection else None
+                "last_reflection": maintenance_system.reflection.last_reflection.isoformat()
+                if maintenance_system.reflection.last_reflection
+                else None,
             }
-        
+
         # Orion-Riri-Hourman Agent Tools
         elif name == "orion_hunt_tasks":
             if not ORION_AGENT_AVAILABLE or not get_orion_agent:
@@ -2308,8 +2989,7 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 return {"error": "Orion-Riri-Hourman agent not available"}
             agent = get_orion_agent()
             result = await agent.start_sprint(
-                arguments["sprint_type"],
-                arguments.get("task_id")
+                arguments["sprint_type"], arguments.get("task_id")
             )
             return result
 
@@ -2324,8 +3004,7 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 return {"error": "Orion-Riri-Hourman agent not available"}
             agent = get_orion_agent()
             result = await agent.complete_sprint(
-                arguments["summary"],
-                arguments.get("task_id")
+                arguments["summary"], arguments.get("task_id")
             )
             return result
 
@@ -2344,17 +3023,17 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 {
                     "name": arguments["name"],
                     "description": arguments["description"],
-                    **arguments.get("params", {})
-                }
+                    **arguments.get("params", {}),
+                },
             )
             return result
-        
+
         elif name == "orion_riri_hourman_status":
             if not ORION_AGENT_AVAILABLE or not get_orion_agent:
                 return {"error": "Orion-Riri-Hourman agent not available"}
             agent = get_orion_agent()
             return agent.get_full_status()
-        
+
         # Multi-Agent Coordination Tools
         elif name == "coord_register_agent":
             if not COORDINATION_AVAILABLE or not get_coordination_hub:
@@ -2363,9 +3042,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             return hub.register_agent(
                 arguments["agent_id"],
                 arguments["agent_type"],
-                arguments["capabilities"]
+                arguments["capabilities"],
             )
-        
+
         elif name == "coord_submit_task":
             if not COORDINATION_AVAILABLE or not get_coordination_hub:
                 return {"error": "Coordination hub not available"}
@@ -2375,9 +3054,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 description=arguments["description"],
                 files=arguments.get("files", []),
                 requester="claude-mcp",
-                care_score=arguments.get("care_score", 0.5)
+                care_score=arguments.get("care_score", 0.5),
             )
-        
+
         elif name == "coord_acquire_files":
             if not COORDINATION_AVAILABLE or not get_coordination_hub:
                 return {"error": "Coordination hub not available"}
@@ -2386,18 +3065,17 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 agent_id=arguments["agent_id"],
                 files=arguments["files"],
                 task_id=arguments["task_id"],
-                exclusive=arguments.get("exclusive", False)
+                exclusive=arguments.get("exclusive", False),
             )
-        
+
         elif name == "coord_release_files":
             if not COORDINATION_AVAILABLE or not get_coordination_hub:
                 return {"error": "Coordination hub not available"}
             hub = get_coordination_hub()
             return hub.release_files(
-                agent_id=arguments["agent_id"],
-                files=arguments["files"]
+                agent_id=arguments["agent_id"], files=arguments["files"]
             )
-        
+
         elif name == "coord_complete_task":
             if not COORDINATION_AVAILABLE or not get_coordination_hub:
                 return {"error": "Coordination hub not available"}
@@ -2406,20 +3084,23 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 task_id=arguments["task_id"],
                 agent_id=arguments["agent_id"],
                 result_summary=arguments["result_summary"],
-                care_score=arguments.get("care_score", 0.5)
+                care_score=arguments.get("care_score", 0.5),
             )
-        
+
         elif name == "coord_get_dashboard":
             if not COORDINATION_AVAILABLE or not get_coordination_hub:
                 return {"error": "Coordination hub not available"}
             hub = get_coordination_hub()
             return hub.get_dashboard()
-        
+
         # === Project Heartbeat Tools ===
         elif name == "get_heartbeat_status":
             if heartbeat:
                 return heartbeat.get_status()
-            return {"error": "Heartbeat not available", "hint": "Project Heartbeat not initialized"}
+            return {
+                "error": "Heartbeat not available",
+                "hint": "Project Heartbeat not initialized",
+            }
 
         elif name == "get_nightshift_digest":
             if memory_store and memory_store.pool:
@@ -2427,18 +3108,20 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     rows = await conn.fetch(
                         "SELECT * FROM memory_episodes WHERE tags @> $1::text[] "
                         "ORDER BY timestamp DESC LIMIT 1",
-                        ['morning_digest']
+                        ["morning_digest"],
                     )
                     if rows:
                         row = rows[0]
                         return {
-                            "id": str(row['id']),
-                            "content": row['content'],
-                            "timestamp": row['timestamp'].isoformat(),
-                            "care_weight": float(row['care_weight']),
-                            "tags": row['tags']
+                            "id": str(row["id"]),
+                            "content": row["content"],
+                            "timestamp": row["timestamp"].isoformat(),
+                            "care_weight": float(row["care_weight"]),
+                            "tags": row["tags"],
                         }
-                    return {"message": "No morning digest found yet. Digest is generated at 3:30 AM GMT."}
+                    return {
+                        "message": "No morning digest found yet. Digest is generated at 3:30 AM GMT."
+                    }
             return {"error": "Memory store not available"}
 
         elif name == "trigger_research_sweep":
@@ -2462,23 +3145,45 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         elif name == "run_quantum_batch":
             try:
                 import sys, os
-                quantum_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sovereign-temple-live", "quantum")
+
+                quantum_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "..",
+                    "sovereign-temple-live",
+                    "quantum",
+                )
                 if quantum_path not in sys.path:
                     sys.path.insert(0, os.path.dirname(quantum_path))
                 from sovereign_temple_live.quantum.quantum_batch import run_batch
+
                 qaoa_only = arguments.get("qaoa_only", False)
-                result = run_batch(qaoa_only=qaoa_only, sov3_url="http://localhost:3100")
-                return {"status": "complete", "elapsed_seconds": result.get("total_elapsed"), "phases": list(result.get("phases", {}).keys())}
+                result = run_batch(
+                    qaoa_only=qaoa_only, sov3_url="http://localhost:3100"
+                )
+                return {
+                    "status": "complete",
+                    "elapsed_seconds": result.get("total_elapsed"),
+                    "phases": list(result.get("phases", {}).keys()),
+                }
             except Exception as e:
                 return {"error": f"Quantum batch failed: {e}"}
 
         elif name == "quantum_memory_search":
             try:
                 import sys, os
-                quantum_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sovereign-temple-live", "quantum")
+
+                quantum_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "..",
+                    "sovereign-temple-live",
+                    "quantum",
+                )
                 if quantum_path not in sys.path:
                     sys.path.insert(0, os.path.dirname(quantum_path))
-                from sovereign_temple_live.quantum.grover_memory_search import GroverMemorySearch
+                from sovereign_temple_live.quantum.grover_memory_search import (
+                    GroverMemorySearch,
+                )
+
                 query = arguments.get("query", "")
                 top_k = int(arguments.get("top_k", 5))
                 episodes = memory_store.get_recent(limit=500) if memory_store else []
@@ -2493,14 +3198,27 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         elif name == "quantum_score_memories":
             try:
                 import sys, os
-                quantum_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sovereign-temple-live", "quantum")
+
+                quantum_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "..",
+                    "sovereign-temple-live",
+                    "quantum",
+                )
                 if quantum_path not in sys.path:
                     sys.path.insert(0, os.path.dirname(quantum_path))
-                from sovereign_temple_live.quantum.vqe_memory_scorer import score_sovereign_memories
+                from sovereign_temple_live.quantum.vqe_memory_scorer import (
+                    score_sovereign_memories,
+                )
+
                 top_k = int(arguments.get("top_k", 10))
                 result = score_sovereign_memories()
                 top = result.get("top_10", [])[:top_k]
-                return {"total_scored": result.get("total_episodes"), "top_k": top, "method": result.get("method")}
+                return {
+                    "total_scored": result.get("total_episodes"),
+                    "top_k": top,
+                    "method": result.get("method"),
+                }
             except Exception as e:
                 return {"error": f"VQE scoring failed: {e}"}
 
@@ -2534,11 +3252,15 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 if "novelty_score" not in context and memory_store:
                     try:
                         recent = await memory_store.get_recent_episodes(limit=10)
-                        ref = [ep.content for ep in recent if hasattr(ep, 'content')]
-                        context["novelty_score"] = kolmogorov_novelty(text, ref) if ref else 0.5
+                        ref = [ep.content for ep in recent if hasattr(ep, "content")]
+                        context["novelty_score"] = (
+                            kolmogorov_novelty(text, ref) if ref else 0.5
+                        )
                     except Exception:
                         context["novelty_score"] = 0.5
-                assessment = await creativity_pipeline.assess_creative_output(text, context)
+                assessment = await creativity_pipeline.assess_creative_output(
+                    text, context
+                )
 
                 # Archive in QD if available
                 if qd_archive and assessment.get("scores"):
@@ -2556,11 +3278,16 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 # Apply stochastic resonance variant if engine available
                 if resonance_engine and context:
                     noised = apply_stochastic_resonance(context, resonance_engine)
-                    noised_assessment = await creativity_pipeline.assess_creative_output(text, noised)
-                    if noised_assessment.get("overall_creativity", 0) > assessment.get("overall_creativity", 0):
+                    noised_assessment = (
+                        await creativity_pipeline.assess_creative_output(text, noised)
+                    )
+                    if noised_assessment.get("overall_creativity", 0) > assessment.get(
+                        "overall_creativity", 0
+                    ):
                         assessment["resonance_boost"] = {
                             "noised_score": noised_assessment["overall_creativity"],
-                            "improvement": noised_assessment["overall_creativity"] - assessment["overall_creativity"],
+                            "improvement": noised_assessment["overall_creativity"]
+                            - assessment["overall_creativity"],
                         }
                         resonance_engine.update_from_feedback(
                             assessment["overall_creativity"],
@@ -2578,12 +3305,14 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         elif name == "get_consciousness_mode":
             if consciousness:
                 state = consciousness.get_consciousness_state()
-                mode = getattr(consciousness, 'consciousness_mode', None)
+                mode = getattr(consciousness, "consciousness_mode", None)
                 return {
                     "mode": mode.value if mode else "jagrat",
                     "consciousness_level": state.get("consciousness_level", 0),
                     "emotional_state": state.get("emotional_state", {}),
-                    "care_intensity": state.get("emotional_state", {}).get("care_intensity", 0),
+                    "care_intensity": state.get("emotional_state", {}).get(
+                        "care_intensity", 0
+                    ),
                 }
             return {"error": "Consciousness not available"}
 
@@ -2595,7 +3324,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     # Use recent memories as reference
                     try:
                         recent = await memory_store.get_recent_episodes(limit=20)
-                        reference = [ep.content for ep in recent if hasattr(ep, 'content')]
+                        reference = [
+                            ep.content for ep in recent if hasattr(ep, "content")
+                        ]
                     except Exception:
                         reference = []
                 score = kolmogorov_novelty(text, reference)
@@ -2603,10 +3334,13 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     "novelty_score": round(score, 4),
                     "reference_size": len(reference),
                     "interpretation": (
-                        "highly redundant" if score < 0.3 else
-                        "moderate novelty" if score < 0.6 else
-                        "substantially novel" if score < 0.8 else
-                        "radically novel"
+                        "highly redundant"
+                        if score < 0.3
+                        else "moderate novelty"
+                        if score < 0.6
+                        else "substantially novel"
+                        if score < 0.8
+                        else "radically novel"
                     ),
                 }
             return {"error": "Creativity engine not available"}
@@ -2621,15 +3355,19 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     asyncio.create_task(_appraise_event("novel_bisociation"))
                 try:
                     result = await creativity_pipeline.run_full_pipeline()
-                    print(f"[creativity_cycle] Pipeline complete: {result.get('status', 'unknown')}, "
-                          f"traditions={result.get('tradition_count', 0)}, "
-                          f"examples={result.get('total_examples', 0)}")
+                    print(
+                        f"[creativity_cycle] Pipeline complete: {result.get('status', 'unknown')}, "
+                        f"traditions={result.get('tradition_count', 0)}, "
+                        f"examples={result.get('total_examples', 0)}"
+                    )
                     # Refresh bisociation with higher top_k for more diverse links
                     if cross_domain_linker and TIER2_CREATIVITY_AVAILABLE:
                         try:
                             cross_domain_linker.compute_distances()
                             new_links = cross_domain_linker.find_bisociations(top_k=50)
-                            print(f"[creativity_cycle] Bisociation refreshed: {len(new_links)} links")
+                            print(
+                                f"[creativity_cycle] Bisociation refreshed: {len(new_links)} links"
+                            )
                             result["bisociation_links_refreshed"] = len(new_links)
                         except Exception as be:
                             print(f"[creativity_cycle] Bisociation refresh error: {be}")
@@ -2638,21 +3376,28 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 except Exception as e:
                     print(f"[creativity_cycle] ERROR: {e}")
                     import traceback
+
                     traceback.print_exc()
-                    return {"error": f"Creativity cycle failed: {str(e)}", "status": "error"}
+                    return {
+                        "error": f"Creativity cycle failed: {str(e)}",
+                        "status": "error",
+                    }
             return {"error": "Creativity pipeline not available"}
 
         elif name == "get_meta_observations":
             if consciousness:
-                meta_monitor = getattr(consciousness, 'meta_monitor', None)
+                meta_monitor = getattr(consciousness, "meta_monitor", None)
                 if meta_monitor:
                     obs = await meta_monitor.observe(
                         consciousness.emotional_state,
-                        consciousness.reflection_cycle,
-                        consciousness.dream_state,
+                        getattr(consciousness, "reflection", None),
+                        getattr(consciousness, "dream", None),
                     )
                     return obs
-                return {"mode": "turiya_not_initialized", "message": "MetaMonitor not yet active"}
+                return {
+                    "mode": "turiya_not_initialized",
+                    "message": "MetaMonitor not yet active",
+                }
             return {"error": "Consciousness not available"}
 
         # === Tier 2: Cross-Domain Bisociation ===
@@ -2665,7 +3410,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     cross_domain_linker.compute_distances()
                 except Exception:
                     pass
-                links = cross_domain_linker.find_bisociations(min_distance=min_dist, top_k=top_k)
+                links = cross_domain_linker.find_bisociations(
+                    min_distance=min_dist, top_k=top_k
+                )
                 return {
                     "bisociation_links": [l.to_dict() for l in links],
                     "count": len(links),
@@ -2683,30 +3430,53 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         elif name == "get_bridge_concepts":
             if cross_domain_linker:
                 connectivity = cross_domain_linker.get_tradition_connectivity()
-                return {"bridge_concepts": connectivity[:20], "total": len(connectivity)}
+                return {
+                    "bridge_concepts": connectivity[:20],
+                    "total": len(connectivity),
+                }
             return {"error": "CrossDomainLinker not available"}
 
         elif name == "get_domain_distances":
             if cross_domain_linker:
-                return {"domain_distances": cross_domain_linker.get_domain_distance_map()}
+                return {
+                    "domain_distances": cross_domain_linker.get_domain_distance_map()
+                }
             return {"error": "CrossDomainLinker not available"}
 
         # === Tier 2: Stochastic Resonance ===
         elif name == "apply_resonance":
             if resonance_engine:
                 features = arguments.get("features", {})
-                temp = arguments.get("temperature", resonance_engine.get_optimal_temperature())
+                temp = arguments.get(
+                    "temperature", resonance_engine.get_optimal_temperature()
+                )
                 noised = apply_stochastic_resonance(features, resonance_engine, temp)
 
                 # If creativity pipeline available, assess both original and noised
-                result = {"original_features": features, "noised_features": noised, "temperature": temp}
+                result = {
+                    "original_features": features,
+                    "noised_features": noised,
+                    "temperature": temp,
+                }
                 if creativity_pipeline:
                     try:
-                        orig_assessment = await creativity_pipeline.assess_creative_output("", features)
-                        noised_assessment = await creativity_pipeline.assess_creative_output("", noised)
-                        result["original_score"] = orig_assessment.get("overall_creativity", 0)
-                        result["noised_score"] = noised_assessment.get("overall_creativity", 0)
-                        result["improvement"] = result["noised_score"] - result["original_score"]
+                        orig_assessment = (
+                            await creativity_pipeline.assess_creative_output(
+                                "", features
+                            )
+                        )
+                        noised_assessment = (
+                            await creativity_pipeline.assess_creative_output("", noised)
+                        )
+                        result["original_score"] = orig_assessment.get(
+                            "overall_creativity", 0
+                        )
+                        result["noised_score"] = noised_assessment.get(
+                            "overall_creativity", 0
+                        )
+                        result["improvement"] = (
+                            result["noised_score"] - result["original_score"]
+                        )
 
                         # Feed back to resonance engine
                         resonance_engine.update_from_feedback(
@@ -2726,7 +3496,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         elif name == "get_unified_context":
             if STREAM_AGG_AVAILABLE:
                 include_screens = arguments.get("include_screens", False)
-                ctx = get_aggregator().get_unified_context(include_screens=include_screens)
+                ctx = get_aggregator().get_unified_context(
+                    include_screens=include_screens
+                )
                 # Merge with HARV
                 if HARV_AVAILABLE:
                     ctx["harv"] = get_harv().get_all()
@@ -2744,7 +3516,11 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             if qd_archive:
                 limit = arguments.get("limit", 20)
                 niches = qd_archive.get_empty_niches()
-                return {"empty_niches": niches[:limit], "total_empty": len(niches), "coverage": qd_archive.coverage()}
+                return {
+                    "empty_niches": niches[:limit],
+                    "total_empty": len(niches),
+                    "coverage": qd_archive.coverage(),
+                }
             return {"error": "QualityDiversityArchive not available"}
 
         elif name == "suggest_exploration":
@@ -2792,7 +3568,10 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         elif name == "kimi_list_models":
             if kimi_agent:
                 return await kimi_agent.list_models()
-            return {"models": ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"], "status": "agent_not_initialized"}
+            return {
+                "models": ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],
+                "status": "agent_not_initialized",
+            }
 
         # === Sovereign Rundown ===
         elif name == "sovereign_rundown":
@@ -2808,15 +3587,15 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             if consciousness:
                 es = consciousness.emotional_state.current_state
                 rundown["consciousness"] = {
-                    "mode": str(getattr(consciousness, 'consciousness_mode', 'waking')),
+                    "mode": str(getattr(consciousness, "consciousness_mode", "waking")),
                     "care_intensity": round(es.care_intensity, 3),
                     "pleasure": round(es.pleasure, 3),
                     "arousal": round(es.arousal, 3),
-                    "curiosity": round(getattr(es, 'curiosity', 0), 3),
-                    "aesthetics": round(getattr(es, 'aesthetics', 0), 3),
+                    "curiosity": round(getattr(es, "curiosity", 0), 3),
+                    "aesthetics": round(getattr(es, "aesthetics", 0), 3),
                     "primary_emotion": es.primary_emotion,
-                    "reflections": getattr(consciousness, 'reflection_count', 0),
-                    "dreams": getattr(consciousness, 'dream_count', 0),
+                    "reflections": getattr(consciousness, "reflection_count", 0),
+                    "dreams": getattr(consciousness, "dream_count", 0),
                 }
 
             # Neural models
@@ -2824,9 +3603,11 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                 rundown["neural_models"] = {
                     name: {
                         "trained": m.is_trained,
-                        "metrics": {k: round(v, 4) if isinstance(v, float) else v
-                                   for k, v in (getattr(m, 'metrics', {}) or {}).items()
-                                   if k in ("mse", "mae", "r2_score", "accuracy")}
+                        "metrics": {
+                            k: round(v, 4) if isinstance(v, float) else v
+                            for k, v in (getattr(m, "metrics", {}) or {}).items()
+                            if k in ("mse", "mae", "r2_score", "accuracy")
+                        },
                     }
                     for name, m in model_registry.models.items()
                 }
@@ -2842,9 +3623,14 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             # Creativity engine
             if cross_domain_linker:
                 rundown["creativity"] = {
-                    "bisociation_links": cross_domain_linker.get_stats().get("total_links", 0),
-                    "top_bridge": cross_domain_linker.get_tradition_connectivity()[0]["tradition"]
-                        if cross_domain_linker.get_tradition_connectivity() else "none",
+                    "bisociation_links": cross_domain_linker.get_stats().get(
+                        "total_links", 0
+                    ),
+                    "top_bridge": cross_domain_linker.get_tradition_connectivity()[0][
+                        "tradition"
+                    ]
+                    if cross_domain_linker.get_tradition_connectivity()
+                    else "none",
                 }
             if qd_archive:
                 rundown.setdefault("creativity", {})["qd_archive"] = {
@@ -2855,7 +3641,9 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             if resonance_engine:
                 rundown.setdefault("creativity", {})["resonance"] = {
                     "mean_sigma": resonance_engine.get_stats()["mean_sigma"],
-                    "improvement_rate": resonance_engine.get_stats()["improvement_rate"],
+                    "improvement_rate": resonance_engine.get_stats()[
+                        "improvement_rate"
+                    ],
                 }
 
             # Agents
@@ -2873,7 +3661,7 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             rundown["agents"] = agents_info
 
             # Engagement
-            if agent_registry and hasattr(agent_registry, 'compute_engagement'):
+            if agent_registry and hasattr(agent_registry, "compute_engagement"):
                 try:
                     rundown["engagement"] = agent_registry.compute_engagement()
                 except Exception:
@@ -2896,6 +3684,7 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
 
             # Safe serialize — convert enums, numpy, etc to JSON-safe types
             import json as _json
+
             def _safe(obj):
                 if isinstance(obj, (np.integer,)):
                     return int(obj)
@@ -2903,21 +3692,246 @@ async def execute_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
                     return float(obj)
                 if isinstance(obj, np.ndarray):
                     return obj.tolist()
-                if hasattr(obj, 'value'):  # Enum
+                if hasattr(obj, "value"):  # Enum
                     return str(obj.value)
-                if hasattr(obj, '__dict__'):
+                if hasattr(obj, "__dict__"):
                     return str(obj)
                 return str(obj)
+
             rundown = _json.loads(_json.dumps(rundown, default=_safe))
 
             return rundown
+
+        elif name == "get_voice_pipeline_status":
+            try:
+                from voice_pipeline.jarvis_voice import (
+                    SILERO_OK,
+                    WAKEWORD_OK,
+                    WHISPER_OK,
+                    KOKORO_OK,
+                )
+
+                return {
+                    "vad": SILERO_OK,
+                    "wake_word": WAKEWORD_OK,
+                    "stt": WHISPER_OK,
+                    "tts": KOKORO_OK,
+                    "phase": 2 if (WHISPER_OK and KOKORO_OK) else 1,
+                    "components": {
+                        "silero_vad": "installed"
+                        if SILERO_OK
+                        else "not installed (pip install silero-vad)",
+                        "openwakeword": "installed"
+                        if WAKEWORD_OK
+                        else "not installed (pip install openwakeword)",
+                        "lightning_whisper_mlx": "installed"
+                        if WHISPER_OK
+                        else "not installed (pip install lightning-whisper-mlx)",
+                        "kokoro_mlx": "installed"
+                        if KOKORO_OK
+                        else "not installed (pip install kokoro-mlx)",
+                    },
+                }
+            except Exception as ve:
+                return {"error": f"Voice pipeline not available: {ve}", "phase": 0}
+
+        elif name == "execute_with_claw_code":
+            import asyncio as _aio
+            from claw_code_adapter import ClawCodeExecutor
+
+            executor = ClawCodeExecutor(
+                working_dir=arguments.get(
+                    "working_dir", "/Users/nicholas/clawd/meok/ui"
+                ),
+                timeout=arguments.get("timeout", 30),
+            )
+            task_payload = {
+                "type": arguments["action"],
+                "description": arguments.get("description", ""),
+                "path": arguments.get("path", ""),
+                "content": arguments.get("content", ""),
+                "command": arguments.get("command", ""),
+                "pattern": arguments.get("pattern", ""),
+                "test_path": arguments.get("test_path", ""),
+                "files": arguments.get("files", []),
+                "message": arguments.get("message", ""),
+                "working_dir": arguments.get(
+                    "working_dir", "/Users/nicholas/clawd/meok/ui"
+                ),
+            }
+            result = await executor.execute_task(task_payload)
+            # Record to memory
+            if memory_store:
+                try:
+                    await memory_store.store(
+                        f"Execution: {arguments['action']} → {'success' if result.success else 'failed'}. Output: {result.output[:200]}",
+                        "jarvis_executor",
+                        "interaction",
+                        0.6,
+                        ["execution", "claw_code", arguments["action"]],
+                    )
+                except:
+                    pass
+            return {
+                "success": result.success,
+                "action": result.action,
+                "output": result.output[:3000],
+                "files_changed": result.files_changed,
+                "tests_passed": result.tests_passed,
+                "duration_ms": result.duration_ms,
+                "tier": result.tier,
+            }
+
+        # Genesis → G-code Pipeline Tools
+        elif name == "design_robot":
+            from genesis_pipeline import genesis_pipeline
+
+            result = await genesis_pipeline.voice_to_robot(arguments["voice_command"])
+
+            # Record this design session in memory
+            if memory_store:
+                await memory_store.record_memory(
+                    content=f"Designed robot: {result.get('design_id', 'unknown')} from command: {arguments['voice_command'][:100]}",
+                    source_agent="genesis_pipeline",
+                    memory_type="decision",
+                    care_weight=0.8,
+                    tags=["robotics", "genesis", "3d_printing"],
+                )
+
+            return result
+
+        elif name == "list_print_queue":
+            from genesis_pipeline import genesis_pipeline
+
+            return {"print_queue": await genesis_pipeline.list_print_queue()}
+
+        elif name == "get_genesis_cluster_status":
+            from genesis_pipeline import genesis_pipeline
+
+            return await genesis_pipeline.get_cluster_status()
+
+        elif name == "simulate_robot_design":
+            from genesis_pipeline import genesis_pipeline
+
+            # Run single robot simulation
+            result = await genesis_pipeline._simulate_single_robot(
+                arguments["design"],
+                {
+                    "test_scenarios": arguments.get(
+                        "test_scenarios", ["stability", "mobility"]
+                    )
+                },
+            )
+            return result
+
+        elif name == "export_robot_stl":
+            from genesis_pipeline import genesis_pipeline
+
+            # Mock export - in reality would load design from database
+            mock_winner = {
+                "id": arguments["design_id"],
+                "name": f"Design_{arguments['design_id']}",
+            }
+            stl_files = await genesis_pipeline._export_to_stl(mock_winner)
+            return {"stl_files": stl_files}
+
+        elif name == "generate_gcode":
+            from genesis_pipeline import genesis_pipeline
+
+            gcode_files = await genesis_pipeline._generate_gcode(arguments["stl_files"])
+
+            # Filter by printer if specified
+            if arguments.get("printer") != "both":
+                printer = arguments["printer"]
+                gcode_files = {printer: gcode_files.get(printer, [])}
+
+            return {"gcode_files": gcode_files}
+
+        # ═══ DEPARTMENT AGENT TOOLS ═══
+        elif name == "delegate_to_department":
+            from department_mcp_tools import delegate_to_department
+
+            return await delegate_to_department(
+                department=arguments["department"],
+                task=arguments["task"],
+                priority=arguments.get("priority", 5),
+            )
+
+        elif name == "get_department_status":
+            from department_mcp_tools import get_department_status
+
+            return await get_department_status()
+
+        elif name == "get_department_task_queue":
+            from agent_department import CEOAgent
+
+            ceo = CEOAgent()
+            from agent_department import Department
+
+            dept_map = {
+                "content": Department.CONTENT,
+                "sales": Department.SALES,
+                "finance": Department.FINANCE,
+                "support": Department.SUPPORT,
+                "research": Department.RESEARCH,
+                "operations": Department.OPERATIONS,
+            }
+            dept = dept_map.get(arguments["department"].lower())
+            if not dept:
+                return {"error": f"Unknown department: {arguments['department']}"}
+            queue = ceo.departments[dept].get_task_queue()
+            return {"department": arguments["department"], "tasks": queue}
+
+        elif name == "initiate_sales_call":
+            from department_mcp_tools import initiate_sales_call
+
+            return await initiate_sales_call(
+                phone_number=arguments["phone_number"],
+                script=arguments["script"],
+                voice_id=arguments.get("voice_id", "sarah"),
+            )
+
+        elif name == "generate_invoice":
+            from department_mcp_tools import generate_invoice
+
+            return await generate_invoice(
+                customer=arguments["customer"],
+                items=arguments["items"],
+            )
+
+        elif name == "get_financial_summary":
+            from department_mcp_tools import get_financial_summary
+
+            return await get_financial_summary()
+
+        elif name == "get_seo_analysis":
+            from department_mcp_tools import get_seo_analysis
+
+            return await get_seo_analysis()
+
+        elif name == "generate_video_ad":
+            from department_mcp_tools import generate_video_ad
+
+            return await generate_video_ad(
+                product=arguments["product"],
+                style=arguments.get("style", "cinematic"),
+            )
+
+        elif name == "triage_support_ticket":
+            from department_mcp_tools import triage_support_ticket
+
+            return await triage_support_ticket(
+                ticket_content=arguments["ticket_content"],
+            )
 
         else:
             return {"error": f"Unknown tool: {name}"}
 
     except Exception as e:
         import traceback
+
         return {"error": str(e), "traceback": traceback.format_exc()}
+
 
 def _get_core_tools() -> List[Dict[str, Any]]:
     """Return 5 core always-loaded tool definitions for the /chat tool runner."""
@@ -2927,18 +3941,18 @@ def _get_core_tools() -> List[Dict[str, Any]]:
             "description": "Query Sovereign's RAG memory for relevant context",
             "input_schema": {
                 "type": "object",
-                "properties": {"query": {"type": "string"}}
-            }
+                "properties": {"query": {"type": "string"}},
+            },
         },
         {
             "name": "get_consciousness_state",
             "description": "Get current emotional and consciousness state",
-            "input_schema": {"type": "object", "properties": {}}
+            "input_schema": {"type": "object", "properties": {}},
         },
         {
             "name": "get_engagement_score",
             "description": "Get current social cohesion score",
-            "input_schema": {"type": "object", "properties": {}}
+            "input_schema": {"type": "object", "properties": {}},
         },
         {
             "name": "record_memory",
@@ -2947,14 +3961,14 @@ def _get_core_tools() -> List[Dict[str, Any]]:
                 "type": "object",
                 "properties": {
                     "content": {"type": "string"},
-                    "memory_type": {"type": "string"}
-                }
-            }
+                    "memory_type": {"type": "string"},
+                },
+            },
         },
         {
             "name": "get_system_status",
             "description": "Get full Sovereign system status",
-            "input_schema": {"type": "object", "properties": {}}
+            "input_schema": {"type": "object", "properties": {}},
         },
     ]
 
@@ -2968,24 +3982,47 @@ async def _prefetch_tools(message: str) -> str:
         if any(w in msg_lower for w in ["engagement", "cohesion", "unity", "council"]):
             if agent_registry:
                 result = agent_registry.compute_engagement()
-                score = result.get("engagement_score", result) if isinstance(result, dict) else result
+                score = (
+                    result.get("engagement_score", result)
+                    if isinstance(result, dict)
+                    else result
+                )
                 sections.append(f"Engagement score: {score}")
     except Exception:
         pass
 
     try:
-        if any(w in msg_lower for w in ["memory", "remember", "recall", "know about", "what do you"]):
+        if any(
+            w in msg_lower
+            for w in ["memory", "remember", "recall", "know about", "what do you"]
+        ):
             if memory_store:
                 eps = await memory_store.query_memories(query=message, limit=3)
                 if eps:
-                    mems = "\n".join(f"  · {e.content[:150]}" if hasattr(e, 'content') else f"  · {str(e)[:150]}" for e in eps[:3])
+                    mems = "\n".join(
+                        f"  · {e.content[:150]}"
+                        if hasattr(e, "content")
+                        else f"  · {str(e)[:150]}"
+                        for e in eps[:3]
+                    )
                     sections.append(f"Retrieved memories:\n{mems}")
     except Exception:
         pass
 
     try:
-        if any(w in msg_lower for w in ["health", "how are you", "your state", "feeling", "conscious", "status", "state"]):
-            if consciousness and hasattr(consciousness, 'get_consciousness_state'):
+        if any(
+            w in msg_lower
+            for w in [
+                "health",
+                "how are you",
+                "your state",
+                "feeling",
+                "conscious",
+                "status",
+                "state",
+            ]
+        ):
+            if consciousness and hasattr(consciousness, "get_consciousness_state"):
                 state = consciousness.get_consciousness_state()
                 mode = state.get("mode") or state.get("consciousness_mode", "jagrat")
                 level = state.get("consciousness_level", state.get("level", "?"))
@@ -2997,7 +4034,11 @@ async def _prefetch_tools(message: str) -> str:
         if any(w in msg_lower for w in ["metrics", "dashboard"]):
             if metrics:
                 data = metrics.get_dashboard_data()
-                summary = {k: v for k, v in list(data.items())[:4]} if isinstance(data, dict) else data
+                summary = (
+                    {k: v for k, v in list(data.items())[:4]}
+                    if isinstance(data, dict)
+                    else data
+                )
                 sections.append(f"Dashboard metrics: {summary}")
     except Exception:
         pass
@@ -3008,7 +4049,7 @@ async def _prefetch_tools(message: str) -> str:
                 alerts = alert_manager.get_active_alerts()
                 if alerts:
                     first = alerts[0]
-                    title = getattr(first, 'title', str(first))
+                    title = getattr(first, "title", str(first))
                     sections.append(f"Active alerts: {len(alerts)} — {title}")
                 else:
                     sections.append("Active alerts: none")
@@ -3016,7 +4057,9 @@ async def _prefetch_tools(message: str) -> str:
         pass
 
     try:
-        if any(w in msg_lower for w in ["dream", "creativity", "creative", "bisociation"]):
+        if any(
+            w in msg_lower for w in ["dream", "creativity", "creative", "bisociation"]
+        ):
             if cross_domain_linker:
                 targets = cross_domain_linker.suggest_dream_targets(n=3)
                 if targets:
@@ -3053,10 +4096,12 @@ async def chat_with_sovereign(request: Request):
     try:
         if consciousness and hasattr(consciousness, "emotional_state"):
             s = consciousness.emotional_state.current_state
-            emotion_desc = (f"care={s.get('care_intensity',0):.2f} "
-                           f"curiosity={s.get('curiosity',0):.2f} "
-                           f"pleasure={s.get('pleasure',0):.2f} "
-                           f"arousal={s.get('arousal',0):.2f}")
+            emotion_desc = (
+                f"care={s.get('care_intensity', 0):.2f} "
+                f"curiosity={s.get('curiosity', 0):.2f} "
+                f"pleasure={s.get('pleasure', 0):.2f} "
+                f"arousal={s.get('arousal', 0):.2f}"
+            )
         if consciousness:
             engagement_val = f"{consciousness.get_engagement_score():.3f}"
     except Exception:
@@ -3067,7 +4112,9 @@ async def chat_with_sovereign(request: Request):
         if memory_store:
             eps = memory_store.query_memories(message, top_k=5)
             if eps:
-                memory_ctx = "Memory context:\n" + "\n".join(f"- {e.content[:200]}" for e in eps[:3])
+                memory_ctx = "Memory context:\n" + "\n".join(
+                    f"- {e.content[:200]}" for e in eps[:3]
+                )
     except Exception:
         pass
 
@@ -3108,9 +4155,14 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
         try:
             sys.path.insert(0, "/Users/nicholas/clawd/meok")
             from meok.core.character_catalog import get_character
+
             char = get_character(char_id)
             if char:
-                system_prompt = char.get_system_prompt(user_name="Nick", context=system_prompt) + "\n\n" + system_prompt
+                system_prompt = (
+                    char.get_system_prompt(user_name="Nick", context=system_prompt)
+                    + "\n\n"
+                    + system_prompt
+                )
         except Exception:
             pass
 
@@ -3126,16 +4178,33 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
     if anthropic_key:
         try:
             if screen_image:
-                img_data = screen_image.split(",", 1)[-1] if "," in screen_image else screen_image
+                img_data = (
+                    screen_image.split(",", 1)[-1]
+                    if "," in screen_image
+                    else screen_image
+                )
                 user_content = [
                     {"type": "text", "text": message},
-                    {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img_data}}
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": img_data,
+                        },
+                    },
                 ]
             else:
                 user_content = message
 
             # Prompt caching: system as list with cache_control (90% discount after first call)
-            cached_system = [{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}]
+            cached_system = [
+                {
+                    "type": "text",
+                    "text": system_prompt,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ]
 
             async with httpx.AsyncClient(timeout=60.0) as client:
                 messages_history = [{"role": "user", "content": user_content}]
@@ -3162,7 +4231,7 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
                             "system": cached_system,
                             "tools": _get_core_tools(),
                             "messages": messages_history,
-                        }
+                        },
                     )
                     d = resp.json()
 
@@ -3184,7 +4253,10 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
                     # Handle tool_use: call each tool via internal MCP and collect results
                     tool_results = []
                     for block in content_blocks:
-                        if not isinstance(block, dict) or block.get("type") != "tool_use":
+                        if (
+                            not isinstance(block, dict)
+                            or block.get("type") != "tool_use"
+                        ):
                             continue
                         tool_name = block.get("name", "")
                         tool_input = block.get("input", {})
@@ -3192,7 +4264,9 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
 
                         # Track stats
                         _tool_call_stats["total"] += 1
-                        _tool_call_stats["by_tool"][tool_name] = _tool_call_stats["by_tool"].get(tool_name, 0) + 1
+                        _tool_call_stats["by_tool"][tool_name] = (
+                            _tool_call_stats["by_tool"].get(tool_name, 0) + 1
+                        )
                         tools_used_names.append(tool_name)
 
                         # Call MCP server internally
@@ -3202,12 +4276,12 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
                                 "jsonrpc": "2.0",
                                 "id": "chat-tool",
                                 "method": "tools/call",
-                                "params": {"name": tool_name, "arguments": tool_input}
+                                "params": {"name": tool_name, "arguments": tool_input},
                             }
                             mcp_resp = await client.post(
                                 "http://localhost:3100/mcp",
                                 json=mcp_payload,
-                                timeout=10.0
+                                timeout=10.0,
                             )
                             mcp_data = mcp_resp.json()
                             result_val = mcp_data.get("result", {})
@@ -3218,23 +4292,35 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
                         except Exception as te:
                             tool_result_content = f"Tool error: {te}"
 
-                        tool_results.append({
-                            "type": "tool_result",
-                            "tool_use_id": tool_use_id,
-                            "content": tool_result_content,
-                        })
+                        tool_results.append(
+                            {
+                                "type": "tool_result",
+                                "tool_use_id": tool_use_id,
+                                "content": tool_result_content,
+                            }
+                        )
 
                     # Append assistant turn + tool results to history
-                    messages_history.append({"role": "assistant", "content": content_blocks})
+                    messages_history.append(
+                        {"role": "assistant", "content": content_blocks}
+                    )
                     messages_history.append({"role": "user", "content": tool_results})
 
                 if final_text:
-                    return {"response": final_text, "model": "claude-sonnet-4-5", "tools_used": tools_used_names}
+                    return {
+                        "response": final_text,
+                        "model": "claude-sonnet-4-5",
+                        "tools_used": tools_used_names,
+                    }
                 elif content_blocks:
                     # Fallback: return first text block found anywhere
                     for block in content_blocks:
                         if isinstance(block, dict) and block.get("type") == "text":
-                            return {"response": block["text"], "model": "claude-sonnet-4-5", "tools_used": tools_used_names}
+                            return {
+                                "response": block["text"],
+                                "model": "claude-sonnet-4-5",
+                                "tools_used": tools_used_names,
+                            }
         except Exception:
             pass
 
@@ -3242,9 +4328,21 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
     if openai_key:
         try:
             if screen_image:
-                img_data = screen_image.split(",", 1)[-1] if "," in screen_image else screen_image
-                uc = [{"type": "text", "text": message},
-                      {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_data}", "detail": "low"}}]
+                img_data = (
+                    screen_image.split(",", 1)[-1]
+                    if "," in screen_image
+                    else screen_image
+                )
+                uc = [
+                    {"type": "text", "text": message},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{img_data}",
+                            "detail": "low",
+                        },
+                    },
+                ]
                 mdl = "gpt-4o"
             else:
                 uc = message
@@ -3253,22 +4351,36 @@ Reply in 2-4 sentences. Never say "As an AI" or "I'm just a language model". You
                 resp = await client.post(
                     "https://api.openai.com/v1/chat/completions",
                     headers={"Authorization": f"Bearer {openai_key}"},
-                    json={"model": mdl, "max_tokens": 400, "temperature": 0.75,
-                          "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": uc}]}
+                    json={
+                        "model": mdl,
+                        "max_tokens": 400,
+                        "temperature": 0.75,
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": uc},
+                        ],
+                    },
                 )
                 d = resp.json()
                 if "choices" in d:
-                    return {"response": d["choices"][0]["message"]["content"], "model": mdl}
+                    return {
+                        "response": d["choices"][0]["message"]["content"],
+                        "model": mdl,
+                    }
         except Exception:
             pass
 
-    return {"response": "All 235 minds are present, Nick. Configure ANTHROPIC_API_KEY for full Sovereign voice.", "model": "offline"}
+    return {
+        "response": "All 235 minds are present, Nick. Configure ANTHROPIC_API_KEY for full Sovereign voice.",
+        "model": "offline",
+    }
 
 
 @app.post("/transcribe")
 async def transcribe_audio(request: Request):
     """Whisper STT — receives raw WebM audio, returns transcript. Replaces Web Speech API."""
     import httpx
+
     openai_key = os.environ.get("OPENAI_API_KEY", "")
     if not openai_key:
         return {"transcript": "", "error": "OPENAI_API_KEY not set"}
@@ -3281,7 +4393,7 @@ async def transcribe_audio(request: Request):
                 "https://api.openai.com/v1/audio/transcriptions",
                 headers={"Authorization": f"Bearer {openai_key}"},
                 files={"file": ("audio.webm", audio_bytes, "audio/webm")},
-                data={"model": "whisper-1", "language": "en"}
+                data={"model": "whisper-1", "language": "en"},
             )
             d = resp.json()
             return {"transcript": d.get("text", "").strip(), "model": "whisper-1"}
@@ -3293,23 +4405,37 @@ async def transcribe_audio(request: Request):
 async def text_to_speech(request: Request):
     """OpenAI TTS — converts text to high-quality MP3 audio for Sovereign's voice."""
     import httpx
+
     openai_key = os.environ.get("OPENAI_API_KEY", "")
     if not openai_key:
         return Response(content=b"", media_type="audio/mpeg")
     try:
         body = await request.json()
         text = body.get("text", "")[:500]
-        voice = body.get("voice", "onyx")  # onyx=deep/wise, nova=warm/feminine, echo=neutral, fable=expressive
+        voice = body.get(
+            "voice", "onyx"
+        )  # onyx=deep/wise, nova=warm/feminine, echo=neutral, fable=expressive
         if not text:
             return Response(content=b"", media_type="audio/mpeg")
         async with httpx.AsyncClient(timeout=20.0) as client:
             resp = await client.post(
                 "https://api.openai.com/v1/audio/speech",
                 headers={"Authorization": f"Bearer {openai_key}"},
-                json={"model": "tts-1", "input": text, "voice": voice, "response_format": "mp3"}
+                json={
+                    "model": "tts-1",
+                    "input": text,
+                    "voice": voice,
+                    "response_format": "mp3",
+                },
             )
-            return Response(content=resp.content, media_type="audio/mpeg",
-                          headers={"Cache-Control": "no-cache", "Access-Control-Allow-Origin": "*"})
+            return Response(
+                content=resp.content,
+                media_type="audio/mpeg",
+                headers={
+                    "Cache-Control": "no-cache",
+                    "Access-Control-Allow-Origin": "*",
+                },
+            )
     except Exception:
         return Response(content=b"", media_type="audio/mpeg")
 
@@ -3328,13 +4454,12 @@ async def harv_update(request: Request):
     if "activity" in body:
         harv.update("activity", body["activity"])
         from datetime import datetime
+
         harv.update("activity_since", datetime.utcnow().isoformat())
         updated.append("activity")
     if "pc_idle" in body:
         harv.update_pc(
-            int(body["pc_idle"]),
-            body.get("pc_app", ""),
-            body.get("pc_window", "")
+            int(body["pc_idle"]), body.get("pc_app", ""), body.get("pc_window", "")
         )
         updated.append("pc_status")
     if "weather" in body:
@@ -3363,7 +4488,7 @@ async def harv_camera_event(request: Request):
         label=body.get("label", ""),
         confidence=float(body.get("confidence", 0.0)),
         zone=body.get("zone", "unknown"),
-        metadata=body.get("metadata", {})
+        metadata=body.get("metadata", {}),
     )
     return {"status": "ok", "buffered": len(harv.camera_events)}
 
@@ -3414,7 +4539,7 @@ async def push_app_event(request: Request):
     get_aggregator().push_app_event(
         body.get("type", "app_activated"),
         body.get("app_name", ""),
-        body.get("detail", "")
+        body.get("detail", ""),
     )
     return {"ok": True}
 
@@ -3468,6 +4593,7 @@ async def db_health():
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+
 @app.get("/healthz/deep")
 async def deep_health():
     """Level 3: Can subsystems actually produce output?"""
@@ -3476,7 +4602,9 @@ async def deep_health():
     # Can threat model predict?
     if model_registry and model_registry.get("threat_detection_nn"):
         try:
-            pred = model_registry.get("threat_detection_nn").predict("test health check")
+            pred = model_registry.get("threat_detection_nn").predict(
+                "test health check"
+            )
             results["threat_model"] = {"ok": True, "has_output": bool(pred)}
         except Exception as e:
             results["threat_model"] = {"ok": False, "error": str(e)}
@@ -3493,7 +4621,10 @@ async def deep_health():
     if qd_archive:
         try:
             stats = qd_archive.get_stats()
-            results["qd_archive"] = {"ok": True, "coverage": stats.get("coverage_pct", 0)}
+            results["qd_archive"] = {
+                "ok": True,
+                "coverage": stats.get("coverage_pct", 0),
+            }
         except Exception as e:
             results["qd_archive"] = {"ok": False, "error": str(e)}
 
@@ -3504,7 +4635,7 @@ async def deep_health():
         "passing": passing,
         "total": total,
         "checks": results,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -3522,7 +4653,7 @@ async def agent_trust_stats():
         return {
             "density": _trust_manager.get_density(),
             "agents": _trust_manager.get_all(),
-            "task_queue": _task_queue.get_stats() if _task_queue else {}
+            "task_queue": _task_queue.get_stats() if _task_queue else {},
         }
     return {"error": "Trust manager not initialized"}
 
@@ -3530,15 +4661,17 @@ async def agent_trust_stats():
 @app.get("/security")
 async def security_policy():
     """OWASP LLM Top 10 security policy and active mitigations."""
-    return JSONResponse({
-        "policy": "responsible_disclosure",
-        "contact": "security@meok.ai",
-        "owasp_llm_top10": "mitigated",
-        "lm01_prompt_injection": "active",
-        "lm06_excessive_agency": "active",
-        "rate_limit": "50_calls_per_60s",
-        "report_url": "https://huntr.com",
-    })
+    return JSONResponse(
+        {
+            "policy": "responsible_disclosure",
+            "contact": "security@meok.ai",
+            "owasp_llm_top10": "mitigated",
+            "lm01_prompt_injection": "active",
+            "lm06_excessive_agency": "active",
+            "rate_limit": "50_calls_per_60s",
+            "report_url": "https://huntr.com",
+        }
+    )
 
 
 @app.get("/.well-known/security.txt")
@@ -3597,10 +4730,15 @@ async def neural_predict(request: Request):
     # - RelationshipEvolutionNN     → "predicted_trust_6mo"
     # - CarePatternAnalyzer         → "burnout_risk" (dict)
     _SCORE_KEYS = (
-        "score", "overall_care_score", "opportunity_score",
-        "predicted_trust_6mo", "threat_scores", "burnout_risk",
+        "score",
+        "overall_care_score",
+        "opportunity_score",
+        "predicted_trust_6mo",
+        "threat_scores",
+        "burnout_risk",
         "overall_creativity",
     )
+
     def _has_real_prediction(result):
         if not result or "error" in result:
             return False
@@ -3616,7 +4754,13 @@ async def neural_predict(request: Request):
         result["source"] = "lgbm_fallback"
         return JSONResponse(result)
 
-    return JSONResponse({"error": f"Unknown model '{model_type}' and no fallback available", "available_models": lgbm_fallback.MODEL_TYPES if lgbm_fallback else []}, status_code=404)
+    return JSONResponse(
+        {
+            "error": f"Unknown model '{model_type}' and no fallback available",
+            "available_models": lgbm_fallback.MODEL_TYPES if lgbm_fallback else [],
+        },
+        status_code=404,
+    )
 
 
 @app.get("/stats")
@@ -3628,11 +4772,13 @@ async def get_stats():
             stream_stats = get_aggregator().get_stats()
     except Exception:
         pass
-    return JSONResponse({
-        "tool_calls": _tool_call_stats,
-        "uptime_seconds": time.time() - _SERVER_START,
-        "stream_aggregator": stream_stats,
-    })
+    return JSONResponse(
+        {
+            "tool_calls": _tool_call_stats,
+            "uptime_seconds": time.time() - _SERVER_START,
+            "stream_aggregator": stream_stats,
+        }
+    )
 
 
 @app.get("/")
@@ -3648,10 +4794,18 @@ async def root():
             "neural_predict": "/neural/predict (POST)",
             "security": "/security",
             "security_txt": "/.well-known/security.txt",
-        }
+        },
     }
 
+
 if __name__ == "__main__":
+    # Use uvloop for 2x async performance (if available)
+    try:
+        import uvloop
+
+        uvloop.install()
+    except ImportError:
+        pass
     _port = int(os.environ.get("PORT", 3100))
     _host = os.environ.get("HOST", "0.0.0.0")
     uvicorn.run(app, host=_host, port=_port)

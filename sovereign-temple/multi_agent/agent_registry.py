@@ -544,44 +544,44 @@ class TaskDelegator:
         """Select agent with best capability match"""
         # Prioritize agents with fewer but sufficient capabilities (specialists)
         scored = []
-        for agent in candidates:
+        for i, agent in enumerate(candidates):
             if agent.status == AgentStatus.IDLE:
                 # Score by having just the required capabilities + performance
                 extra_caps = len(agent.capabilities) - len(task.required_capabilities)
                 score = agent.performance_score - (extra_caps * 0.05)
-                scored.append((score, agent))
-        
-        scored.sort(reverse=True)
-        return scored[0][1] if scored else None
-    
+                scored.append((score, i, agent))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return scored[0][2] if scored else None
+
     def _trust_weighted_strategy(self, candidates: List[Agent], task: Task) -> Optional[Agent]:
         """Select agent based on trust level"""
         scored = []
-        for agent in candidates:
+        for i, agent in enumerate(candidates):
             if agent.status == AgentStatus.IDLE:
                 score = agent.trust_level * 0.7 + agent.performance_score * 0.3
-                scored.append((score, agent))
-        
-        scored.sort(reverse=True)
-        return scored[0][1] if scored else None
-    
+                scored.append((score, i, agent))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return scored[0][2] if scored else None
+
     def _load_balanced_strategy(self, candidates: List[Agent], task: Task) -> Optional[Agent]:
         """Select agent with lowest load"""
         scored = []
-        for agent in candidates:
+        for i, agent in enumerate(candidates):
             if agent.status == AgentStatus.IDLE:
                 # Prefer agents with fewer completed tasks (distribute load)
                 score = 1.0 / (1 + agent.tasks_completed)
-                scored.append((score, agent))
-        
-        scored.sort(reverse=True)
-        return scored[0][1] if scored else None
+                scored.append((score, i, agent))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return scored[0][2] if scored else None
     
     def _care_aware_strategy(self, candidates: List[Agent], task: Task) -> Optional[Agent]:
         # Fixed: asyncpg JSONB deserialization — field may arrive as string or dict depending on query path
         """Select agent considering care weight and trust"""
         scored = []
-        for agent in candidates:
+        for i, agent in enumerate(candidates):
             if agent.status in [AgentStatus.IDLE, AgentStatus.ACTIVE]:
                 # Safety: ensure relationships is a dict before calling .get()
                 relationships = agent.relationships
@@ -606,10 +606,10 @@ class TaskDelegator:
                     trust_component *= 1.5
                 
                 score = trust_component + performance_component + care_component + availability_component
-                scored.append((score, agent))
-        
-        scored.sort(reverse=True)
-        return scored[0][1] if scored else None
+                scored.append((score, i, agent))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return scored[0][2] if scored else None
     
     async def complete_task(self, task_id: str, result: Any, success: bool = True):
         """Mark a task as completed"""

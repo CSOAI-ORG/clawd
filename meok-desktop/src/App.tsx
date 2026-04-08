@@ -90,14 +90,24 @@ export default function App() {
   const activeChar = CHARACTERS.find(c => c.id === activeCharId) || CHARACTERS[0];
 
   const handleCharacterClick = async () => {
-    setView("chat");
-    await invoke("resize_for_panel");
+    try {
+      await invoke("resize_for_panel");
+      setView("chat");
+    } catch (e) {
+      console.error("resize failed:", e);
+      setView("chat"); // Still switch even if resize fails
+    }
   };
 
   const handleCharacterRightClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setView("picker");
-    await invoke("resize_for_panel");
+    try {
+      await invoke("resize_for_panel");
+      setView("picker");
+    } catch (e2) {
+      console.error("resize failed:", e2);
+      setView("picker");
+    }
   };
 
   const handleClose = async () => {

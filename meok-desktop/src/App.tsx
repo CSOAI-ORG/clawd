@@ -5,6 +5,7 @@ import { LivingCharacter } from "./components/LivingCharacter";
 import { ChatPanel } from "./components/ChatPanel";
 import { CharacterPicker, type VisualStyle } from "./components/CharacterPicker";
 import { DiceBearCharacter } from "./components/DiceBearCharacter";
+import { Live2DCharacter } from "./components/Live2DCharacter";
 import { useConnectionStatus } from "./hooks/useConnectionStatus";
 import { useCharacterBridge } from "./hooks/useCharacterBridge";
 import type { RingStatus } from "./lib/types";
@@ -145,7 +146,14 @@ export default function App() {
       ) : (
         /* Character view — render based on visual style */
         <div onContextMenu={handleCharacterRightClick}>
-          {visualStyle === "dicebear" ? (
+          {visualStyle === "live2d" ? (
+            <Live2DCharacter
+              state={characterState}
+              modelId={activeChar.archetype.toLowerCase() === "healer" ? "shizuku" : "hiyori"}
+              size={120}
+              onClick={handleCharacterClick}
+            />
+          ) : visualStyle === "dicebear" ? (
             <DiceBearCharacter
               name={activeChar.name}
               archetype={activeChar.archetype}

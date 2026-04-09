@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, FormEvent } from "react";
-import { useSSEChat } from "../hooks/useSSEChat";
+import { useWebSocketChat as useSSEChat } from "../hooks/useWebSocketChat";
 import { MessageBubble } from "./MessageBubble";
 import { Send, X } from "lucide-react";
 

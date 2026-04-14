@@ -27,5 +27,8 @@ WORKDIR /app
 RUN uv venv /home/nicholas/.venv
 ENV PATH="/home/nicholas/.venv/bin:$PATH"
 
-# Default: install deps and run SSE transport
+# Copy the SSE bridge script for low-level Server APIs
+COPY --chown=nicholas:nicholas ../../scripts/mcp-sse-bridge.py /home/nicholas/mcp-sse-bridge.py
+
+# Default: install deps and run SSE transport (overridden per-service for low-level APIs)
 CMD ["sh", "-c", "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""]

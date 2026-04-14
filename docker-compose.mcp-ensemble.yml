@@ -16,8 +16,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8000:8000"
     volumes:
@@ -42,8 +41,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8001:8000"
     volumes:
@@ -68,8 +66,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8002:8000"
     volumes:
@@ -94,8 +91,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8003:8000"
     volumes:
@@ -120,8 +116,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8004:8000"
     volumes:
@@ -146,8 +141,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8005:8000"
     volumes:
@@ -172,8 +166,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8006:8000"
     volumes:
@@ -198,8 +191,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8007:8000"
     volumes:
@@ -224,8 +216,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8008:8000"
     volumes:
@@ -250,8 +241,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8009:8000"
     volumes:
@@ -276,8 +266,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8010:8000"
     volumes:
@@ -302,8 +291,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8011:8000"
     volumes:
@@ -328,8 +316,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8012:8000"
     volumes:
@@ -354,8 +341,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8013:8000"
     volumes:
@@ -380,8 +366,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8014:8000"
     volumes:
@@ -406,8 +391,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8015:8000"
     volumes:
@@ -432,8 +416,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8016:8000"
     volumes:
@@ -458,8 +441,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8017:8000"
     volumes:
@@ -484,8 +466,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8018:8000"
     volumes:
@@ -510,8 +491,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8019:8000"
     volumes:
@@ -536,8 +516,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8020:8000"
     volumes:
@@ -562,8 +541,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8021:8000"
     volumes:
@@ -588,8 +566,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8022:8000"
     volumes:
@@ -614,8 +591,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8023:8000"
     volumes:
@@ -640,8 +616,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8024:8000"
     volumes:
@@ -666,8 +641,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8025:8000"
     volumes:
@@ -692,8 +666,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8026:8000"
     volumes:
@@ -718,8 +691,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8027:8000"
     volumes:
@@ -744,8 +716,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8028:8000"
     volumes:
@@ -770,8 +741,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8029:8000"
     volumes:
@@ -796,8 +766,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8030:8000"
     volumes:
@@ -822,8 +791,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8031:8000"
     volumes:
@@ -848,8 +816,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8032:8000"
     volumes:
@@ -874,8 +841,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8033:8000"
     volumes:
@@ -900,8 +866,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8034:8000"
     volumes:
@@ -926,8 +891,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8035:8000"
     volumes:
@@ -952,8 +916,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8036:8000"
     volumes:
@@ -978,8 +941,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8037:8000"
     volumes:
@@ -1004,8 +966,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8038:8000"
     volumes:
@@ -1030,8 +991,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8039:8000"
     volumes:
@@ -1056,8 +1016,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8040:8000"
     volumes:
@@ -1082,8 +1041,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8041:8000"
     volumes:
@@ -1108,8 +1066,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8042:8000"
     volumes:
@@ -1134,8 +1091,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8043:8000"
     volumes:
@@ -1160,8 +1116,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8044:8000"
     volumes:
@@ -1186,8 +1141,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8045:8000"
     volumes:
@@ -1212,8 +1166,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8046:8000"
     volumes:
@@ -1238,8 +1191,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8047:8000"
     volumes:
@@ -1264,8 +1216,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8048:8000"
     volumes:
@@ -1290,8 +1241,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8049:8000"
     volumes:
@@ -1316,8 +1266,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8050:8000"
     volumes:
@@ -1342,8 +1291,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8051:8000"
     volumes:
@@ -1368,8 +1316,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8052:8000"
     volumes:
@@ -1394,8 +1341,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8053:8000"
     volumes:
@@ -1420,8 +1366,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8054:8000"
     volumes:
@@ -1446,8 +1391,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8055:8000"
     volumes:
@@ -1472,8 +1416,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8056:8000"
     volumes:
@@ -1498,8 +1441,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8057:8000"
     volumes:
@@ -1524,8 +1466,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8058:8000"
     volumes:
@@ -1550,8 +1491,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8059:8000"
     volumes:
@@ -1576,8 +1516,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8060:8000"
     volumes:
@@ -1602,8 +1541,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8061:8000"
     volumes:
@@ -1628,8 +1566,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8062:8000"
     volumes:
@@ -1654,8 +1591,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8063:8000"
     volumes:
@@ -1680,8 +1616,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8064:8000"
     volumes:
@@ -1706,8 +1641,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8065:8000"
     volumes:
@@ -1732,8 +1666,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8066:8000"
     volumes:
@@ -1758,8 +1691,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8067:8000"
     volumes:
@@ -1784,8 +1716,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8068:8000"
     volumes:
@@ -1810,8 +1741,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8069:8000"
     volumes:
@@ -1836,8 +1766,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8070:8000"
     volumes:
@@ -1862,8 +1791,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8071:8000"
     volumes:
@@ -1888,8 +1816,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8072:8000"
     volumes:
@@ -1914,8 +1841,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8073:8000"
     volumes:
@@ -1940,8 +1866,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8074:8000"
     volumes:
@@ -1966,8 +1891,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8075:8000"
     volumes:
@@ -1992,8 +1916,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8076:8000"
     volumes:
@@ -2018,8 +1941,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8077:8000"
     volumes:
@@ -2044,8 +1966,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8078:8000"
     volumes:
@@ -2070,8 +1991,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8079:8000"
     volumes:
@@ -2096,8 +2016,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8080:8000"
     volumes:
@@ -2122,8 +2041,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8081:8000"
     volumes:
@@ -2148,8 +2066,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8082:8000"
     volumes:
@@ -2174,8 +2091,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8083:8000"
     volumes:
@@ -2200,8 +2116,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8084:8000"
     volumes:
@@ -2226,8 +2141,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8085:8000"
     volumes:
@@ -2252,8 +2166,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8086:8000"
     volumes:
@@ -2278,8 +2191,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8087:8000"
     volumes:
@@ -2304,8 +2216,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8088:8000"
     volumes:
@@ -2330,8 +2241,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8089:8000"
     volumes:
@@ -2356,8 +2266,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8090:8000"
     volumes:
@@ -2382,8 +2291,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8091:8000"
     volumes:
@@ -2408,8 +2316,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8092:8000"
     volumes:
@@ -2434,8 +2341,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8093:8000"
     volumes:
@@ -2460,8 +2366,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8094:8000"
     volumes:
@@ -2486,8 +2391,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8095:8000"
     volumes:
@@ -2512,8 +2416,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8096:8000"
     volumes:
@@ -2538,8 +2441,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8097:8000"
     volumes:
@@ -2564,8 +2466,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8098:8000"
     volumes:
@@ -2590,8 +2491,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8099:8000"
     volumes:
@@ -2616,8 +2516,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8100:8000"
     volumes:
@@ -2642,8 +2541,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8101:8000"
     volumes:
@@ -2668,8 +2566,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8102:8000"
     volumes:
@@ -2694,8 +2591,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8103:8000"
     volumes:
@@ -2720,8 +2616,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8104:8000"
     volumes:
@@ -2746,8 +2641,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8105:8000"
     volumes:
@@ -2772,8 +2666,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8106:8000"
     volumes:
@@ -2798,8 +2691,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8107:8000"
     volumes:
@@ -2824,8 +2716,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8108:8000"
     volumes:
@@ -2850,8 +2741,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8109:8000"
     volumes:
@@ -2876,8 +2766,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8110:8000"
     volumes:
@@ -2902,8 +2791,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8111:8000"
     volumes:
@@ -2928,8 +2816,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8112:8000"
     volumes:
@@ -2954,8 +2841,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8113:8000"
     volumes:
@@ -2980,8 +2866,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8114:8000"
     volumes:
@@ -3006,8 +2891,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8115:8000"
     volumes:
@@ -3032,8 +2916,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8116:8000"
     volumes:
@@ -3058,8 +2941,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8117:8000"
     volumes:
@@ -3084,8 +2966,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8118:8000"
     volumes:
@@ -3110,8 +2991,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8119:8000"
     volumes:
@@ -3136,8 +3016,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8120:8000"
     volumes:
@@ -3162,8 +3041,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8121:8000"
     volumes:
@@ -3188,8 +3066,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8122:8000"
     volumes:
@@ -3214,8 +3091,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8123:8000"
     volumes:
@@ -3240,8 +3116,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8124:8000"
     volumes:
@@ -3266,8 +3141,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8125:8000"
     volumes:
@@ -3292,8 +3166,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8126:8000"
     volumes:
@@ -3318,8 +3191,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8127:8000"
     volumes:
@@ -3344,8 +3216,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8128:8000"
     volumes:
@@ -3370,8 +3241,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8129:8000"
     volumes:
@@ -3396,8 +3266,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8130:8000"
     volumes:
@@ -3422,8 +3291,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8131:8000"
     volumes:
@@ -3448,8 +3316,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8132:8000"
     volumes:
@@ -3474,8 +3341,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8133:8000"
     volumes:
@@ -3500,8 +3366,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8134:8000"
     volumes:
@@ -3526,8 +3391,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8135:8000"
     volumes:
@@ -3552,8 +3416,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8136:8000"
     volumes:
@@ -3578,8 +3441,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8137:8000"
     volumes:
@@ -3604,8 +3466,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8138:8000"
     volumes:
@@ -3630,8 +3491,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8139:8000"
     volumes:
@@ -3656,8 +3516,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8140:8000"
     volumes:
@@ -3682,8 +3541,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8141:8000"
     volumes:
@@ -3708,8 +3566,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8142:8000"
     volumes:
@@ -3734,8 +3591,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8143:8000"
     volumes:
@@ -3760,8 +3616,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8144:8000"
     volumes:
@@ -3786,8 +3641,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8145:8000"
     volumes:
@@ -3812,8 +3666,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8146:8000"
     volumes:
@@ -3838,8 +3691,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8147:8000"
     volumes:
@@ -3864,8 +3716,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8148:8000"
     volumes:
@@ -3890,8 +3741,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8149:8000"
     volumes:
@@ -3916,8 +3766,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8150:8000"
     volumes:
@@ -3942,8 +3791,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8151:8000"
     volumes:
@@ -3968,8 +3816,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8152:8000"
     volumes:
@@ -3994,8 +3841,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8153:8000"
     volumes:
@@ -4020,8 +3866,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8154:8000"
     volumes:
@@ -4046,8 +3891,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8155:8000"
     volumes:
@@ -4072,8 +3916,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8156:8000"
     volumes:
@@ -4098,8 +3941,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8157:8000"
     volumes:
@@ -4124,8 +3966,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8158:8000"
     volumes:
@@ -4150,8 +3991,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8159:8000"
     volumes:
@@ -4176,8 +4016,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8160:8000"
     volumes:
@@ -4202,8 +4041,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8161:8000"
     volumes:
@@ -4228,8 +4066,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8162:8000"
     volumes:
@@ -4254,8 +4091,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8163:8000"
     volumes:
@@ -4280,8 +4116,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8164:8000"
     volumes:
@@ -4306,8 +4141,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8165:8000"
     volumes:
@@ -4332,8 +4166,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8166:8000"
     volumes:
@@ -4358,8 +4191,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8167:8000"
     volumes:
@@ -4384,8 +4216,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8168:8000"
     volumes:
@@ -4410,8 +4241,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8169:8000"
     volumes:
@@ -4436,8 +4266,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8170:8000"
     volumes:
@@ -4462,8 +4291,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8171:8000"
     volumes:
@@ -4488,8 +4316,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8172:8000"
     volumes:
@@ -4514,8 +4341,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8173:8000"
     volumes:
@@ -4540,8 +4366,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8174:8000"
     volumes:
@@ -4566,8 +4391,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8175:8000"
     volumes:
@@ -4592,8 +4416,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8176:8000"
     volumes:
@@ -4618,8 +4441,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8177:8000"
     volumes:
@@ -4644,8 +4466,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8178:8000"
     volumes:
@@ -4670,8 +4491,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8179:8000"
     volumes:
@@ -4696,8 +4516,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8180:8000"
     volumes:
@@ -4722,8 +4541,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8181:8000"
     volumes:
@@ -4748,8 +4566,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8182:8000"
     volumes:
@@ -4774,8 +4591,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8183:8000"
     volumes:
@@ -4800,8 +4616,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8184:8000"
     volumes:
@@ -4826,8 +4641,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8185:8000"
     volumes:
@@ -4852,8 +4666,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8186:8000"
     volumes:
@@ -4878,8 +4691,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8187:8000"
     volumes:
@@ -4904,8 +4716,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8188:8000"
     volumes:
@@ -4930,8 +4741,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8189:8000"
     volumes:
@@ -4956,8 +4766,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8190:8000"
     volumes:
@@ -4982,8 +4791,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8191:8000"
     volumes:
@@ -5008,8 +4816,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8192:8000"
     volumes:
@@ -5034,8 +4841,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8193:8000"
     volumes:
@@ -5060,8 +4866,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8194:8000"
     volumes:
@@ -5086,8 +4891,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8195:8000"
     volumes:
@@ -5112,8 +4916,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8196:8000"
     volumes:
@@ -5138,8 +4941,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8197:8000"
     volumes:
@@ -5164,8 +4966,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8198:8000"
     volumes:
@@ -5190,8 +4991,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python /home/nicholas/mcp-sse-bridge.py"
     ports:
       - "8199:8000"
     volumes:
@@ -5216,8 +5016,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8200:8000"
     volumes:
@@ -5242,8 +5041,7 @@ services:
       dockerfile: ../../Dockerfile.mcp-base
     working_dir: /app
     command: >
-      sh -c "uv pip install -e . &&
-      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+      sh -c "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
     ports:
       - "8201:8000"
     volumes:

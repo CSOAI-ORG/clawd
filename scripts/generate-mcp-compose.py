@@ -10,6 +10,15 @@ MANIFEST_PATH = os.path.join(BASE_DIR, "MCP_DEPLOYMENT_MANIFEST.json")
 OUTPUT_PATH = os.path.join(BASE_DIR, "docker-compose.mcp-ensemble.yml")
 
 
+def uses_fastmcp(server_py_path: str) -> bool:
+    try:
+        with open(server_py_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return "FastMCP" in content
+    except Exception:
+        return False
+
+
 def main() -> int:
     if not os.path.exists(MANIFEST_PATH):
         print(f"Manifest not found: {MANIFEST_PATH}")
@@ -20,6 +29,9 @@ def main() -> int:
 
     servers = [s for s in manifest.get("deployable_servers", []) if s.get("deployment_ready")]
     print(f"Generating compose file for {len(servers)} deployable servers...")
+
+    fastmcp_count = 0
+    bridge_count = 0
 
     lines = [
         "# Auto-generated MCP Ensemble Docker Compose",
@@ -40,6 +52,20 @@ def main() -> int:
         name = server["name"]
         repo_dir = f"./mcp-marketplace/{name}"
         external_port = base_port + idx
+        server_py = os.path.join(BASE_DIR, "mcp-marketplace", name, "server.py")
+
+        if uses_fastmcp(server_py):
+            cmd = (
+                'sh -c "uv pip install -e . && '
+                'python -c \\\"from server import mcp; mcp.settings.host=\'0.0.0.0\'; mcp.run(transport=\'sse\')\\\""'
+            )
+            fastmcp_count += 1
+        else:
+            cmd = (
+                'sh -c "uv pip install -e . && '
+                'python /home/nicholas/mcp-sse-bridge.py"'
+            )
+            bridge_count += 1
 
         lines.extend([
             f"  {name}:",
@@ -49,8 +75,7 @@ def main() -> int:
             f"      dockerfile: ../../Dockerfile.mcp-base",
             f"    working_dir: /app",
             f"    command: >",
-            f"      sh -c \"uv pip install -e . &&",
-            f"      python -c \\\"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\\\"\"",
+            f"      {cmd}",
             f"    ports:",
             f"      - \"{external_port}:8000\"",
             f"    volumes:",
@@ -75,6 +100,7 @@ def main() -> int:
 
     print(f"Wrote {len(lines)} lines to {OUTPUT_PATH}")
     print(f"Port range: {base_port} -> {base_port + len(servers) - 1}")
+    print(f"FastMCP services: {fastmcp_count}, Bridge services: {bridge_count}")
     return 0
 
 

@@ -1,0 +1,5262 @@
+# Auto-generated MCP Ensemble Docker Compose
+# Generated from: MCP_DEPLOYMENT_MANIFEST.json
+# Total servers: 202
+
+name: mcp-ensemble
+
+networks:
+  mcp-ensemble:
+    driver: bridge
+
+services:
+  a2a-governance-bridge-mcp:
+    container_name: a2a-governance-bridge-mcp
+    build:
+      context: ./mcp-marketplace/a2a-governance-bridge-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./mcp-marketplace/a2a-governance-bridge-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  accessibility-ai-mcp:
+    container_name: accessibility-ai-mcp
+    build:
+      context: ./mcp-marketplace/accessibility-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./mcp-marketplace/accessibility-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  accounting-ai-mcp:
+    container_name: accounting-ai-mcp
+    build:
+      context: ./mcp-marketplace/accounting-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./mcp-marketplace/accounting-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ad-copy-ai-mcp:
+    container_name: ad-copy-ai-mcp
+    build:
+      context: ./mcp-marketplace/ad-copy-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./mcp-marketplace/ad-copy-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  agent-commerce-payments-mcp:
+    container_name: agent-commerce-payments-mcp
+    build:
+      context: ./mcp-marketplace/agent-commerce-payments-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8004:8000"
+    volumes:
+      - ./mcp-marketplace/agent-commerce-payments-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  agent-delegation-mcp:
+    container_name: agent-delegation-mcp
+    build:
+      context: ./mcp-marketplace/agent-delegation-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8005:8000"
+    volumes:
+      - ./mcp-marketplace/agent-delegation-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  agent-identity-trust-mcp:
+    container_name: agent-identity-trust-mcp
+    build:
+      context: ./mcp-marketplace/agent-identity-trust-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8006:8000"
+    volumes:
+      - ./mcp-marketplace/agent-identity-trust-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  agent-negotiation-mcp:
+    container_name: agent-negotiation-mcp
+    build:
+      context: ./mcp-marketplace/agent-negotiation-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8007:8000"
+    volumes:
+      - ./mcp-marketplace/agent-negotiation-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  agent-orchestrator-mcp:
+    container_name: agent-orchestrator-mcp
+    build:
+      context: ./mcp-marketplace/agent-orchestrator-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8008:8000"
+    volumes:
+      - ./mcp-marketplace/agent-orchestrator-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  agriculture-robotics-mcp:
+    container_name: agriculture-robotics-mcp
+    build:
+      context: ./mcp-marketplace/agriculture-robotics-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8009:8000"
+    volumes:
+      - ./mcp-marketplace/agriculture-robotics-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ai-gateway-mcp:
+    container_name: ai-gateway-mcp
+    build:
+      context: ./mcp-marketplace/ai-gateway-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8010:8000"
+    volumes:
+      - ./mcp-marketplace/ai-gateway-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ai-ops-mcp:
+    container_name: ai-ops-mcp
+    build:
+      context: ./mcp-marketplace/ai-ops-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8011:8000"
+    volumes:
+      - ./mcp-marketplace/ai-ops-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ai-self-audit-mcp:
+    container_name: ai-self-audit-mcp
+    build:
+      context: ./mcp-marketplace/ai-self-audit-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8012:8000"
+    volumes:
+      - ./mcp-marketplace/ai-self-audit-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  airspace-monitor-mcp:
+    container_name: airspace-monitor-mcp
+    build:
+      context: ./mcp-marketplace/airspace-monitor-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8013:8000"
+    volumes:
+      - ./mcp-marketplace/airspace-monitor-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  api-docs-generator-ai-mcp:
+    container_name: api-docs-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/api-docs-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8014:8000"
+    volumes:
+      - ./mcp-marketplace/api-docs-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  api-tester-ai-mcp:
+    container_name: api-tester-ai-mcp
+    build:
+      context: ./mcp-marketplace/api-tester-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8015:8000"
+    volumes:
+      - ./mcp-marketplace/api-tester-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ascii-art-ai-mcp:
+    container_name: ascii-art-ai-mcp
+    build:
+      context: ./mcp-marketplace/ascii-art-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8016:8000"
+    volumes:
+      - ./mcp-marketplace/ascii-art-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  backup-ai-mcp:
+    container_name: backup-ai-mcp
+    build:
+      context: ./mcp-marketplace/backup-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8017:8000"
+    volumes:
+      - ./mcp-marketplace/backup-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  blockchain-ai-mcp:
+    container_name: blockchain-ai-mcp
+    build:
+      context: ./mcp-marketplace/blockchain-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8018:8000"
+    volumes:
+      - ./mcp-marketplace/blockchain-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  blockchain-verification-mcp:
+    container_name: blockchain-verification-mcp
+    build:
+      context: ./mcp-marketplace/blockchain-verification-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8019:8000"
+    volumes:
+      - ./mcp-marketplace/blockchain-verification-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  budget-planner-ai-mcp:
+    container_name: budget-planner-ai-mcp
+    build:
+      context: ./mcp-marketplace/budget-planner-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8020:8000"
+    volumes:
+      - ./mcp-marketplace/budget-planner-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  calendar-ai-mcp:
+    container_name: calendar-ai-mcp
+    build:
+      context: ./mcp-marketplace/calendar-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8021:8000"
+    volumes:
+      - ./mcp-marketplace/calendar-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  canada-aida-ai-mcp:
+    container_name: canada-aida-ai-mcp
+    build:
+      context: ./mcp-marketplace/canada-aida-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8022:8000"
+    volumes:
+      - ./mcp-marketplace/canada-aida-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  care-membrane-mcp:
+    container_name: care-membrane-mcp
+    build:
+      context: ./mcp-marketplace/care-membrane-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8023:8000"
+    volumes:
+      - ./mcp-marketplace/care-membrane-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  changelog-ai-mcp:
+    container_name: changelog-ai-mcp
+    build:
+      context: ./mcp-marketplace/changelog-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8024:8000"
+    volumes:
+      - ./mcp-marketplace/changelog-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  churn-predictor-ai-mcp:
+    container_name: churn-predictor-ai-mcp
+    build:
+      context: ./mcp-marketplace/churn-predictor-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8025:8000"
+    volumes:
+      - ./mcp-marketplace/churn-predictor-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ci-cd-generator-ai-mcp:
+    container_name: ci-cd-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/ci-cd-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8026:8000"
+    volumes:
+      - ./mcp-marketplace/ci-cd-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  citation-finder-ai-mcp:
+    container_name: citation-finder-ai-mcp
+    build:
+      context: ./mcp-marketplace/citation-finder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8027:8000"
+    volumes:
+      - ./mcp-marketplace/citation-finder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  cli-builder-ai-mcp:
+    container_name: cli-builder-ai-mcp
+    build:
+      context: ./mcp-marketplace/cli-builder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8028:8000"
+    volumes:
+      - ./mcp-marketplace/cli-builder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  clinical-trials-ai-mcp:
+    container_name: clinical-trials-ai-mcp
+    build:
+      context: ./mcp-marketplace/clinical-trials-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8029:8000"
+    volumes:
+      - ./mcp-marketplace/clinical-trials-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  clipboard-ai-mcp:
+    container_name: clipboard-ai-mcp
+    build:
+      context: ./mcp-marketplace/clipboard-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8030:8000"
+    volumes:
+      - ./mcp-marketplace/clipboard-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  code-executor-mcp:
+    container_name: code-executor-mcp
+    build:
+      context: ./mcp-marketplace/code-executor-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8031:8000"
+    volumes:
+      - ./mcp-marketplace/code-executor-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  code-reviewer-ai-mcp:
+    container_name: code-reviewer-ai-mcp
+    build:
+      context: ./mcp-marketplace/code-reviewer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8032:8000"
+    volumes:
+      - ./mcp-marketplace/code-reviewer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  color-ai-mcp:
+    container_name: color-ai-mcp
+    build:
+      context: ./mcp-marketplace/color-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8033:8000"
+    volumes:
+      - ./mcp-marketplace/color-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  commit-message-ai-mcp:
+    container_name: commit-message-ai-mcp
+    build:
+      context: ./mcp-marketplace/commit-message-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8034:8000"
+    volumes:
+      - ./mcp-marketplace/commit-message-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  competitor-monitor-ai-mcp:
+    container_name: competitor-monitor-ai-mcp
+    build:
+      context: ./mcp-marketplace/competitor-monitor-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8035:8000"
+    volumes:
+      - ./mcp-marketplace/competitor-monitor-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  compression-ai-mcp:
+    container_name: compression-ai-mcp
+    build:
+      context: ./mcp-marketplace/compression-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8036:8000"
+    volumes:
+      - ./mcp-marketplace/compression-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  config-validator-ai-mcp:
+    container_name: config-validator-ai-mcp
+    build:
+      context: ./mcp-marketplace/config-validator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8037:8000"
+    volumes:
+      - ./mcp-marketplace/config-validator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  consciousness-engine-mcp:
+    container_name: consciousness-engine-mcp
+    build:
+      context: ./mcp-marketplace/consciousness-engine-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8038:8000"
+    volumes:
+      - ./mcp-marketplace/consciousness-engine-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  content-calendar-ai-mcp:
+    container_name: content-calendar-ai-mcp
+    build:
+      context: ./mcp-marketplace/content-calendar-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8039:8000"
+    volumes:
+      - ./mcp-marketplace/content-calendar-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  content-registry-mcp:
+    container_name: content-registry-mcp
+    build:
+      context: ./mcp-marketplace/content-registry-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8040:8000"
+    volumes:
+      - ./mcp-marketplace/content-registry-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  contract-review-ai-mcp:
+    container_name: contract-review-ai-mcp
+    build:
+      context: ./mcp-marketplace/contract-review-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8041:8000"
+    volumes:
+      - ./mcp-marketplace/contract-review-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  creativity-engine-mcp:
+    container_name: creativity-engine-mcp
+    build:
+      context: ./mcp-marketplace/creativity-engine-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8042:8000"
+    volumes:
+      - ./mcp-marketplace/creativity-engine-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  credential-manager-mcp:
+    container_name: credential-manager-mcp
+    build:
+      context: ./mcp-marketplace/credential-manager-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8043:8000"
+    volumes:
+      - ./mcp-marketplace/credential-manager-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  crm-ai-mcp:
+    container_name: crm-ai-mcp
+    build:
+      context: ./mcp-marketplace/crm-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8044:8000"
+    volumes:
+      - ./mcp-marketplace/crm-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  cron-ai-mcp:
+    container_name: cron-ai-mcp
+    build:
+      context: ./mcp-marketplace/cron-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8045:8000"
+    volumes:
+      - ./mcp-marketplace/cron-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  crypto-tracker-ai-mcp:
+    container_name: crypto-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/crypto-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8046:8000"
+    volumes:
+      - ./mcp-marketplace/crypto-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  csoai-governance-crosswalk-mcp:
+    container_name: csoai-governance-crosswalk-mcp
+    build:
+      context: ./mcp-marketplace/csoai-governance-crosswalk-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8047:8000"
+    volumes:
+      - ./mcp-marketplace/csoai-governance-crosswalk-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  csv-analytics-mcp:
+    container_name: csv-analytics-mcp
+    build:
+      context: ./mcp-marketplace/csv-analytics-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8048:8000"
+    volumes:
+      - ./mcp-marketplace/csv-analytics-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  csv-tools-ai-mcp:
+    container_name: csv-tools-ai-mcp
+    build:
+      context: ./mcp-marketplace/csv-tools-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8049:8000"
+    volumes:
+      - ./mcp-marketplace/csv-tools-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  currency-converter-ai-mcp:
+    container_name: currency-converter-ai-mcp
+    build:
+      context: ./mcp-marketplace/currency-converter-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8050:8000"
+    volumes:
+      - ./mcp-marketplace/currency-converter-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  customer-support-ai-mcp:
+    container_name: customer-support-ai-mcp
+    build:
+      context: ./mcp-marketplace/customer-support-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8051:8000"
+    volumes:
+      - ./mcp-marketplace/customer-support-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  cybersecurity-ai-mcp:
+    container_name: cybersecurity-ai-mcp
+    build:
+      context: ./mcp-marketplace/cybersecurity-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8052:8000"
+    volumes:
+      - ./mcp-marketplace/cybersecurity-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  data-science-ai-mcp:
+    container_name: data-science-ai-mcp
+    build:
+      context: ./mcp-marketplace/data-science-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8053:8000"
+    volumes:
+      - ./mcp-marketplace/data-science-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  database-universal-mcp:
+    container_name: database-universal-mcp
+    build:
+      context: ./mcp-marketplace/database-universal-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8054:8000"
+    volumes:
+      - ./mcp-marketplace/database-universal-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  dataprivacy-ai-mcp:
+    container_name: dataprivacy-ai-mcp
+    build:
+      context: ./mcp-marketplace/dataprivacy-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8055:8000"
+    volumes:
+      - ./mcp-marketplace/dataprivacy-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  date-calculator-ai-mcp:
+    container_name: date-calculator-ai-mcp
+    build:
+      context: ./mcp-marketplace/date-calculator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8056:8000"
+    volumes:
+      - ./mcp-marketplace/date-calculator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  deepfake-detector-mcp:
+    container_name: deepfake-detector-mcp
+    build:
+      context: ./mcp-marketplace/deepfake-detector-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8057:8000"
+    volumes:
+      - ./mcp-marketplace/deepfake-detector-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  dependency-updater-ai-mcp:
+    container_name: dependency-updater-ai-mcp
+    build:
+      context: ./mcp-marketplace/dependency-updater-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8058:8000"
+    volumes:
+      - ./mcp-marketplace/dependency-updater-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  devops-ai-mcp:
+    container_name: devops-ai-mcp
+    build:
+      context: ./mcp-marketplace/devops-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8059:8000"
+    volumes:
+      - ./mcp-marketplace/devops-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  diff-ai-mcp:
+    container_name: diff-ai-mcp
+    build:
+      context: ./mcp-marketplace/diff-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8060:8000"
+    volumes:
+      - ./mcp-marketplace/diff-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  docker-helper-ai-mcp:
+    container_name: docker-helper-ai-mcp
+    build:
+      context: ./mcp-marketplace/docker-helper-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8061:8000"
+    volumes:
+      - ./mcp-marketplace/docker-helper-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  dockerfile-generator-ai-mcp:
+    container_name: dockerfile-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/dockerfile-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8062:8000"
+    volumes:
+      - ./mcp-marketplace/dockerfile-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  document-comparison-ai-mcp:
+    container_name: document-comparison-ai-mcp
+    build:
+      context: ./mcp-marketplace/document-comparison-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8063:8000"
+    volumes:
+      - ./mcp-marketplace/document-comparison-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  drone-airspace-governance-mcp:
+    container_name: drone-airspace-governance-mcp
+    build:
+      context: ./mcp-marketplace/drone-airspace-governance-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8064:8000"
+    volumes:
+      - ./mcp-marketplace/drone-airspace-governance-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ecommerce-ai-mcp:
+    container_name: ecommerce-ai-mcp
+    build:
+      context: ./mcp-marketplace/ecommerce-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8065:8000"
+    volumes:
+      - ./mcp-marketplace/ecommerce-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  education-ai-mcp:
+    container_name: education-ai-mcp
+    build:
+      context: ./mcp-marketplace/education-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8066:8000"
+    volumes:
+      - ./mcp-marketplace/education-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  email-automation-mcp:
+    container_name: email-automation-mcp
+    build:
+      context: ./mcp-marketplace/email-automation-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8067:8000"
+    volumes:
+      - ./mcp-marketplace/email-automation-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  email-validator-ai-mcp:
+    container_name: email-validator-ai-mcp
+    build:
+      context: ./mcp-marketplace/email-validator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8068:8000"
+    volumes:
+      - ./mcp-marketplace/email-validator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  emoji-ai-mcp:
+    container_name: emoji-ai-mcp
+    build:
+      context: ./mcp-marketplace/emoji-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8069:8000"
+    volumes:
+      - ./mcp-marketplace/emoji-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  encoder-ai-mcp:
+    container_name: encoder-ai-mcp
+    build:
+      context: ./mcp-marketplace/encoder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8070:8000"
+    volumes:
+      - ./mcp-marketplace/encoder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  env-manager-ai-mcp:
+    container_name: env-manager-ai-mcp
+    build:
+      context: ./mcp-marketplace/env-manager-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8071:8000"
+    volumes:
+      - ./mcp-marketplace/env-manager-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  eu-ai-act-compliance-mcp:
+    container_name: eu-ai-act-compliance-mcp
+    build:
+      context: ./mcp-marketplace/eu-ai-act-compliance-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8072:8000"
+    volumes:
+      - ./mcp-marketplace/eu-ai-act-compliance-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  event-planning-ai-mcp:
+    container_name: event-planning-ai-mcp
+    build:
+      context: ./mcp-marketplace/event-planning-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8073:8000"
+    volumes:
+      - ./mcp-marketplace/event-planning-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  expense-tracker-ai-mcp:
+    container_name: expense-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/expense-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8074:8000"
+    volumes:
+      - ./mcp-marketplace/expense-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  faker-ai-mcp:
+    container_name: faker-ai-mcp
+    build:
+      context: ./mcp-marketplace/faker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8075:8000"
+    volumes:
+      - ./mcp-marketplace/faker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  feedback-analyzer-ai-mcp:
+    container_name: feedback-analyzer-ai-mcp
+    build:
+      context: ./mcp-marketplace/feedback-analyzer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8076:8000"
+    volumes:
+      - ./mcp-marketplace/feedback-analyzer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  file-organizer-ai-mcp:
+    container_name: file-organizer-ai-mcp
+    build:
+      context: ./mcp-marketplace/file-organizer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8077:8000"
+    volumes:
+      - ./mcp-marketplace/file-organizer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  fishkeeper-ai-mcp:
+    container_name: fishkeeper-ai-mcp
+    build:
+      context: ./mcp-marketplace/fishkeeper-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8078:8000"
+    volumes:
+      - ./mcp-marketplace/fishkeeper-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  fitness-ai-mcp:
+    container_name: fitness-ai-mcp
+    build:
+      context: ./mcp-marketplace/fitness-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8079:8000"
+    volumes:
+      - ./mcp-marketplace/fitness-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  flashcard-ai-mcp:
+    container_name: flashcard-ai-mcp
+    build:
+      context: ./mcp-marketplace/flashcard-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./mcp-marketplace/flashcard-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  flight-logger-mcp:
+    container_name: flight-logger-mcp
+    build:
+      context: ./mcp-marketplace/flight-logger-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8081:8000"
+    volumes:
+      - ./mcp-marketplace/flight-logger-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  focus-timer-ai-mcp:
+    container_name: focus-timer-ai-mcp
+    build:
+      context: ./mcp-marketplace/focus-timer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8082:8000"
+    volumes:
+      - ./mcp-marketplace/focus-timer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  gardening-ai-mcp:
+    container_name: gardening-ai-mcp
+    build:
+      context: ./mcp-marketplace/gardening-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8083:8000"
+    volumes:
+      - ./mcp-marketplace/gardening-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  gdpr-compliance-ai-mcp:
+    container_name: gdpr-compliance-ai-mcp
+    build:
+      context: ./mcp-marketplace/gdpr-compliance-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8084:8000"
+    volumes:
+      - ./mcp-marketplace/gdpr-compliance-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  geolocation-ai-mcp:
+    container_name: geolocation-ai-mcp
+    build:
+      context: ./mcp-marketplace/geolocation-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8085:8000"
+    volumes:
+      - ./mcp-marketplace/geolocation-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  git-helper-ai-mcp:
+    container_name: git-helper-ai-mcp
+    build:
+      context: ./mcp-marketplace/git-helper-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8086:8000"
+    volumes:
+      - ./mcp-marketplace/git-helper-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  grammar-fix-ai-mcp:
+    container_name: grammar-fix-ai-mcp
+    build:
+      context: ./mcp-marketplace/grammar-fix-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8087:8000"
+    volumes:
+      - ./mcp-marketplace/grammar-fix-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  habit-tracker-ai-mcp:
+    container_name: habit-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/habit-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8088:8000"
+    volumes:
+      - ./mcp-marketplace/habit-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  hash-utils-ai-mcp:
+    container_name: hash-utils-ai-mcp
+    build:
+      context: ./mcp-marketplace/hash-utils-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8089:8000"
+    volumes:
+      - ./mcp-marketplace/hash-utils-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  health-check-ai-mcp:
+    container_name: health-check-ai-mcp
+    build:
+      context: ./mcp-marketplace/health-check-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8090:8000"
+    volumes:
+      - ./mcp-marketplace/health-check-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  healthcare-ai-governance-mcp:
+    container_name: healthcare-ai-governance-mcp
+    build:
+      context: ./mcp-marketplace/healthcare-ai-governance-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8091:8000"
+    volumes:
+      - ./mcp-marketplace/healthcare-ai-governance-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  healthcare-fhir-mcp:
+    container_name: healthcare-fhir-mcp
+    build:
+      context: ./mcp-marketplace/healthcare-fhir-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8092:8000"
+    volumes:
+      - ./mcp-marketplace/healthcare-fhir-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  hr-management-ai-mcp:
+    container_name: hr-management-ai-mcp
+    build:
+      context: ./mcp-marketplace/hr-management-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8093:8000"
+    volumes:
+      - ./mcp-marketplace/hr-management-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  html-parser-ai-mcp:
+    container_name: html-parser-ai-mcp
+    build:
+      context: ./mcp-marketplace/html-parser-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8094:8000"
+    volumes:
+      - ./mcp-marketplace/html-parser-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  hydration-reminder-ai-mcp:
+    container_name: hydration-reminder-ai-mcp
+    build:
+      context: ./mcp-marketplace/hydration-reminder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8095:8000"
+    volumes:
+      - ./mcp-marketplace/hydration-reminder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  icon-generator-ai-mcp:
+    container_name: icon-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/icon-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8096:8000"
+    volumes:
+      - ./mcp-marketplace/icon-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  image-metadata-ai-mcp:
+    container_name: image-metadata-ai-mcp
+    build:
+      context: ./mcp-marketplace/image-metadata-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8097:8000"
+    volumes:
+      - ./mcp-marketplace/image-metadata-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  insurance-verification-mcp:
+    container_name: insurance-verification-mcp
+    build:
+      context: ./mcp-marketplace/insurance-verification-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8098:8000"
+    volumes:
+      - ./mcp-marketplace/insurance-verification-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  inventory-management-ai-mcp:
+    container_name: inventory-management-ai-mcp
+    build:
+      context: ./mcp-marketplace/inventory-management-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8099:8000"
+    volumes:
+      - ./mcp-marketplace/inventory-management-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  invoice-generator-ai-mcp:
+    container_name: invoice-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/invoice-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8100:8000"
+    volumes:
+      - ./mcp-marketplace/invoice-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ip-network-ai-mcp:
+    container_name: ip-network-ai-mcp
+    build:
+      context: ./mcp-marketplace/ip-network-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8101:8000"
+    volumes:
+      - ./mcp-marketplace/ip-network-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  iso-27001-ai-mcp:
+    container_name: iso-27001-ai-mcp
+    build:
+      context: ./mcp-marketplace/iso-27001-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8102:8000"
+    volumes:
+      - ./mcp-marketplace/iso-27001-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  iso-42001-ai-mcp:
+    container_name: iso-42001-ai-mcp
+    build:
+      context: ./mcp-marketplace/iso-42001-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8103:8000"
+    volumes:
+      - ./mcp-marketplace/iso-42001-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  job-description-ai-mcp:
+    container_name: job-description-ai-mcp
+    build:
+      context: ./mcp-marketplace/job-description-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8104:8000"
+    volumes:
+      - ./mcp-marketplace/job-description-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  json-ai-mcp:
+    container_name: json-ai-mcp
+    build:
+      context: ./mcp-marketplace/json-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8105:8000"
+    volumes:
+      - ./mcp-marketplace/json-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  jwt-ai-mcp:
+    container_name: jwt-ai-mcp
+    build:
+      context: ./mcp-marketplace/jwt-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8106:8000"
+    volumes:
+      - ./mcp-marketplace/jwt-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  keyword-extractor-ai-mcp:
+    container_name: keyword-extractor-ai-mcp
+    build:
+      context: ./mcp-marketplace/keyword-extractor-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8107:8000"
+    volumes:
+      - ./mcp-marketplace/keyword-extractor-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  landlaw-ai-mcp:
+    container_name: landlaw-ai-mcp
+    build:
+      context: ./mcp-marketplace/landlaw-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8108:8000"
+    volumes:
+      - ./mcp-marketplace/landlaw-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  lead-scoring-ai-mcp:
+    container_name: lead-scoring-ai-mcp
+    build:
+      context: ./mcp-marketplace/lead-scoring-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8109:8000"
+    volumes:
+      - ./mcp-marketplace/lead-scoring-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  legal-document-ai-mcp:
+    container_name: legal-document-ai-mcp
+    build:
+      context: ./mcp-marketplace/legal-document-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8110:8000"
+    volumes:
+      - ./mcp-marketplace/legal-document-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  license-checker-ai-mcp:
+    container_name: license-checker-ai-mcp
+    build:
+      context: ./mcp-marketplace/license-checker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8111:8000"
+    volumes:
+      - ./mcp-marketplace/license-checker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  linkedin-outreach-mcp:
+    container_name: linkedin-outreach-mcp
+    build:
+      context: ./mcp-marketplace/linkedin-outreach-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8112:8000"
+    volumes:
+      - ./mcp-marketplace/linkedin-outreach-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  llm-compliance-comparison-mcp:
+    container_name: llm-compliance-comparison-mcp
+    build:
+      context: ./mcp-marketplace/llm-compliance-comparison-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8113:8000"
+    volumes:
+      - ./mcp-marketplace/llm-compliance-comparison-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  logistics-ai-mcp:
+    container_name: logistics-ai-mcp
+    build:
+      context: ./mcp-marketplace/logistics-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8114:8000"
+    volumes:
+      - ./mcp-marketplace/logistics-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  lorem-ipsum-ai-mcp:
+    container_name: lorem-ipsum-ai-mcp
+    build:
+      context: ./mcp-marketplace/lorem-ipsum-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8115:8000"
+    volumes:
+      - ./mcp-marketplace/lorem-ipsum-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  markdown-ai-mcp:
+    container_name: markdown-ai-mcp
+    build:
+      context: ./mcp-marketplace/markdown-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8116:8000"
+    volumes:
+      - ./mcp-marketplace/markdown-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  marketing-analytics-ai-mcp:
+    container_name: marketing-analytics-ai-mcp
+    build:
+      context: ./mcp-marketplace/marketing-analytics-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8117:8000"
+    volumes:
+      - ./mcp-marketplace/marketing-analytics-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  math-solver-ai-mcp:
+    container_name: math-solver-ai-mcp
+    build:
+      context: ./mcp-marketplace/math-solver-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8118:8000"
+    volumes:
+      - ./mcp-marketplace/math-solver-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  meal-planner-ai-mcp:
+    container_name: meal-planner-ai-mcp
+    build:
+      context: ./mcp-marketplace/meal-planner-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8119:8000"
+    volumes:
+      - ./mcp-marketplace/meal-planner-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  meditation-guide-ai-mcp:
+    container_name: meditation-guide-ai-mcp
+    build:
+      context: ./mcp-marketplace/meditation-guide-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8120:8000"
+    volumes:
+      - ./mcp-marketplace/meditation-guide-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  meeting-summarizer-ai-mcp:
+    container_name: meeting-summarizer-ai-mcp
+    build:
+      context: ./mcp-marketplace/meeting-summarizer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8121:8000"
+    volumes:
+      - ./mcp-marketplace/meeting-summarizer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  memory-search-mcp:
+    container_name: memory-search-mcp
+    build:
+      context: ./mcp-marketplace/memory-search-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8122:8000"
+    volumes:
+      - ./mcp-marketplace/memory-search-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  meok-governance-engine-mcp:
+    container_name: meok-governance-engine-mcp
+    build:
+      context: ./mcp-marketplace/meok-governance-engine-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8123:8000"
+    volumes:
+      - ./mcp-marketplace/meok-governance-engine-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  mock-server-ai-mcp:
+    container_name: mock-server-ai-mcp
+    build:
+      context: ./mcp-marketplace/mock-server-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8124:8000"
+    volumes:
+      - ./mcp-marketplace/mock-server-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  mortgage-calculator-ai-mcp:
+    container_name: mortgage-calculator-ai-mcp
+    build:
+      context: ./mcp-marketplace/mortgage-calculator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8125:8000"
+    volumes:
+      - ./mcp-marketplace/mortgage-calculator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  muckaway-ai-mcp:
+    container_name: muckaway-ai-mcp
+    build:
+      context: ./mcp-marketplace/muckaway-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8126:8000"
+    volumes:
+      - ./mcp-marketplace/muckaway-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  music-production-ai-mcp:
+    container_name: music-production-ai-mcp
+    build:
+      context: ./mcp-marketplace/music-production-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8127:8000"
+    volumes:
+      - ./mcp-marketplace/music-production-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  nist-rmf-ai-mcp:
+    container_name: nist-rmf-ai-mcp
+    build:
+      context: ./mcp-marketplace/nist-rmf-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8128:8000"
+    volumes:
+      - ./mcp-marketplace/nist-rmf-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  note-taking-ai-mcp:
+    container_name: note-taking-ai-mcp
+    build:
+      context: ./mcp-marketplace/note-taking-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8129:8000"
+    volumes:
+      - ./mcp-marketplace/note-taking-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  notification-ai-mcp:
+    container_name: notification-ai-mcp
+    build:
+      context: ./mcp-marketplace/notification-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8130:8000"
+    volumes:
+      - ./mcp-marketplace/notification-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  nutrition-tracker-ai-mcp:
+    container_name: nutrition-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/nutrition-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8131:8000"
+    volumes:
+      - ./mcp-marketplace/nutrition-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  optometry-ai-safety-mcp:
+    container_name: optometry-ai-safety-mcp
+    build:
+      context: ./mcp-marketplace/optometry-ai-safety-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8132:8000"
+    volumes:
+      - ./mcp-marketplace/optometry-ai-safety-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  otp-ai-mcp:
+    container_name: otp-ai-mcp
+    build:
+      context: ./mcp-marketplace/otp-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8133:8000"
+    volumes:
+      - ./mcp-marketplace/otp-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  password-ai-mcp:
+    container_name: password-ai-mcp
+    build:
+      context: ./mcp-marketplace/password-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8134:8000"
+    volumes:
+      - ./mcp-marketplace/password-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  patient-safety-ai-mcp:
+    container_name: patient-safety-ai-mcp
+    build:
+      context: ./mcp-marketplace/patient-safety-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8135:8000"
+    volumes:
+      - ./mcp-marketplace/patient-safety-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  pdf-document-mcp:
+    container_name: pdf-document-mcp
+    build:
+      context: ./mcp-marketplace/pdf-document-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8136:8000"
+    volumes:
+      - ./mcp-marketplace/pdf-document-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  pdf-merge-ai-mcp:
+    container_name: pdf-merge-ai-mcp
+    build:
+      context: ./mcp-marketplace/pdf-merge-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8137:8000"
+    volumes:
+      - ./mcp-marketplace/pdf-merge-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  pdf-tools-ai-mcp:
+    container_name: pdf-tools-ai-mcp
+    build:
+      context: ./mcp-marketplace/pdf-tools-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8138:8000"
+    volumes:
+      - ./mcp-marketplace/pdf-tools-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  performance-ai-mcp:
+    container_name: performance-ai-mcp
+    build:
+      context: ./mcp-marketplace/performance-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8139:8000"
+    volumes:
+      - ./mcp-marketplace/performance-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  personal-finance-ai-mcp:
+    container_name: personal-finance-ai-mcp
+    build:
+      context: ./mcp-marketplace/personal-finance-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8140:8000"
+    volumes:
+      - ./mcp-marketplace/personal-finance-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  pet-care-ai-mcp:
+    container_name: pet-care-ai-mcp
+    build:
+      context: ./mcp-marketplace/pet-care-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8141:8000"
+    volumes:
+      - ./mcp-marketplace/pet-care-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  photography-ai-mcp:
+    container_name: photography-ai-mcp
+    build:
+      context: ./mcp-marketplace/photography-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8142:8000"
+    volumes:
+      - ./mcp-marketplace/photography-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  plagiarism-checker-ai-mcp:
+    container_name: plagiarism-checker-ai-mcp
+    build:
+      context: ./mcp-marketplace/plagiarism-checker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8143:8000"
+    volumes:
+      - ./mcp-marketplace/plagiarism-checker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  planthire-ai-mcp:
+    container_name: planthire-ai-mcp
+    build:
+      context: ./mcp-marketplace/planthire-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8144:8000"
+    volumes:
+      - ./mcp-marketplace/planthire-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  pomodoro-ai-mcp:
+    container_name: pomodoro-ai-mcp
+    build:
+      context: ./mcp-marketplace/pomodoro-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8145:8000"
+    volumes:
+      - ./mcp-marketplace/pomodoro-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  price-tracker-ai-mcp:
+    container_name: price-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/price-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8146:8000"
+    volumes:
+      - ./mcp-marketplace/price-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  project-management-ai-mcp:
+    container_name: project-management-ai-mcp
+    build:
+      context: ./mcp-marketplace/project-management-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8147:8000"
+    volumes:
+      - ./mcp-marketplace/project-management-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  proofof-ai-mcp:
+    container_name: proofof-ai-mcp
+    build:
+      context: ./mcp-marketplace/proofof-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8148:8000"
+    volumes:
+      - ./mcp-marketplace/proofof-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  qr-code-ai-mcp:
+    container_name: qr-code-ai-mcp
+    build:
+      context: ./mcp-marketplace/qr-code-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8149:8000"
+    volumes:
+      - ./mcp-marketplace/qr-code-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  quiz-generator-ai-mcp:
+    container_name: quiz-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/quiz-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8150:8000"
+    volumes:
+      - ./mcp-marketplace/quiz-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  rag-knowledge-graph-mcp:
+    container_name: rag-knowledge-graph-mcp
+    build:
+      context: ./mcp-marketplace/rag-knowledge-graph-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8151:8000"
+    volumes:
+      - ./mcp-marketplace/rag-knowledge-graph-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  rag-knowledge-mcp:
+    container_name: rag-knowledge-mcp
+    build:
+      context: ./mcp-marketplace/rag-knowledge-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8152:8000"
+    volumes:
+      - ./mcp-marketplace/rag-knowledge-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  readme-generator-ai-mcp:
+    container_name: readme-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/readme-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8153:8000"
+    volumes:
+      - ./mcp-marketplace/readme-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  real-estate-listing-mcp:
+    container_name: real-estate-listing-mcp
+    build:
+      context: ./mcp-marketplace/real-estate-listing-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8154:8000"
+    volumes:
+      - ./mcp-marketplace/real-estate-listing-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  recipe-finder-ai-mcp:
+    container_name: recipe-finder-ai-mcp
+    build:
+      context: ./mcp-marketplace/recipe-finder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8155:8000"
+    volumes:
+      - ./mcp-marketplace/recipe-finder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  recruitment-ai-mcp:
+    container_name: recruitment-ai-mcp
+    build:
+      context: ./mcp-marketplace/recruitment-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8156:8000"
+    volumes:
+      - ./mcp-marketplace/recruitment-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  regex-ai-mcp:
+    container_name: regex-ai-mcp
+    build:
+      context: ./mcp-marketplace/regex-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8157:8000"
+    volumes:
+      - ./mcp-marketplace/regex-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  regulatory-webhook-mcp:
+    container_name: regulatory-webhook-mcp
+    build:
+      context: ./mcp-marketplace/regulatory-webhook-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8158:8000"
+    volumes:
+      - ./mcp-marketplace/regulatory-webhook-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  restaurant-ai-mcp:
+    container_name: restaurant-ai-mcp
+    build:
+      context: ./mcp-marketplace/restaurant-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8159:8000"
+    volumes:
+      - ./mcp-marketplace/restaurant-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  resume-parser-ai-mcp:
+    container_name: resume-parser-ai-mcp
+    build:
+      context: ./mcp-marketplace/resume-parser-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8160:8000"
+    volumes:
+      - ./mcp-marketplace/resume-parser-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  risk-assessment-ai-mcp:
+    container_name: risk-assessment-ai-mcp
+    build:
+      context: ./mcp-marketplace/risk-assessment-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8161:8000"
+    volumes:
+      - ./mcp-marketplace/risk-assessment-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  robotics-control-mcp:
+    container_name: robotics-control-mcp
+    build:
+      context: ./mcp-marketplace/robotics-control-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8162:8000"
+    volumes:
+      - ./mcp-marketplace/robotics-control-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  schema-validator-ai-mcp:
+    container_name: schema-validator-ai-mcp
+    build:
+      context: ./mcp-marketplace/schema-validator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8163:8000"
+    volumes:
+      - ./mcp-marketplace/schema-validator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  security-scanner-ai-mcp:
+    container_name: security-scanner-ai-mcp
+    build:
+      context: ./mcp-marketplace/security-scanner-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8164:8000"
+    volumes:
+      - ./mcp-marketplace/security-scanner-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  self-healing-infrastructure-mcp:
+    container_name: self-healing-infrastructure-mcp
+    build:
+      context: ./mcp-marketplace/self-healing-infrastructure-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8165:8000"
+    volumes:
+      - ./mcp-marketplace/self-healing-infrastructure-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  sentiment-analysis-ai-mcp:
+    container_name: sentiment-analysis-ai-mcp
+    build:
+      context: ./mcp-marketplace/sentiment-analysis-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8166:8000"
+    volumes:
+      - ./mcp-marketplace/sentiment-analysis-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  seo-checker-ai-mcp:
+    container_name: seo-checker-ai-mcp
+    build:
+      context: ./mcp-marketplace/seo-checker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8167:8000"
+    volumes:
+      - ./mcp-marketplace/seo-checker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  slack-enterprise-mcp:
+    container_name: slack-enterprise-mcp
+    build:
+      context: ./mcp-marketplace/slack-enterprise-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8168:8000"
+    volumes:
+      - ./mcp-marketplace/slack-enterprise-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  sleep-tracker-ai-mcp:
+    container_name: sleep-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/sleep-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8169:8000"
+    volumes:
+      - ./mcp-marketplace/sleep-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  slugify-ai-mcp:
+    container_name: slugify-ai-mcp
+    build:
+      context: ./mcp-marketplace/slugify-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8170:8000"
+    volumes:
+      - ./mcp-marketplace/slugify-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  soc2-compliance-ai-mcp:
+    container_name: soc2-compliance-ai-mcp
+    build:
+      context: ./mcp-marketplace/soc2-compliance-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8171:8000"
+    volumes:
+      - ./mcp-marketplace/soc2-compliance-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  social-media-ai-mcp:
+    container_name: social-media-ai-mcp
+    build:
+      context: ./mcp-marketplace/social-media-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8172:8000"
+    volumes:
+      - ./mcp-marketplace/social-media-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  sql-builder-ai-mcp:
+    container_name: sql-builder-ai-mcp
+    build:
+      context: ./mcp-marketplace/sql-builder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8173:8000"
+    volumes:
+      - ./mcp-marketplace/sql-builder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  stock-analyzer-ai-mcp:
+    container_name: stock-analyzer-ai-mcp
+    build:
+      context: ./mcp-marketplace/stock-analyzer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8174:8000"
+    volumes:
+      - ./mcp-marketplace/stock-analyzer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  string-utils-ai-mcp:
+    container_name: string-utils-ai-mcp
+    build:
+      context: ./mcp-marketplace/string-utils-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8175:8000"
+    volumes:
+      - ./mcp-marketplace/string-utils-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  stripe-billing-mcp:
+    container_name: stripe-billing-mcp
+    build:
+      context: ./mcp-marketplace/stripe-billing-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8176:8000"
+    volumes:
+      - ./mcp-marketplace/stripe-billing-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  subscription-tracker-ai-mcp:
+    container_name: subscription-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/subscription-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8177:8000"
+    volumes:
+      - ./mcp-marketplace/subscription-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  summarizer-ai-mcp:
+    container_name: summarizer-ai-mcp
+    build:
+      context: ./mcp-marketplace/summarizer-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8178:8000"
+    volumes:
+      - ./mcp-marketplace/summarizer-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  survey-builder-ai-mcp:
+    container_name: survey-builder-ai-mcp
+    build:
+      context: ./mcp-marketplace/survey-builder-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8179:8000"
+    volumes:
+      - ./mcp-marketplace/survey-builder-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  tax-calculator-ai-mcp:
+    container_name: tax-calculator-ai-mcp
+    build:
+      context: ./mcp-marketplace/tax-calculator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8180:8000"
+    volumes:
+      - ./mcp-marketplace/tax-calculator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  test-case-generator-ai-mcp:
+    container_name: test-case-generator-ai-mcp
+    build:
+      context: ./mcp-marketplace/test-case-generator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8181:8000"
+    volumes:
+      - ./mcp-marketplace/test-case-generator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  text-stats-ai-mcp:
+    container_name: text-stats-ai-mcp
+    build:
+      context: ./mcp-marketplace/text-stats-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8182:8000"
+    volumes:
+      - ./mcp-marketplace/text-stats-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  time-tracker-ai-mcp:
+    container_name: time-tracker-ai-mcp
+    build:
+      context: ./mcp-marketplace/time-tracker-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8183:8000"
+    volumes:
+      - ./mcp-marketplace/time-tracker-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  tone-rewriter-ai-mcp:
+    container_name: tone-rewriter-ai-mcp
+    build:
+      context: ./mcp-marketplace/tone-rewriter-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8184:8000"
+    volumes:
+      - ./mcp-marketplace/tone-rewriter-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  translation-ai-mcp:
+    container_name: translation-ai-mcp
+    build:
+      context: ./mcp-marketplace/translation-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8185:8000"
+    volumes:
+      - ./mcp-marketplace/translation-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  translator-pro-ai-mcp:
+    container_name: translator-pro-ai-mcp
+    build:
+      context: ./mcp-marketplace/translator-pro-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8186:8000"
+    volumes:
+      - ./mcp-marketplace/translator-pro-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  trust-chain-mcp:
+    container_name: trust-chain-mcp
+    build:
+      context: ./mcp-marketplace/trust-chain-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8187:8000"
+    volumes:
+      - ./mcp-marketplace/trust-chain-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  unit-converter-ai-mcp:
+    container_name: unit-converter-ai-mcp
+    build:
+      context: ./mcp-marketplace/unit-converter-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8188:8000"
+    volumes:
+      - ./mcp-marketplace/unit-converter-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  url-ai-mcp:
+    container_name: url-ai-mcp
+    build:
+      context: ./mcp-marketplace/url-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8189:8000"
+    volumes:
+      - ./mcp-marketplace/url-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  uuid-ai-mcp:
+    container_name: uuid-ai-mcp
+    build:
+      context: ./mcp-marketplace/uuid-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8190:8000"
+    volumes:
+      - ./mcp-marketplace/uuid-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  validator-ai-mcp:
+    container_name: validator-ai-mcp
+    build:
+      context: ./mcp-marketplace/validator-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8191:8000"
+    volumes:
+      - ./mcp-marketplace/validator-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  vector-knowledge-graph-mcp:
+    container_name: vector-knowledge-graph-mcp
+    build:
+      context: ./mcp-marketplace/vector-knowledge-graph-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8192:8000"
+    volumes:
+      - ./mcp-marketplace/vector-knowledge-graph-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  video-editing-ai-mcp:
+    container_name: video-editing-ai-mcp
+    build:
+      context: ./mcp-marketplace/video-editing-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8193:8000"
+    volumes:
+      - ./mcp-marketplace/video-editing-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  voice-audio-mcp:
+    container_name: voice-audio-mcp
+    build:
+      context: ./mcp-marketplace/voice-audio-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8194:8000"
+    volumes:
+      - ./mcp-marketplace/voice-audio-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  watermarking-authenticity-mcp:
+    container_name: watermarking-authenticity-mcp
+    build:
+      context: ./mcp-marketplace/watermarking-authenticity-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8195:8000"
+    volumes:
+      - ./mcp-marketplace/watermarking-authenticity-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  weather-ai-mcp:
+    container_name: weather-ai-mcp
+    build:
+      context: ./mcp-marketplace/weather-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8196:8000"
+    volumes:
+      - ./mcp-marketplace/weather-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  web-research-mcp:
+    container_name: web-research-mcp
+    build:
+      context: ./mcp-marketplace/web-research-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8197:8000"
+    volumes:
+      - ./mcp-marketplace/web-research-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  webhook-ai-mcp:
+    container_name: webhook-ai-mcp
+    build:
+      context: ./mcp-marketplace/webhook-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8198:8000"
+    volumes:
+      - ./mcp-marketplace/webhook-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  workout-planner-ai-mcp:
+    container_name: workout-planner-ai-mcp
+    build:
+      context: ./mcp-marketplace/workout-planner-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8199:8000"
+    volumes:
+      - ./mcp-marketplace/workout-planner-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  writing-assistant-ai-mcp:
+    container_name: writing-assistant-ai-mcp
+    build:
+      context: ./mcp-marketplace/writing-assistant-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8200:8000"
+    volumes:
+      - ./mcp-marketplace/writing-assistant-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  yaml-ai-mcp:
+    container_name: yaml-ai-mcp
+    build:
+      context: ./mcp-marketplace/yaml-ai-mcp
+      dockerfile: ../../Dockerfile.mcp-base
+    working_dir: /app
+    command: >
+      sh -c "uv pip install -e . &&
+      python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""
+    ports:
+      - "8201:8000"
+    volumes:
+      - ./mcp-marketplace/yaml-ai-mcp:/app
+      - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
+    networks:
+      - mcp-ensemble
+    restart: unless-stopped
+    profiles:
+      - mcp
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

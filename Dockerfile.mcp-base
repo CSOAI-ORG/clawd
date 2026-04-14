@@ -1,0 +1,31 @@
+# Base image for MCP ensemble services
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv globally
+RUN pip install --no-cache-dir uv
+
+# Create nicholas user so ~/clawd resolves to /home/nicholas/clawd
+RUN useradd -m -s /bin/bash nicholas
+
+# Pre-create the shared auth middleware path
+RUN mkdir -p /home/nicholas/clawd/meok-labs-engine/shared && chown -R nicholas:nicholas /home/nicholas
+
+# Switch to nicholas for venv and runtime
+USER nicholas
+WORKDIR /app
+
+# Create a virtual environment
+RUN uv venv /home/nicholas/.venv
+ENV PATH="/home/nicholas/.venv/bin:$PATH"
+
+# Default: install deps and run SSE transport
+CMD ["sh", "-c", "uv pip install -e . && python -c \"from server import mcp; mcp.settings.host='0.0.0.0'; mcp.run(transport='sse')\""]

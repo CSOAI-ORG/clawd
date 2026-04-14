@@ -49,8 +49,17 @@ MATERNAL_COVENANT_RULES = [
 ]
 
 HARMFUL_KEYWORDS = {
-    "strike", "hit", "smash", "attack", "destroy", "burn",
-    "stab", "cut", "crush", "throw at person", "harm",
+    "strike",
+    "hit",
+    "smash",
+    "attack",
+    "destroy",
+    "burn",
+    "stab",
+    "cut",
+    "crush",
+    "throw at person",
+    "harm",
 }
 
 
@@ -65,14 +74,28 @@ def _maternal_covenant_check(action: dict) -> tuple[bool, str]:
 
     for kw in HARMFUL_KEYWORDS:
         if kw in combined:
-            return False, f"Maternal Covenant blocked: keyword '{kw}' detected in action description"
+            return (
+                False,
+                f"Maternal Covenant blocked: keyword '{kw}' detected in action description",
+            )
 
     if action.get("force_level", 0) > 0.85:
-        return False, "Maternal Covenant blocked: force_level exceeds safe threshold (0.85)"
+        return (
+            False,
+            "Maternal Covenant blocked: force_level exceeds safe threshold (0.85)",
+        )
 
     if action.get("target_category") in {"person", "animal", "child"}:
-        if action.get("action_type") not in {"wave", "gesture", "approach_slow", "retreat"}:
-            return False, f"Maternal Covenant blocked: non-safe action type toward {action.get('target_category')}"
+        if action.get("action_type") not in {
+            "wave",
+            "gesture",
+            "approach_slow",
+            "retreat",
+        }:
+            return (
+                False,
+                f"Maternal Covenant blocked: non-safe action type toward {action.get('target_category')}",
+            )
 
     return True, "Maternal Covenant: passed"
 
@@ -80,6 +103,7 @@ def _maternal_covenant_check(action: dict) -> tuple[bool, str]:
 # ---------------------------------------------------------------------------
 # Mock ROS interface (used when ROS is not installed)
 # ---------------------------------------------------------------------------
+
 
 class MockROSPublisher:
     def __init__(self, topic: str, msg_type: str):
@@ -111,6 +135,7 @@ class MockROSNode:
 # EI3Node
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ActionResult:
     action_id: str
@@ -135,13 +160,15 @@ class EI3Node:
 
     def __init__(
         self,
-        sov_url: str = "http://localhost:3100",
+        sov_url: str = "http://localhost:3200",
         robot_id: str = "robot_001",
         ros_available: bool = False,
     ):
         self.sov_url = sov_url.rstrip("/")
         self.robot_id = robot_id
-        self.ros_available = ros_available or os.environ.get("ROS_AVAILABLE", "").lower() == "true"
+        self.ros_available = (
+            ros_available or os.environ.get("ROS_AVAILABLE", "").lower() == "true"
+        )
 
         # Stats
         self._actions_executed = 0
@@ -152,8 +179,10 @@ class EI3Node:
         if self.ros_available:
             try:
                 import rclpy  # type: ignore
+
                 rclpy.init()
                 import rclpy.node  # type: ignore
+
                 self._ros_node = rclpy.node.Node(f"ei3_{robot_id}")
                 self._action_pub = self._ros_node.create_publisher(
                     "/ei3/action_goals", "std_msgs/msg/String"
@@ -301,7 +330,9 @@ class EI3Node:
                             .get("text", "{}")
                         )
                         result = json.loads(result_text)
-                        score = float(result.get("score", result.get("engagement", 0.5)))
+                        score = float(
+                            result.get("score", result.get("engagement", 0.5))
+                        )
                         approved = score > 0.3
                         log.info(
                             f"Council consensus: engagement={score:.3f} -> "
@@ -388,7 +419,9 @@ class EI3Node:
         Returns ActionResult as dict.
         """
         action_id = str(uuid.uuid4())[:8]
-        log.info(f"[{action_id}] Evaluating: {action.get('description', action.get('action_type'))}")
+        log.info(
+            f"[{action_id}] Evaluating: {action.get('description', action.get('action_type'))}"
+        )
 
         # Step 1: Safety
         safety = await self.check_action_safety(action)
@@ -400,21 +433,25 @@ class EI3Node:
                 "reason": safety["reason"],
             }
             await self.log_embodied_action(action, outcome)
-            return asdict(ActionResult(
-                action_id=action_id,
-                action=action,
-                safe=False,
-                care_score=safety["care_score"],
-                council_approved=False,
-                executed=False,
-                outcome=outcome,
-                reason=safety["reason"],
-            ))
+            return asdict(
+                ActionResult(
+                    action_id=action_id,
+                    action=action,
+                    safe=False,
+                    care_score=safety["care_score"],
+                    council_approved=False,
+                    executed=False,
+                    outcome=outcome,
+                    reason=safety["reason"],
+                )
+            )
 
         # Step 2: Council consensus
         council_ok = await self.request_council_consensus(action)
         if not council_ok:
-            log.warning(f"[{action_id}] DEFERRED — Byzantine Council did not reach consensus")
+            log.warning(
+                f"[{action_id}] DEFERRED — Byzantine Council did not reach consensus"
+            )
             outcome = {
                 "status": "deferred",
                 "care_score": safety["care_score"],
@@ -422,16 +459,18 @@ class EI3Node:
             }
             await self.log_embodied_action(action, outcome)
             self._actions_blocked += 1
-            return asdict(ActionResult(
-                action_id=action_id,
-                action=action,
-                safe=True,
-                care_score=safety["care_score"],
-                council_approved=False,
-                executed=False,
-                outcome=outcome,
-                reason="Council deferred",
-            ))
+            return asdict(
+                ActionResult(
+                    action_id=action_id,
+                    action=action,
+                    safe=True,
+                    care_score=safety["care_score"],
+                    council_approved=False,
+                    executed=False,
+                    outcome=outcome,
+                    reason="Council deferred",
+                )
+            )
 
         # Step 3: Execute
         exec_result = await self._do_execute(action)
@@ -451,16 +490,18 @@ class EI3Node:
         # Step 4: Log
         await self.log_embodied_action(action, outcome)
 
-        return asdict(ActionResult(
-            action_id=action_id,
-            action=action,
-            safe=True,
-            care_score=safety["care_score"],
-            council_approved=True,
-            executed=True,
-            outcome=outcome,
-            reason=safety["reason"],
-        ))
+        return asdict(
+            ActionResult(
+                action_id=action_id,
+                action=action,
+                safe=True,
+                care_score=safety["care_score"],
+                council_approved=True,
+                executed=True,
+                outcome=outcome,
+                reason=safety["reason"],
+            )
+        )
 
     async def _do_execute(self, action: dict) -> dict:
         """
@@ -478,6 +519,7 @@ class EI3Node:
         if self.ros_available:
             # Real ROS publish
             import std_msgs.msg  # type: ignore
+
             msg = std_msgs.msg.String()
             msg.data = json.dumps(goal_msg)
             self._action_pub.publish(msg)
@@ -582,6 +624,7 @@ class EI3Node:
 # FarmNode — represents a single farm MCP perception node
 # ---------------------------------------------------------------------------
 
+
 class FarmNode:
     """
     Represents a single farm awareness node (RPi5/BeagleY-AI/STM32N6).
@@ -602,7 +645,7 @@ class FarmNode:
         node_id: str,
         zone: str = "lab",
         hardware_type: str = "rpi5",
-        sov_url: str = "http://localhost:3100",
+        sov_url: str = "http://localhost:3200",
         node_port: int = 3200,
     ):
         self.node_id = node_id
@@ -656,12 +699,22 @@ class FarmNode:
                     json=payload,
                     timeout=aiohttp.ClientTimeout(total=3),
                 ) as resp:
-                    result = await resp.json() if resp.status == 200 else {"status": "error", "code": resp.status}
-                    log.info(f"FarmNode {self.node_id}: pushed '{label}' conf={confidence:.2f} -> {result}")
+                    result = (
+                        await resp.json()
+                        if resp.status == 200
+                        else {"status": "error", "code": resp.status}
+                    )
+                    log.info(
+                        f"FarmNode {self.node_id}: pushed '{label}' conf={confidence:.2f} -> {result}"
+                    )
                     return result
         except Exception as e:
-            log.debug(f"FarmNode {self.node_id}: SOV3 push failed ({e}), logged locally")
-            log.info(f"FarmNode {self.node_id} [local]: {label} conf={confidence:.2f} {metadata}")
+            log.debug(
+                f"FarmNode {self.node_id}: SOV3 push failed ({e}), logged locally"
+            )
+            log.info(
+                f"FarmNode {self.node_id} [local]: {label} conf={confidence:.2f} {metadata}"
+            )
             return {"status": "local_only", "reason": str(e)}
 
     async def heartbeat(self) -> dict:

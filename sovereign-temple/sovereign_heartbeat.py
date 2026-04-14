@@ -129,6 +129,15 @@ class SovereignHeartbeat:
             replace_existing=True,
         )
 
+        # ═══ AUTONOMOUS TASK EXECUTION — agents discover + execute tasks ═══
+        self.scheduler.add_job(
+            self._safe_run(self.autonomous_task_cycle),
+            IntervalTrigger(minutes=30),
+            id="autonomous_tasks",
+            name="Autonomous Task Cycle (30m)",
+            replace_existing=True,
+        )
+
         self.scheduler.add_job(
             self._safe_run(self.security_harden),
             CronTrigger(hour=1, minute=0, timezone=UK_TZ),
@@ -707,6 +716,28 @@ class SovereignHeartbeat:
             else:
                 retrain_summary += "No model registry available. "
 
+        # Run the neural training pipeline (collects interaction data → retrains)
+        try:
+            from neural_training_pipeline import pipeline as training_pipeline
+            pipeline_result = training_pipeline.run_training_cycle()
+            pipeline_stats = training_pipeline.get_stats()
+            retrain_summary += (
+                f"Pipeline: {pipeline_stats['total_interactions']} interactions ingested, "
+                f"{pipeline_stats['total_training_runs']} total runs. "
+            )
+            logger.info(f"Neural training pipeline: {pipeline_result}")
+        except Exception as e:
+            logger.warning(f"Training pipeline error (non-fatal): {e}")
+            retrain_summary += f"Pipeline error: {e}. "
+
+        # Sync living alignment with training results
+        try:
+            from living_alignment import alignment
+            alignment.record_training("heartbeat_cycle", {"summary": retrain_summary[:200]})
+            alignment.sync_to_sov3()
+        except Exception:
+            pass
+
         # Query training-relevant memories for next cycle
         training_memories = await self._query_recent_tagged_memories("insight", hours=24)
         retrain_summary += f"{len(training_memories)} insight memories from last 24h available for next cycle."
@@ -718,6 +749,31 @@ class SovereignHeartbeat:
         )
 
         logger.info("Neural retrain cycle complete")
+
+    async def autonomous_task_cycle(self) -> None:
+        """Every 30 minutes — agents discover, claim, and execute tasks."""
+        logger.info("🔄 Autonomous task cycle starting")
+        try:
+            from autonomous_task_queue import task_queue
+
+            # 1. Discover new tasks from alignment priorities
+            discovered = task_queue.discover_tasks()
+            logger.info(f"  🔍 Discovered {len(discovered)} tasks")
+
+            # 2. Run execution cycle — agents claim and complete tasks
+            result = task_queue.run_cycle()
+            logger.info(f"  ✅ Cycle: {result['completed']} completed, {result['failed']} failed, {result['still_pending']} pending")
+
+            # 3. Record to memory
+            await self._record_memory(
+                content=f"Task cycle: discovered {len(discovered)}, completed {result['completed']}, "
+                        f"failed {result['failed']}, pending {result['still_pending']}",
+                care_weight=0.5,
+                tags=["autonomous", "task_cycle", "heartbeat"],
+            )
+
+        except Exception as e:
+            logger.warning(f"Autonomous task cycle error: {e}")
 
     async def security_harden(self) -> None:
         """Daily at 01:00 — security hardening checks."""
@@ -1343,15 +1399,9 @@ Extract 1-2 principles in format: "When [condition], do [action] because [reason
 Focus on what went well and what could improve."""
 
             try:
-                import requests
-                r = requests.post("http://localhost:11434/api/generate", json={
-                    "model": "jarvis",
-                    "prompt": reflection_prompt,
-                    "stream": False,
-                    "options": {"num_predict": 200}
-                }, timeout=30)
-                principle = r.json().get("response", "")
-                if principle:
+                # DISABLED: Ollama reserved for Sophie character UI
+                principle = ""
+                if False and principle:
                     await self.memory_store.store(
                         content=f"[MARS Reflection] {principle}",
                         memory_type="reflection",

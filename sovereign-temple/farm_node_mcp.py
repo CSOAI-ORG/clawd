@@ -55,29 +55,52 @@ log = logging.getLogger("farm_node_mcp")
 # Config
 # ---------------------------------------------------------------------------
 
-NODE_ID   = os.environ.get("NODE_ID", f"farm_node_{uuid.uuid4().hex[:8]}")
-ZONE      = os.environ.get("ZONE", "lab")            # caravan | lab | field | perimeter | propagator
-HARDWARE  = os.environ.get("HARDWARE", "rpi5_akida") # rpi5_akida | beagley | stm32n6 | mock
-SOV_URL   = os.environ.get("SOV_URL", "http://localhost:3100")
-PORT      = int(os.environ.get("PORT", "3200"))
+NODE_ID = os.environ.get("NODE_ID", f"farm_node_{uuid.uuid4().hex[:8]}")
+ZONE = os.environ.get("ZONE", "lab")  # caravan | lab | field | perimeter | propagator
+HARDWARE = os.environ.get(
+    "HARDWARE", "rpi5_akida"
+)  # rpi5_akida | beagley | stm32n6 | mock
+SOV_URL = os.environ.get("SOV_URL", "http://localhost:3200")
+PORT = int(os.environ.get("PORT", "3200"))
 
 # Camera/AI config
 YOLO_CONF_THRESHOLD = float(os.environ.get("YOLO_CONF", "0.65"))
-DETECTION_INTERVAL  = float(os.environ.get("DETECT_INTERVAL", "5.0"))  # seconds
-HEARTBEAT_INTERVAL  = float(os.environ.get("HEARTBEAT_INTERVAL", "30.0"))
+DETECTION_INTERVAL = float(os.environ.get("DETECT_INTERVAL", "5.0"))  # seconds
+HEARTBEAT_INTERVAL = float(os.environ.get("HEARTBEAT_INTERVAL", "30.0"))
 
 # Zone-specific sensor ranges (for mock data)
 ZONE_CONFIG = {
-    "caravan":    {"temp": (16, 24), "humidity": (45, 70), "labels": ["person", "dog", "tool"]},
-    "lab":        {"temp": (18, 22), "humidity": (40, 60), "labels": ["plant", "tool", "person"]},
-    "field":      {"temp": (5, 28),  "humidity": (50, 90), "labels": ["dog", "plant", "pest", "person"]},
-    "perimeter":  {"temp": (5, 30),  "humidity": (40, 95), "labels": ["person", "vehicle", "animal"]},
-    "propagator": {"temp": (20, 28), "humidity": (70, 95), "labels": ["plant", "seedling", "pest"]},
+    "caravan": {
+        "temp": (16, 24),
+        "humidity": (45, 70),
+        "labels": ["person", "dog", "tool"],
+    },
+    "lab": {
+        "temp": (18, 22),
+        "humidity": (40, 60),
+        "labels": ["plant", "tool", "person"],
+    },
+    "field": {
+        "temp": (5, 28),
+        "humidity": (50, 90),
+        "labels": ["dog", "plant", "pest", "person"],
+    },
+    "perimeter": {
+        "temp": (5, 30),
+        "humidity": (40, 95),
+        "labels": ["person", "vehicle", "animal"],
+    },
+    "propagator": {
+        "temp": (20, 28),
+        "humidity": (70, 95),
+        "labels": ["plant", "seedling", "pest"],
+    },
 }
 
 # ---------------------------------------------------------------------------
 # Sensor simulation / real hardware abstraction
 # ---------------------------------------------------------------------------
+
 
 class SensorInterface:
     """
@@ -112,7 +135,9 @@ class SensorInterface:
             "uv_index": round(random.uniform(0, 10), 1),
             "motion_detected": random.random() < 0.12,
             "sound_db": round(random.uniform(25, 70), 1),
-            "soil_moisture_pct": round(random.uniform(30, 80), 1) if zone in ("field", "propagator") else None,
+            "soil_moisture_pct": round(random.uniform(30, 80), 1)
+            if zone in ("field", "propagator")
+            else None,
         }
 
 
@@ -146,7 +171,8 @@ class AIVisionInterface:
         """Initialise BrainChip Akida via MetaTF."""
         try:
             import cnn2snn  # type: ignore — BrainChip MetaTF SDK
-            import akida     # type: ignore
+            import akida  # type: ignore
+
             self._akida_model = None  # Would load .fbz model here
             log.info("Akida NPU initialised")
         except ImportError:
@@ -156,6 +182,7 @@ class AIVisionInterface:
         """Initialise TI EdgeAI SDK for BeagleY-AI DSP."""
         try:
             import tidl  # type: ignore — TI TIDL runtime
+
             log.info("BeagleY-AI DSP initialised")
         except ImportError:
             log.warning("TI TIDL SDK not found — using mock vision")
@@ -164,6 +191,7 @@ class AIVisionInterface:
         """Initialise ST Edge AI Core for STM32N6."""
         try:
             import stai_mpu  # type: ignore — ST Edge AI MPU runtime
+
             log.info("STM32N6 NPU initialised")
         except ImportError:
             log.warning("ST Edge AI not found — using mock vision")
@@ -179,17 +207,19 @@ class AIVisionInterface:
         for _ in range(num_objects):
             label = random.choice(self._zone_labels)
             confidence = round(random.uniform(self.conf_threshold, 0.99), 3)
-            detections.append({
-                "label": label,
-                "confidence": confidence,
-                "bounding_box": {
-                    "x": round(random.uniform(0.05, 0.85), 3),
-                    "y": round(random.uniform(0.05, 0.85), 3),
-                    "w": round(random.uniform(0.05, 0.35), 3),
-                    "h": round(random.uniform(0.05, 0.35), 3),
-                },
-                "track_id": random.randint(1, 99),
-            })
+            detections.append(
+                {
+                    "label": label,
+                    "confidence": confidence,
+                    "bounding_box": {
+                        "x": round(random.uniform(0.05, 0.85), 3),
+                        "y": round(random.uniform(0.05, 0.85), 3),
+                        "w": round(random.uniform(0.05, 0.35), 3),
+                        "h": round(random.uniform(0.05, 0.35), 3),
+                    },
+                    "track_id": random.randint(1, 99),
+                }
+            )
 
         return detections
 
@@ -206,8 +236,10 @@ class AIVisionInterface:
 # SOV3 client
 # ---------------------------------------------------------------------------
 
-async def push_to_sov(event_type: str, label: str, confidence: float,
-                      metadata: Optional[Dict] = None) -> Dict:
+
+async def push_to_sov(
+    event_type: str, label: str, confidence: float, metadata: Optional[Dict] = None
+) -> Dict:
     """Push a detection event to Sovereign Temple /harv/camera_event."""
     payload = {
         "node_id": NODE_ID,
@@ -225,7 +257,11 @@ async def push_to_sov(event_type: str, label: str, confidence: float,
                 json=payload,
                 timeout=aiohttp.ClientTimeout(total=3),
             ) as resp:
-                result = await resp.json() if resp.status == 200 else {"status": "error", "code": resp.status}
+                result = (
+                    await resp.json()
+                    if resp.status == 200
+                    else {"status": "error", "code": resp.status}
+                )
                 return result
     except Exception as e:
         log.debug(f"SOV push failed: {e}")
@@ -284,6 +320,7 @@ _detections_pushed = 0
 # ---------------------------------------------------------------------------
 # REST endpoints
 # ---------------------------------------------------------------------------
+
 
 @app.get("/health")
 async def health():
@@ -348,6 +385,7 @@ async def stats():
 # MCP tool endpoint (JSON-RPC 2.0)
 # ---------------------------------------------------------------------------
 
+
 class MCPRequest(BaseModel):
     jsonrpc: str = "2.0"
     id: Optional[str] = None
@@ -377,8 +415,14 @@ MCP_TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "label": {"type": "string", "description": "Alert label (e.g. 'intrusion', 'fire_risk')"},
-                "severity": {"type": "number", "description": "Alert confidence/severity 0-1"},
+                "label": {
+                    "type": "string",
+                    "description": "Alert label (e.g. 'intrusion', 'fire_risk')",
+                },
+                "severity": {
+                    "type": "number",
+                    "description": "Alert confidence/severity 0-1",
+                },
                 "message": {"type": "string"},
             },
             "required": ["label"],
@@ -406,19 +450,42 @@ async def mcp_endpoint(req: MCPRequest):
 
         if tool_name == "get_sensor_reading":
             result = _sensor.read()
-            return {"jsonrpc": "2.0", "id": req.id, "result": {"content": [{"type": "text", "text": json.dumps(result)}]}}
+            return {
+                "jsonrpc": "2.0",
+                "id": req.id,
+                "result": {"content": [{"type": "text", "text": json.dumps(result)}]},
+            }
 
         elif tool_name == "run_detection":
             detections = await _vision.detect()
-            return {"jsonrpc": "2.0", "id": req.id, "result": {"content": [{"type": "text", "text": json.dumps({"detections": detections, "node_id": NODE_ID})}]}}
+            return {
+                "jsonrpc": "2.0",
+                "id": req.id,
+                "result": {
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": json.dumps(
+                                {"detections": detections, "node_id": NODE_ID}
+                            ),
+                        }
+                    ]
+                },
+            }
 
         elif tool_name == "get_node_status":
             status = {
-                "node_id": NODE_ID, "zone": ZONE, "hardware": HARDWARE,
+                "node_id": NODE_ID,
+                "zone": ZONE,
+                "hardware": HARDWARE,
                 "uptime_s": round(time.time() - _start_time, 1),
                 "detections_pushed": _detections_pushed,
             }
-            return {"jsonrpc": "2.0", "id": req.id, "result": {"content": [{"type": "text", "text": json.dumps(status)}]}}
+            return {
+                "jsonrpc": "2.0",
+                "id": req.id,
+                "result": {"content": [{"type": "text", "text": json.dumps(status)}]},
+            }
 
         elif tool_name == "push_alert":
             pushed = await push_to_sov(
@@ -427,18 +494,31 @@ async def mcp_endpoint(req: MCPRequest):
                 confidence=float(args.get("severity", 0.9)),
                 metadata={"message": args.get("message", ""), "manual_alert": True},
             )
-            return {"jsonrpc": "2.0", "id": req.id, "result": {"content": [{"type": "text", "text": json.dumps(pushed)}]}}
+            return {
+                "jsonrpc": "2.0",
+                "id": req.id,
+                "result": {"content": [{"type": "text", "text": json.dumps(pushed)}]},
+            }
 
         else:
-            return {"jsonrpc": "2.0", "id": req.id, "error": {"code": -32601, "message": f"Unknown tool: {tool_name}"}}
+            return {
+                "jsonrpc": "2.0",
+                "id": req.id,
+                "error": {"code": -32601, "message": f"Unknown tool: {tool_name}"},
+            }
 
     else:
-        return {"jsonrpc": "2.0", "id": req.id, "error": {"code": -32601, "message": f"Unknown method: {method}"}}
+        return {
+            "jsonrpc": "2.0",
+            "id": req.id,
+            "error": {"code": -32601, "message": f"Unknown method: {method}"},
+        }
 
 
 # ---------------------------------------------------------------------------
 # Background tasks
 # ---------------------------------------------------------------------------
+
 
 @app.on_event("startup")
 async def startup():
@@ -478,7 +558,10 @@ async def _heartbeat_loop():
                 event_type="heartbeat",
                 label="__heartbeat__",
                 confidence=1.0,
-                metadata={"sensor": reading, "uptime_s": round(time.time() - _start_time, 1)},
+                metadata={
+                    "sensor": reading,
+                    "uptime_s": round(time.time() - _start_time, 1),
+                },
             )
         except Exception as e:
             log.debug(f"Heartbeat error: {e}")
@@ -490,6 +573,7 @@ async def _heartbeat_loop():
 
 if __name__ == "__main__":
     import uvicorn
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(name)s] %(levelname)s — %(message)s",

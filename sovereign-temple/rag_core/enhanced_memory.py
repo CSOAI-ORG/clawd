@@ -6,6 +6,7 @@ Features: Temporal chains, episodic compaction, importance scoring
 import asyncio
 import asyncpg
 import weaviate
+from weaviate.client import Client
 from weaviate.util import generate_uuid5
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Tuple
@@ -334,8 +335,9 @@ class EnhancedMemoryStore:
                 logger.info("PostgreSQL memory store initialized")
                 break
             except Exception as e:
+                import traceback
                 logger.warning(
-                    f"PostgreSQL connection attempt {attempt + 1}/{max_retries} failed: {e}"
+                    f"PostgreSQL connection attempt {attempt + 1}/{max_retries} failed: {type(e).__name__}: {e}\n{traceback.format_exc()}"
                 )
                 if attempt < max_retries - 1:
                     await asyncio.sleep(retry_delay * (attempt + 1))
@@ -546,6 +548,27 @@ class EnhancedMemoryStore:
                 episode.access_count,
             )
 
+        # Generate and store pgvector embedding (non-fatal)
+        try:
+            import requests as _req
+            _emb_resp = _req.post("http://localhost:11434/api/embed", json={
+                "model": "nomic-embed-text",
+                "input": content[:2000],
+            }, timeout=15)
+            _emb_data = _emb_resp.json().get("embeddings", [])
+            if _emb_data:
+                _raw = _emb_data[0][:384]
+                _norm = sum(x*x for x in _raw) ** 0.5
+                _emb = [x/_norm for x in _raw] if _norm > 0 else _raw
+                _vec_str = "[" + ",".join(str(x) for x in _emb) + "]"
+                async with self.pool.acquire() as conn:
+                    await conn.execute(
+                        "UPDATE memory_episodes SET embedding = $1::vector WHERE id = $2",
+                        _vec_str, episode.id,
+                    )
+        except Exception:
+            pass  # Non-fatal — backfill script catches stragglers
+
         # Store in Weaviate for vector search (non-fatal — Postgres is source of truth)
         try:
             self.weaviate_client.data_object.create(
@@ -682,27 +705,36 @@ class EnhancedMemoryStore:
                     # Generate a simple embedding using SentenceTransformer or fallback
                     embedding = None
                     try:
-                        from sentence_transformers import SentenceTransformer
-
-                        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
-                        embedding = _embedder.encode(query).tolist()
-                    except ImportError:
+                        # Use Ollama nomic-embed-text (matches stored embeddings)
+                        import requests as _req
+                        _emb_resp = _req.post("http://localhost:11434/api/embed", json={
+                            "model": "nomic-embed-text",
+                            "input": query[:2000],
+                        }, timeout=15)
+                        _emb_data = _emb_resp.json().get("embeddings", [])
+                        if _emb_data:
+                            _raw = _emb_data[0][:384]  # Truncate to match stored dims
+                            _norm = sum(x*x for x in _raw) ** 0.5
+                            embedding = [x/_norm for x in _raw] if _norm > 0 else _raw
+                    except Exception:
                         pass
 
                     if embedding:
                         # Use pgvector cosine similarity with HNSW index
+                        # asyncpg needs vector as string format '[x,y,z]'
+                        vec_str = "[" + ",".join(str(x) for x in embedding) + "]"
                         rows = await conn.fetch(
                             """
                             SELECT content, memory_type, source_agent, tags,
                                    importance_score, care_weight, timestamp,
-                                   embedding <=> $1 AS similarity
+                                   embedding <=> $1::vector AS similarity
                             FROM memory_episodes
                             WHERE embedding IS NOT NULL
                               AND care_weight >= $2
-                            ORDER BY embedding <=> $1
+                            ORDER BY embedding <=> $1::vector
                             LIMIT $3
                             """,
-                            embedding,
+                            vec_str,
                             care_weight_min,
                             limit * 2,
                         )

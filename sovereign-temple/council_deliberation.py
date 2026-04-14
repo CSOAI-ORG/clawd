@@ -13,6 +13,7 @@ Usage:
 import json
 import re
 import os
+import yaml
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
@@ -20,42 +21,17 @@ CHARACTER_DIR = Path("/Users/nicholas/legion/character_council")
 
 
 def _parse_yaml_frontmatter(text: str) -> Dict[str, Any]:
-    """Simple YAML frontmatter parser — no dependencies needed."""
+    """Parse YAML frontmatter using PyYAML."""
     if not text.startswith("---"):
         return {}
     end = text.find("---", 3)
     if end == -1:
         return {}
     raw = text[3:end].strip()
-    result = {}
-    current_key = None
-    current_list = None
-    for line in raw.split("\n"):
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if line.startswith("- "):
-            if current_list is not None:
-                current_list.append(line[2:].strip())
-            continue
-        if ": " in line:
-            key, val = line.split(": ", 1)
-            key = key.strip()
-            val = val.strip()
-            if val.startswith("[") and val.endswith("]"):
-                result[key] = [x.strip() for x in val[1:-1].split(",")]
-                current_key = None
-                current_list = None
-            else:
-                result[key] = val
-                current_key = key
-                current_list = []
-                result[key] = current_list
-    # Clean up empty lists
-    for k, v in list(result.items()):
-        if isinstance(v, list) and not v:
-            result[k] = ""
-    return result
+    try:
+        return yaml.safe_load(raw) or {}
+    except Exception:
+        return {}
 
 
 def load_characters() -> List[Dict[str, Any]]:
@@ -211,20 +187,21 @@ def deliberate(
         if llm_fn:
             perspective = llm_fn(prompt)
         else:
-            # Default: use Ollama local
+            # Default: use Ollama local (qwen2.5:7b is always available)
             try:
                 import requests
 
                 resp = requests.post(
                     "http://localhost:11434/api/generate",
                     json={
-                        "model": "qwen3.5:9b",
+                        "model": "qwen2.5:7b",
                         "prompt": prompt,
                         "stream": False,
                         "options": {"temperature": 0.8, "num_predict": 256},
                     },
                     timeout=60,
                 )
+                resp.raise_for_status()
                 perspective = resp.json().get("response", "").strip()
             except Exception:
                 perspective = f"[{name} perspective unavailable — Ollama not running]"
@@ -264,13 +241,14 @@ Keep it to 3-5 sentences."""
             resp = requests.post(
                 "http://localhost:11434/api/generate",
                 json={
-                    "model": "qwen3.5:9b",
+                    "model": "qwen2.5:7b",
                     "prompt": synthesis_prompt,
                     "stream": False,
                     "options": {"temperature": 0.7, "num_predict": 512},
                 },
                 timeout=60,
             )
+            resp.raise_for_status()
             synthesis = resp.json().get("response", "").strip()
         except Exception:
             synthesis = "Council deliberation complete. Perspectives gathered but synthesis unavailable."

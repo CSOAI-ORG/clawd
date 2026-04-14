@@ -327,9 +327,9 @@ class TaskHunter:
         # Add new tasks
         self.tasks.extend(new_tasks)
         
-        # Auto-promote high-care tasks to pursuing
+        # Auto-promote tasks to pursuing (lowered from 0.7 — most tasks have default 0.4)
         for task in self.tasks:
-            if task.status == TaskStatus.STALKING and task.care_score >= 0.7:
+            if task.status == TaskStatus.STALKING and task.care_score >= 0.3:
                 task.status = TaskStatus.PURSUING
         
         self._save_state()

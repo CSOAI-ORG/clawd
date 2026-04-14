@@ -8,6 +8,9 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# Fix PATH for launchd environment
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
 # Source environment
 if [[ -f .env ]]; then
   set -a
@@ -15,17 +18,25 @@ if [[ -f .env ]]; then
   set +a
 fi
 
-export PORT=${PORT:-3100}
+export PORT=${PORT:-3101}
 export HOST=${HOST:-0.0.0.0}
 export PYTHONUNBUFFERED=1
 
+# Prefer project venv, fall back to system python
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PYTHON="$SCRIPT_DIR/.venv/bin/python"
+if [[ ! -x "$PYTHON" ]]; then
+  PYTHON="/usr/bin/python3"
+fi
+
 echo "🚀 Starting SOV3 in production mode..."
+echo "   Python: $PYTHON"
 echo "   Workers: 2 (UvicornWorker)"
 echo "   Max requests: 1000 (then recycle)"
 echo "   Timeout: 120s"
 echo "   Port: $PORT"
 
-exec gunicorn sovereign-mcp-server:app \
+exec "$PYTHON" -m gunicorn sovereign-mcp-server:app \
   --worker-class uvicorn.workers.UvicornWorker \
   --workers 2 \
   --bind "${HOST}:${PORT}" \

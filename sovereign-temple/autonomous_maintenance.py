@@ -215,7 +215,11 @@ class AutonomousMaintenanceSystem:
                 await asyncio.sleep(300)  # Retry in 5 min on error
     
     async def _perform_maintenance_cycle(self):
-        """Single maintenance cycle"""
+        """Single maintenance cycle — skips when voice is active"""
+        import os
+        if os.path.exists("/tmp/jarvis_voice_active"):
+            print(f"⏸️ Maintenance skipped — voice active")
+            return
         print(f"🔄 Maintenance cycle starting at {datetime.now().strftime('%H:%M')}")
         
         # 1. Check current care level

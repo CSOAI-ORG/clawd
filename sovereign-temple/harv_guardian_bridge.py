@@ -11,7 +11,7 @@ import urllib.error
 from datetime import datetime
 from typing import Optional
 
-HARV_BASE_URL = "http://localhost:3100"
+HARV_BASE_URL = "http://localhost:3200"
 CAMERA_EVENT_ENDPOINT = f"{HARV_BASE_URL}/harv/camera_event"
 
 

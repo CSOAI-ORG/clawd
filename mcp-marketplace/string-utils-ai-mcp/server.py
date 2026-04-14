@@ -3,6 +3,11 @@ String Utils AI MCP Server
 String manipulation and transformation tools powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import re
 import time
 import unicodedata
@@ -25,7 +30,7 @@ def _check_rate_limit(tool_name: str) -> None:
 
 
 @mcp.tool()
-def slugify(text: str, separator: str = "-", max_length: int = 80, lowercase: bool = True) -> dict:
+def slugify(text: str, separator: str = "-", max_length: int = 80, lowercase: bool = True, api_key: str = "") -> dict:
     """Convert text to a URL-friendly slug.
 
     Args:
@@ -34,6 +39,10 @@ def slugify(text: str, separator: str = "-", max_length: int = 80, lowercase: bo
         max_length: Maximum slug length (default 80)
         lowercase: Convert to lowercase (default True)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("slugify")
     slug = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
     if lowercase:
@@ -46,13 +55,17 @@ def slugify(text: str, separator: str = "-", max_length: int = 80, lowercase: bo
 
 
 @mcp.tool()
-def camel_to_snake(text: str, direction: str = "camel_to_snake") -> dict:
+def camel_to_snake(text: str, direction: str = "camel_to_snake", api_key: str = "") -> dict:
     """Convert between camelCase, snake_case, kebab-case, and PascalCase.
 
     Args:
         text: String to convert
         direction: Conversion type - 'camel_to_snake', 'snake_to_camel', 'to_kebab', 'to_pascal', 'to_constant'
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("camel_to_snake")
     # First normalize to words
     words = []
@@ -78,7 +91,7 @@ def camel_to_snake(text: str, direction: str = "camel_to_snake") -> dict:
 
 
 @mcp.tool()
-def truncate_smart(text: str, max_length: int = 100, suffix: str = "...", preserve_words: bool = True) -> dict:
+def truncate_smart(text: str, max_length: int = 100, suffix: str = "...", preserve_words: bool = True, api_key: str = "") -> dict:
     """Smartly truncate text at word boundaries with a suffix.
 
     Args:
@@ -87,6 +100,10 @@ def truncate_smart(text: str, max_length: int = 100, suffix: str = "...", preser
         suffix: Suffix to append when truncated (default '...')
         preserve_words: Don't break mid-word (default True)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("truncate_smart")
     if len(text) <= max_length:
         return {"text": text, "truncated": False, "original_length": len(text)}
@@ -105,7 +122,7 @@ def truncate_smart(text: str, max_length: int = 100, suffix: str = "...", preser
 
 
 @mcp.tool()
-def extract_numbers(text: str, include_decimals: bool = True, include_negative: bool = True) -> dict:
+def extract_numbers(text: str, include_decimals: bool = True, include_negative: bool = True, api_key: str = "") -> dict:
     """Extract all numbers from text.
 
     Args:
@@ -113,6 +130,10 @@ def extract_numbers(text: str, include_decimals: bool = True, include_negative: 
         include_decimals: Include decimal numbers (default True)
         include_negative: Include negative numbers (default True)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("extract_numbers")
     if include_negative and include_decimals:
         pattern = r'-?\d+\.?\d*'

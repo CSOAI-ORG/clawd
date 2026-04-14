@@ -3,6 +3,11 @@ Hash Utils AI MCP Server
 Hashing, UUID, and ID generation tools powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import hashlib
 import hmac
 import os
@@ -30,7 +35,7 @@ def _check_rate_limit(tool_name: str) -> None:
 
 
 @mcp.tool()
-def hash_text(text: str, algorithm: str = "sha256", encoding: str = "hex") -> dict:
+def hash_text(text: str, algorithm: str = "sha256", encoding: str = "hex", api_key: str = "") -> dict:
     """Hash text using various algorithms.
 
     Args:
@@ -38,6 +43,10 @@ def hash_text(text: str, algorithm: str = "sha256", encoding: str = "hex") -> di
         algorithm: Hash algorithm - 'md5', 'sha1', 'sha256', 'sha384', 'sha512', 'sha3_256', 'blake2b'
         encoding: Output encoding - 'hex' or 'base64'
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("hash_text")
     algos = {"md5": hashlib.md5, "sha1": hashlib.sha1, "sha256": hashlib.sha256,
              "sha384": hashlib.sha384, "sha512": hashlib.sha512,
@@ -55,7 +64,7 @@ def hash_text(text: str, algorithm: str = "sha256", encoding: str = "hex") -> di
 
 
 @mcp.tool()
-def verify_hash(text: str, expected_hash: str, algorithm: str = "sha256") -> dict:
+def verify_hash(text: str, expected_hash: str, algorithm: str = "sha256", api_key: str = "") -> dict:
     """Verify if a text matches an expected hash.
 
     Args:
@@ -63,6 +72,10 @@ def verify_hash(text: str, expected_hash: str, algorithm: str = "sha256") -> dic
         expected_hash: Expected hash value
         algorithm: Hash algorithm used (default 'sha256')
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("verify_hash")
     algos = {"md5": hashlib.md5, "sha1": hashlib.sha1, "sha256": hashlib.sha256,
              "sha384": hashlib.sha384, "sha512": hashlib.sha512}
@@ -74,7 +87,7 @@ def verify_hash(text: str, expected_hash: str, algorithm: str = "sha256") -> dic
 
 
 @mcp.tool()
-def generate_uuid(version: int = 4, count: int = 1, namespace: str = "", name: str = "") -> dict:
+def generate_uuid(version: int = 4, count: int = 1, namespace: str = "", name: str = "", api_key: str = "") -> dict:
     """Generate UUID(s) of various versions.
 
     Args:
@@ -83,6 +96,10 @@ def generate_uuid(version: int = 4, count: int = 1, namespace: str = "", name: s
         namespace: Namespace UUID for v3/v5 (use 'dns', 'url', 'oid', or custom UUID)
         name: Name string for v3/v5
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("generate_uuid")
     count = min(count, 50)
     ns_map = {"dns": uuid.NAMESPACE_DNS, "url": uuid.NAMESPACE_URL, "oid": uuid.NAMESPACE_OID}
@@ -103,7 +120,7 @@ def generate_uuid(version: int = 4, count: int = 1, namespace: str = "", name: s
 
 
 @mcp.tool()
-def generate_nanoid(size: int = 21, alphabet: str = "", count: int = 1) -> dict:
+def generate_nanoid(size: int = 21, alphabet: str = "", count: int = 1, api_key: str = "") -> dict:
     """Generate nanoid-style short unique identifiers.
 
     Args:
@@ -111,6 +128,10 @@ def generate_nanoid(size: int = 21, alphabet: str = "", count: int = 1) -> dict:
         alphabet: Custom alphabet (default: A-Za-z0-9_-)
         count: Number of IDs to generate (default 1, max 50)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("generate_nanoid")
     count = min(count, 50)
     size = min(size, 128)

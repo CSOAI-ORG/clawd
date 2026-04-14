@@ -3,6 +3,11 @@ SEO Checker AI MCP Server
 SEO analysis and optimization tools powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import re
 import time
 from collections import defaultdict
@@ -24,13 +29,17 @@ def _check_rate_limit(tool_name: str) -> None:
 
 
 @mcp.tool()
-def analyze_title(title: str, target_keyword: str = "") -> dict:
+def analyze_title(title: str, target_keyword: str = "", api_key: str = "") -> dict:
     """Analyze a page title for SEO best practices.
 
     Args:
         title: Page title tag content
         target_keyword: Optional target keyword to check placement
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("analyze_title")
     issues = []
     length = len(title)
@@ -70,13 +79,17 @@ def analyze_title(title: str, target_keyword: str = "") -> dict:
 
 
 @mcp.tool()
-def check_meta_description(description: str, target_keyword: str = "") -> dict:
+def check_meta_description(description: str, target_keyword: str = "", api_key: str = "") -> dict:
     """Check a meta description for SEO best practices.
 
     Args:
         description: Meta description content
         target_keyword: Optional target keyword to check for
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("check_meta_description")
     issues = []
     length = len(description)
@@ -105,12 +118,16 @@ def check_meta_description(description: str, target_keyword: str = "") -> dict:
 
 
 @mcp.tool()
-def validate_schema_markup(json_ld: str) -> dict:
+def validate_schema_markup(json_ld: str, api_key: str = "") -> dict:
     """Validate JSON-LD structured data/schema markup.
 
     Args:
         json_ld: JSON-LD structured data string
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("validate_schema_markup")
     import json
     try:
@@ -153,13 +170,17 @@ def validate_schema_markup(json_ld: str) -> dict:
 
 
 @mcp.tool()
-def heading_analysis(html: str, target_keyword: str = "") -> dict:
+def heading_analysis(html: str, target_keyword: str = "", api_key: str = "") -> dict:
     """Analyze heading structure for SEO optimization.
 
     Args:
         html: HTML content to analyze
         target_keyword: Optional target keyword
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("heading_analysis")
     headings = []
     for match in re.finditer(r'<h([1-6])[^>]*>(.*?)</h\1>', html, re.IGNORECASE | re.DOTALL):

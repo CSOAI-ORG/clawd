@@ -3,6 +3,11 @@ Compression AI MCP Server
 Data compression analysis and optimization tools powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import gzip
 import zlib
 import bz2
@@ -39,13 +44,17 @@ ALGO_INFO = {
 
 
 @mcp.tool()
-def estimate_ratio(data: str, algorithms: list[str] | None = None) -> dict:
+def estimate_ratio(data: str, algorithms: list[str] | None = None, api_key: str = "") -> dict:
     """Estimate compression ratios for data using multiple algorithms.
 
     Args:
         data: Text data to compress (or base64-encoded binary)
         algorithms: List of algorithms to test (default: gzip, zlib, bz2)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("estimate_ratio")
     try:
         raw = base64.b64decode(data)
@@ -79,7 +88,7 @@ def estimate_ratio(data: str, algorithms: list[str] | None = None) -> dict:
 
 
 @mcp.tool()
-def suggest_algorithm(data_type: str, priority: str = "balanced", size_mb: float = 1.0) -> dict:
+def suggest_algorithm(data_type: str, priority: str = "balanced", size_mb: float = 1.0, api_key: str = "") -> dict:
     """Suggest the best compression algorithm for a given use case.
 
     Args:
@@ -87,6 +96,10 @@ def suggest_algorithm(data_type: str, priority: str = "balanced", size_mb: float
         priority: Optimization priority - 'speed', 'ratio', 'balanced'
         size_mb: Approximate data size in MB
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("suggest_algorithm")
     recommendations = {
         ("text", "speed"): ["lz4", "zstd", "snappy"],
@@ -127,7 +140,7 @@ def suggest_algorithm(data_type: str, priority: str = "balanced", size_mb: float
 
 
 @mcp.tool()
-def calculate_savings(original_size_mb: float, compressed_size_mb: float, file_count: int = 1) -> dict:
+def calculate_savings(original_size_mb: float, compressed_size_mb: float, file_count: int = 1, api_key: str = "") -> dict:
     """Calculate storage and bandwidth savings from compression.
 
     Args:
@@ -135,6 +148,10 @@ def calculate_savings(original_size_mb: float, compressed_size_mb: float, file_c
         compressed_size_mb: Compressed size in MB
         file_count: Number of similar files (for total savings estimate)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("calculate_savings")
     if original_size_mb <= 0:
         return {"error": "Original size must be positive"}
@@ -155,12 +172,16 @@ def calculate_savings(original_size_mb: float, compressed_size_mb: float, file_c
 
 
 @mcp.tool()
-def benchmark_data(data: str) -> dict:
+def benchmark_data(data: str, api_key: str = "") -> dict:
     """Benchmark compression of data across all available algorithms.
 
     Args:
         data: Text data to benchmark (max 1MB recommended)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("benchmark_data")
     raw = data.encode('utf-8')
     original_size = len(raw)

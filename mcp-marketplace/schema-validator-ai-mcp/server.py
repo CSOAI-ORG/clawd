@@ -3,6 +3,11 @@ Schema Validator AI MCP Server
 JSON Schema validation and generation tools powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import json
 import time
 from collections import defaultdict
@@ -103,13 +108,17 @@ def _validate_against_schema(data, schema, path="$") -> list:
 
 
 @mcp.tool()
-def validate_json_schema(data_json: str, schema_json: str) -> dict:
+def validate_json_schema(data_json: str, schema_json: str, api_key: str = "") -> dict:
     """Validate JSON data against a JSON Schema.
 
     Args:
         data_json: JSON string of the data to validate
         schema_json: JSON string of the schema to validate against
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("validate_json_schema")
     try:
         data = json.loads(data_json)
@@ -121,13 +130,17 @@ def validate_json_schema(data_json: str, schema_json: str) -> dict:
 
 
 @mcp.tool()
-def generate_schema(data_json: str, title: str = "") -> dict:
+def generate_schema(data_json: str, title: str = "", api_key: str = "") -> dict:
     """Generate a JSON Schema from example JSON data.
 
     Args:
         data_json: Example JSON data string
         title: Optional schema title
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("generate_schema")
     try:
         data = json.loads(data_json)
@@ -141,13 +154,17 @@ def generate_schema(data_json: str, title: str = "") -> dict:
 
 
 @mcp.tool()
-def convert_openapi(openapi_json: str, extract_schemas: bool = True) -> dict:
+def convert_openapi(openapi_json: str, extract_schemas: bool = True, api_key: str = "") -> dict:
     """Extract and convert schemas from an OpenAPI specification.
 
     Args:
         openapi_json: OpenAPI spec as JSON string
         extract_schemas: Whether to extract component schemas (default True)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("convert_openapi")
     try:
         spec = json.loads(openapi_json)
@@ -172,13 +189,17 @@ def convert_openapi(openapi_json: str, extract_schemas: bool = True) -> dict:
 
 
 @mcp.tool()
-def validate_types(data_json: str, type_spec: dict) -> dict:
+def validate_types(data_json: str, type_spec: dict, api_key: str = "") -> dict:
     """Validate that JSON data fields match expected types.
 
     Args:
         data_json: JSON string to validate
         type_spec: Dict mapping field paths to expected types (e.g., {"name": "string", "age": "integer"})
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("validate_types")
     try:
         data = json.loads(data_json)

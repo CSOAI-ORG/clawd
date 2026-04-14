@@ -3,6 +3,11 @@ Performance AI MCP Server
 Web performance analysis and optimization tools powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import time
 from collections import defaultdict
 from mcp.server.fastmcp import FastMCP
@@ -29,12 +34,16 @@ def _rate_metric(value: float, good: float, poor: float, lower_is_better: bool =
 
 
 @mcp.tool()
-def analyze_waterfall_data(resources: list[dict]) -> dict:
+def analyze_waterfall_data(resources: list[dict], api_key: str = "") -> dict:
     """Analyze a resource loading waterfall for performance bottlenecks.
 
     Args:
         resources: List of resource dicts with keys: url, type (js/css/img/font/html/other), size_kb, start_ms, duration_ms, blocking (bool, optional)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("analyze_waterfall_data")
     if not resources:
         return {"error": "No resources provided"}
@@ -68,12 +77,16 @@ def analyze_waterfall_data(resources: list[dict]) -> dict:
 
 
 @mcp.tool()
-def suggest_optimizations(page_data: dict) -> dict:
+def suggest_optimizations(page_data: dict, api_key: str = "") -> dict:
     """Suggest performance optimizations based on page characteristics.
 
     Args:
         page_data: Dict with optional keys: total_size_kb, js_count, css_count, image_count, font_count, uses_http2 (bool), has_service_worker (bool), has_lazy_loading (bool), ttfb_ms, lcp_ms, cls, fid_ms
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("suggest_optimizations")
     suggestions = []
     total = page_data.get("total_size_kb", 0)
@@ -112,7 +125,7 @@ def suggest_optimizations(page_data: dict) -> dict:
 
 
 @mcp.tool()
-def calculate_core_web_vitals(lcp_ms: float, fid_ms: float, cls: float, inp_ms: float = 0) -> dict:
+def calculate_core_web_vitals(lcp_ms: float, fid_ms: float, cls: float, inp_ms: float = 0, api_key: str = "") -> dict:
     """Calculate and rate Core Web Vitals scores.
 
     Args:
@@ -121,6 +134,10 @@ def calculate_core_web_vitals(lcp_ms: float, fid_ms: float, cls: float, inp_ms: 
         cls: Cumulative Layout Shift score
         inp_ms: Interaction to Next Paint in ms (optional, new metric)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("calculate_core_web_vitals")
     lcp_rating = _rate_metric(lcp_ms, 2500, 4000)
     fid_rating = _rate_metric(fid_ms, 100, 300)
@@ -147,12 +164,16 @@ def calculate_core_web_vitals(lcp_ms: float, fid_ms: float, cls: float, inp_ms: 
 
 
 @mcp.tool()
-def image_optimization_hints(images: list[dict]) -> dict:
+def image_optimization_hints(images: list[dict], api_key: str = "") -> dict:
     """Analyze images and suggest optimization strategies.
 
     Args:
         images: List of image dicts with keys: url (or name), format (jpg/png/gif/webp/svg), size_kb, width, height, above_fold (bool, optional)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("image_optimization_hints")
     hints = []
     total_size = 0

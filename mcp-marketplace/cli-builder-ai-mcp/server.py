@@ -3,6 +3,11 @@ CLI Builder AI MCP Server
 CLI tool generation and parsing utilities powered by MEOK AI Labs.
 """
 
+
+import sys, os
+sys.path.insert(0, os.path.expanduser('~/clawd/meok-labs-engine/shared'))
+from auth_middleware import check_access
+
 import re
 import time
 from collections import defaultdict
@@ -26,7 +31,7 @@ def _check_rate_limit(tool_name: str) -> None:
 @mcp.tool()
 def generate_argparse(
     program_name: str, description: str, arguments: list[dict], subcommands: list[dict] | None = None
-) -> dict:
+, api_key: str = "") -> dict:
     """Generate Python argparse CLI boilerplate code.
 
     Args:
@@ -35,6 +40,10 @@ def generate_argparse(
         arguments: List of argument dicts with keys: name, type (str/int/float/bool), help, required (bool), default (optional), choices (list, optional)
         subcommands: Optional list of subcommand dicts with keys: name, help, arguments (same format)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("generate_argparse")
     lines = ['import argparse', '', '']
     lines.append('def main():')
@@ -97,7 +106,7 @@ def generate_argparse(
 @mcp.tool()
 def generate_click(
     program_name: str, description: str, commands: list[dict]
-) -> dict:
+, api_key: str = "") -> dict:
     """Generate Python Click CLI boilerplate code.
 
     Args:
@@ -105,6 +114,10 @@ def generate_click(
         description: Program description
         commands: List of command dicts with keys: name, help, options (list of dicts with: name, type, help, required, default)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("generate_click")
     lines = ['import click', '', '']
     lines.append(f'@click.group()')
@@ -147,12 +160,16 @@ def generate_click(
 
 
 @mcp.tool()
-def parse_help_text(help_text: str) -> dict:
+def parse_help_text(help_text: str, api_key: str = "") -> dict:
     """Parse CLI help text output into structured command/option data.
 
     Args:
         help_text: CLI help text output (e.g., from --help)
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("parse_help_text")
     result = {"program": "", "description": "", "commands": [], "options": [], "positional_args": []}
     lines = help_text.strip().split('\n')
@@ -200,7 +217,7 @@ def generate_manpage(
     program_name: str, description: str, version: str = "1.0.0",
     synopsis: str = "", options: list[dict] | None = None, examples: list[dict] | None = None,
     author: str = ""
-) -> dict:
+, api_key: str = "") -> dict:
     """Generate a man page in troff format.
 
     Args:
@@ -212,6 +229,10 @@ def generate_manpage(
         examples: List of example dicts with keys: command, description
         author: Author name
     """
+    allowed, msg, tier = check_access(api_key)
+    if not allowed:
+        return {"error": msg, "upgrade_url": "https://meok.ai/pricing"}
+
     _check_rate_limit("generate_manpage")
     from datetime import date
     today = date.today().strftime("%B %Y")

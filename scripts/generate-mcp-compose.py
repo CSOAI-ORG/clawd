@@ -10,15 +10,6 @@ MANIFEST_PATH = os.path.join(BASE_DIR, "MCP_DEPLOYMENT_MANIFEST.json")
 OUTPUT_PATH = os.path.join(BASE_DIR, "docker-compose.mcp-ensemble.yml")
 
 
-def uses_fastmcp(server_py_path: str) -> bool:
-    try:
-        with open(server_py_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return "FastMCP" in content
-    except Exception:
-        return False
-
-
 def main() -> int:
     if not os.path.exists(MANIFEST_PATH):
         print(f"Manifest not found: {MANIFEST_PATH}")
@@ -29,9 +20,6 @@ def main() -> int:
 
     servers = [s for s in manifest.get("deployable_servers", []) if s.get("deployment_ready")]
     print(f"Generating compose file for {len(servers)} deployable servers...")
-
-    fastmcp_count = 0
-    bridge_count = 0
 
     lines = [
         "# Auto-generated MCP Ensemble Docker Compose",
@@ -52,20 +40,6 @@ def main() -> int:
         name = server["name"]
         repo_dir = f"./mcp-marketplace/{name}"
         external_port = base_port + idx
-        server_py = os.path.join(BASE_DIR, "mcp-marketplace", name, "server.py")
-
-        if uses_fastmcp(server_py):
-            cmd = (
-                'sh -c "uv pip install -e . && '
-                'python -c \\\"from server import mcp; mcp.settings.host=\'0.0.0.0\'; mcp.run(transport=\'sse\')\\\""'
-            )
-            fastmcp_count += 1
-        else:
-            cmd = (
-                'sh -c "uv pip install -e . && '
-                'python /home/nicholas/mcp-sse-bridge.py"'
-            )
-            bridge_count += 1
 
         lines.extend([
             f"  {name}:",
@@ -73,9 +47,12 @@ def main() -> int:
             f"    build:",
             f"      context: {repo_dir}",
             f"      dockerfile: ../../Dockerfile.mcp-base",
+            f"      args:",
+            f"        BUILDKIT_INLINE_CACHE: \"1\"",
+            f"      cache_from:",
+            f"        - mcp-base:latest",
             f"    working_dir: /app",
-            f"    command: >",
-            f"      {cmd}",
+            f"    command: python mcp-wrapper.py",
             f"    ports:",
             f"      - \"{external_port}:8000\"",
             f"    volumes:",
@@ -86,12 +63,25 @@ def main() -> int:
             f"    restart: unless-stopped",
             f"    profiles:",
             f"      - mcp",
+            f"    deploy:",
+            f"      resources:",
+            f"        limits:",
+            f"          cpus: \"0.5\"",
+            f"          memory: 512M",
+            f"        reservations:",
+            f"          cpus: \"0.1\"",
+            f"          memory: 128M",
             f"    healthcheck:",
-            f"      test: [\"CMD-SHELL\", \"python -c \\\"import urllib.request; urllib.request.urlopen('http://localhost:8000/sse')\\\" || exit 1\"]",
-            f"      interval: 30s",
-            f"      timeout: 10s",
+            f"      test: [\"CMD-SHELL\", \"python -c \\\"import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=4)\\\" || exit 1\"]",
+            f"      interval: 15s",
+            f"      timeout: 5s",
             f"      retries: 3",
-            f"      start_period: 15s",
+            f"      start_period: 30s",
+            f"    logging:",
+            f"      driver: json-file",
+            f"      options:",
+            f"        max-size: \"50m\"",
+            f"        max-file: \"3\"",
             "",
         ])
 
@@ -100,7 +90,6 @@ def main() -> int:
 
     print(f"Wrote {len(lines)} lines to {OUTPUT_PATH}")
     print(f"Port range: {base_port} -> {base_port + len(servers) - 1}")
-    print(f"FastMCP services: {fastmcp_count}, Bridge services: {bridge_count}")
     return 0
 
 

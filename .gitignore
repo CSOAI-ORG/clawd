@@ -68,3 +68,14 @@ mlx_models/
 # MCP marketplace sub-repos (managed independently)
 # ---------------------------------------------------------------------------
 mcp-marketplace/*/
+
+# ---------------------------------------------------------------------------
+# Transient / local-only directories
+# ---------------------------------------------------------------------------
+memory/
+audits/
+backups/
+recovery/
+*.log
+team_test_*.py
+test_team*.py

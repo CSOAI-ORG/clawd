@@ -182,8 +182,11 @@ Cloud (via Ollama):
 │   └── src-tauri/           # Rust backend
 │
 ├── god-eye/                 # AI monitoring (binary + HTML)
-├── terranova-*/             # Various platform projects
-├── investing/               # Portfolio tracking
+├── meok-oneos/               # Personal AI OS
+├── meok-agent-zero/          # Agent framework
+├── meok-godeye/              # Security tooling
+├── meok-platform/            # Full platform
+├── investing/                # Portfolio tracking
 └── AGENTS.md, SOUL.md, etc. # Claude Code workspace
 ```
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fleet-wide E2E validator for the MCP ensemble — SAMPLE MODE."""
+"""Fleet-wide E2E validator for ALL MCP ensemble services."""
 
 import json
 import subprocess
@@ -10,37 +10,21 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 COMPOSE_FILE = BASE_DIR / "docker-compose.mcp-ensemble.yml"
-REPORT_PATH = BASE_DIR / "FLEET_E2E_REPORT.json"
-
-# Representative sample across categories (20 services)
-SAMPLE_SERVICES = [
-    "a2a-governance-bridge-mcp",
-    "accessibility-ai-mcp",
-    "accounting-ai-mcp",
-    "agent-commerce-payments-mcp",
-    "ai-ops-mcp",
-    "api-docs-generator-ai-mcp",
-    "blockchain-verification-mcp",
-    "code-executor-mcp",
-    "code-reviewer-ai-mcp",
-    "customer-support-ai-mcp",
-    "data-science-ai-mcp",
-    "dockerfile-generator-ai-mcp",
-    "email-automation-mcp",
-    "healthcare-fhir-mcp",
-    "meok-governance-engine-mcp",
-    "security-scanner-ai-mcp",
-    "stripe-billing-mcp",
-    "web-research-mcp",
-    "webhook-ai-mcp",
-    "writing-assistant-ai-mcp",
-]
+REPORT_PATH = BASE_DIR / "FLEET_E2E_REPORT_FULL.json"
 
 
 def run(cmd, cwd=None, timeout=300):
     return subprocess.run(
         cmd, cwd=cwd or BASE_DIR, capture_output=True, text=True, timeout=timeout
     )
+
+
+def get_services():
+    r = run(["docker", "compose", "-f", str(COMPOSE_FILE), "--profile", "mcp", "config", "--services"])
+    if r.returncode != 0:
+        print(f"Failed to list services: {r.stderr}")
+        sys.exit(1)
+    return [s.strip() for s in r.stdout.strip().splitlines() if s.strip()]
 
 
 def get_service_port(service: str) -> int:
@@ -82,13 +66,13 @@ def health_check(port: int, timeout: int = 30) -> dict:
 
 
 def main() -> int:
-    services = SAMPLE_SERVICES
-    print(f"Validating {len(services)} representative services...", flush=True)
+    services = get_services()
+    print(f"Validating {len(services)} services...", flush=True)
 
     results = []
-    for svc in services:
+    for idx, svc in enumerate(services, 1):
         port = get_service_port(svc)
-        print(f"\n[{svc}] port={port}", flush=True)
+        print(f"\n[{idx}/{len(services)}] {svc} port={port}", flush=True)
 
         run(["docker", "compose", "-f", str(COMPOSE_FILE), "--profile", "mcp", "rm", "-sf", svc])
 
@@ -126,7 +110,7 @@ def main() -> int:
 
     report = {
         "validated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "mode": "sample",
+        "mode": "full",
         "total_services_validated": len(services),
         "build_successes": sum(1 for r in results if r["build_success"]),
         "health_successes": sum(1 for r in results if r["health"]["healthy"]),

@@ -882,7 +882,7 @@ services:
     working_dir: /app
     command: python mcp-wrapper.py
     ports:
-      - "8021:8000"
+      - "8203:8000"
     volumes:
       - ./mcp-marketplace/calendar-ai-mcp:/app
       - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro
@@ -3301,7 +3301,7 @@ services:
     working_dir: /app
     command: python mcp-wrapper.py
     ports:
-      - "8080:8000"
+      - "8202:8000"
     volumes:
       - ./mcp-marketplace/flashcard-ai-mcp:/app
       - ./meok-labs-engine/shared:/home/nicholas/clawd/meok-labs-engine/shared:ro

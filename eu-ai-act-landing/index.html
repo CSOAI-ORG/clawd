@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<title>EU AI Act Compliance Checker — Free Assessment | MEOK AI Labs</title>
+<meta name="description" content="Check if your AI systems comply with the EU AI Act before the 2 August 2026 deadline. Free risk classification tool. Penalties up to €35M or 7% of global turnover.">
+<meta property="og:title" content="EU AI Act Compliance Checker — Free Tool | MEOK AI Labs">
+<meta property="og:description" content="Free risk classification for EU AI Act compliance. August 2, 2026 enforcement. Penalties up to €35M.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://meok.ai">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://meok.ai">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://meok.ai/#org",
+      "name": "MEOK AI Labs",
+      "url": "https://meok.ai",
+      "email": "nicholas@csoai.org",
+      "founder": { "@type": "Person", "name": "Nicholas Templeman" },
+      "sameAs": ["https://github.com/CSOAI-ORG", "https://pypi.org/user/MEOK_AI_Labs/"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "EU AI Act Compliance Checker",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "publisher": { "@id": "https://meok.ai/#org" },
+      "offers": {
+        "@type": "AggregateOffer",
+        "lowPrice": "0",
+        "highPrice": "5000",
+        "priceCurrency": "GBP",
+        "offerCount": 3
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "When does the EU AI Act come into force?",
+          "acceptedAnswer": { "@type": "Answer", "text": "High-risk AI system requirements begin enforcement on 2 August 2026. Prohibited-practice rules are already in force since 2 February 2025. General-purpose AI (GPAI) obligations start 2 August 2025." }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the penalties for non-compliance with the EU AI Act?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Up to €35 million or 7% of global annual turnover (whichever is higher) for prohibited AI practices. Up to €15 million or 3% of turnover for high-risk AI violations. Up to €7.5 million or 1.5% for supplying incorrect information." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which AI systems are classified as high-risk under the EU AI Act?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Annex III lists high-risk categories: biometrics, critical infrastructure, education and vocational training, employment and worker management, access to essential services (credit scoring, health insurance), law enforcement, migration and border control, and administration of justice." }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the core obligations under Articles 9 to 15?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Risk management system (Article 9), data and data governance (Article 10), technical documentation (Article 11), record-keeping/logging (Article 12), transparency and user information (Article 13), human oversight (Article 14), and accuracy/robustness/cybersecurity (Article 15)." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I audit my AI system against the EU AI Act?",
+          "acceptedAnswer": { "@type": "Answer", "text": "MEOK AI Labs publishes 211 open-source MCP servers on PyPI that automate EU AI Act conformity checks. Install the flagship with pip install eu-ai-act-compliance-mcp, or book a 48-hour written assessment for £5,000." }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "Check if your AI system needs EU AI Act compliance",
+      "step": [
+        { "@type": "HowToStep", "name": "Classify your AI system", "text": "Identify whether the system falls under Annex III high-risk categories (hiring, credit, healthcare, education, law enforcement)." },
+        { "@type": "HowToStep", "name": "Confirm EU exposure", "text": "Determine if the system serves EU-based users, employees, or customers — if yes, the Act applies." },
+        { "@type": "HowToStep", "name": "Run a conformity gap analysis", "text": "Audit against Articles 9-15 (risk management, data governance, documentation, logging, transparency, human oversight, accuracy)." },
+        { "@type": "HowToStep", "name": "Generate technical documentation", "text": "Produce the Annex IV technical documentation pack required for CE marking under Article 43." },
+        { "@type": "HowToStep", "name": "Implement post-market monitoring", "text": "Set up the Article 61 post-market monitoring plan including incident reporting." }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;line-height:1.6}
+.hero{text-align:center;padding:80px 20px 40px;max-width:800px;margin:0 auto}
+.hero h1{font-size:48px;margin-bottom:20px;background:linear-gradient(135deg,#00ff88,#00aaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .deadline{font-size:24px;color:#ff4444;font-weight:bold;margin:20px 0}
+.hero .sub{font-size:18px;color:#888;margin-bottom:40px}
+.checker{max-width:600px;margin:0 auto;padding:20px}
+.q{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:24px;margin:16px 0}
+.q h3{color:#00ff88;margin-bottom:12px}
+.q label{display:block;padding:8px 16px;margin:4px 0;border-radius:8px;cursor:pointer;transition:background 0.2s}
+.q label:hover{background:#2a2a2a}
+.q input[type=radio]{margin-right:10px}
+.btn{display:inline-block;background:#00ff88;color:#000;padding:16px 40px;border-radius:8px;font-size:18px;font-weight:bold;text-decoration:none;border:none;cursor:pointer;margin:20px 0}
+.btn:hover{background:#00dd77}
+.btn-red{background:#ff4444;color:#fff}
+.result{background:#1a1a1a;border:2px solid #00ff88;border-radius:12px;padding:32px;margin:24px auto;max-width:600px;display:none}
+.result.high{border-color:#ff4444}
+.result h2{margin-bottom:16px}
+.cta{text-align:center;padding:40px 20px;background:#111;margin-top:40px}
+.cta h2{font-size:32px;margin-bottom:16px}
+.pricing{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;padding:20px}
+.price-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:32px;width:280px;text-align:center}
+.price-card h3{color:#00ff88;font-size:24px}
+.price-card .amount{font-size:36px;font-weight:bold;margin:16px 0}
+.price-card ul{text-align:left;list-style:none;margin:16px 0}
+.price-card li{padding:4px 0}
+.price-card li:before{content:"✓ ";color:#00ff88}
+.footer{text-align:center;padding:40px;color:#666;font-size:14px}
+.countdown{font-size:64px;font-weight:bold;color:#ff4444;font-family:monospace}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>Is Your AI Legal?</h1>
+<p class="deadline">EU AI Act Enforcement Deadline</p>
+<div class="countdown" id="countdown">104 days</div>
+<p class="sub">Penalties up to €35 million or 7% of global turnover.<br>Free compliance check below.</p>
+</div>
+
+<div class="checker">
+<h2 style="text-align:center;margin-bottom:24px">Quick Compliance Check</h2>
+
+<div class="q">
+<h3>1. What does your AI system do?</h3>
+<label><input type="radio" name="q1" value="hiring" onclick="updateResult()"> Recruitment / hiring decisions</label>
+<label><input type="radio" name="q1" value="credit" onclick="updateResult()"> Credit scoring / lending</label>
+<label><input type="radio" name="q1" value="medical" onclick="updateResult()"> Medical diagnosis / triage</label>
+<label><input type="radio" name="q1" value="chatbot" onclick="updateResult()"> Customer service chatbot</label>
+<label><input type="radio" name="q1" value="content" onclick="updateResult()"> Content recommendation</label>
+<label><input type="radio" name="q1" value="internal" onclick="updateResult()"> Internal analytics / BI</label>
+</div>
+
+<div class="q">
+<h3>2. Does it serve EU customers or employees?</h3>
+<label><input type="radio" name="q2" value="yes" onclick="updateResult()"> Yes</label>
+<label><input type="radio" name="q2" value="no" onclick="updateResult()"> No</label>
+<label><input type="radio" name="q2" value="unsure" onclick="updateResult()"> Not sure</label>
+</div>
+
+<div class="q">
+<h3>3. Do you have compliance documentation?</h3>
+<label><input type="radio" name="q3" value="none" onclick="updateResult()"> No documentation</label>
+<label><input type="radio" name="q3" value="partial" onclick="updateResult()"> Some documentation</label>
+<label><input type="radio" name="q3" value="full" onclick="updateResult()"> Full documentation</label>
+</div>
+
+<div class="result" id="result">
+<h2 id="result-title"></h2>
+<p id="result-text"></p>
+<div style="margin-top:20px" id="result-cta"></div>
+</div>
+</div>
+
+<div class="cta">
+<h2>Get Compliant Before August 2</h2>
+<div class="pricing">
+
+<div class="price-card">
+<h3>Free Check</h3>
+<div class="amount">£0</div>
+<ul>
+<li>Risk classification</li>
+<li>Basic compliance gaps</li>
+<li>Framework overview</li>
+</ul>
+<p style="font-size:12px;color:#666;margin-top:8px">pip install eu-ai-act-compliance-mcp</p>
+</div>
+
+<div class="price-card" style="border-color:#00ff88">
+<h3>Compliance Pack</h3>
+<div class="amount">£49<span style="font-size:16px">/mo</span></div>
+<ul>
+<li>5 MCP servers</li>
+<li>ISO 42001 audit</li>
+<li>13 framework crosswalks</li>
+<li>Bias detection</li>
+<li>Audit trail generation</li>
+</ul>
+<a href="https://buy.stripe.com/7sY7sN2G01466kdaqI8k834" class="btn" style="display:block;text-align:center;margin-top:16px">Start Now →</a>
+</div>
+
+<div class="price-card">
+<h3>48-Hour Assessment</h3>
+<div class="amount">£5,000</div>
+<ul>
+<li>Complete system audit</li>
+<li>Risk classification</li>
+<li>Gap analysis report</li>
+<li>Remediation roadmap</li>
+<li>Direct consultant access</li>
+</ul>
+<a href="https://buy.stripe.com/4gM7sN2G0bIKeQJfL28k833" class="btn" style="display:block;text-align:center;margin-top:16px">Book Assessment →</a>
+</div>
+
+</div>
+</div>
+
+<div class="footer">
+<p>MEOK AI Labs — Care-aligned AI research</p>
+<p>207 MCP servers · ISO 42001 · EU AI Act · Open source</p>
+<p><a href="https://meok.ai" style="color:#00ff88">meok.ai</a> · <a href="https://github.com/CSOAI-ORG" style="color:#00ff88">GitHub</a></p>
+</div>
+
+<script>
+// Countdown
+const deadline = new Date('2026-08-02T00:00:00Z');
+function updateCountdown(){
+const now=new Date();
+const diff=deadline-now;
+const days=Math.floor(diff/(1000*60*60*24));
+document.getElementById('countdown').textContent=days+' days';
+}
+updateCountdown();
+setInterval(updateCountdown,86400000);
+
+function updateResult(){
+const q1=document.querySelector('input[name=q1]:checked');
+const q2=document.querySelector('input[name=q2]:checked');
+const q3=document.querySelector('input[name=q3]:checked');
+if(!q1||!q2||!q3)return;
+
+const r=document.getElementById('result');
+const title=document.getElementById('result-title');
+const text=document.getElementById('result-text');
+const cta=document.getElementById('result-cta');
+r.style.display='block';
+
+const highRisk=['hiring','credit','medical'];
+const isHighRisk=highRisk.includes(q1.value);
+const isEU=q2.value!=='no';
+const hasDoc=q3.value;
+
+if(isHighRisk&&isEU){
+r.className='result high';
+title.textContent='⚠️ HIGH RISK — Immediate action required';
+text.textContent='Your AI system is classified as HIGH RISK under EU AI Act Annex III. You need conformity assessment, technical documentation, bias monitoring, and human oversight mechanisms before August 2, 2026. Penalties: up to €35M.';
+cta.innerHTML='<a href="https://buy.stripe.com/4gM7sN2G0bIKeQJfL28k833" class="btn btn-red">Book 48-Hour Assessment — £5,000 →</a>';
+}else if(isEU&&hasDoc==='none'){
+r.className='result high';
+title.textContent='⚠️ AT RISK — No documentation';
+text.textContent='Your AI system serves EU customers but has no compliance documentation. Even limited-risk AI systems require transparency obligations. Start documenting now.';
+cta.innerHTML='<a href="https://buy.stripe.com/7sY7sN2G01466kdaqI8k834" class="btn">Get Compliance Pack — £49/mo →</a>';
+}else if(!isEU){
+r.className='result';
+title.textContent='✓ Lower risk — but monitor changes';
+text.textContent='Your AI system does not currently serve EU customers, so direct EU AI Act obligations may not apply. However, many countries are adopting similar frameworks. Consider proactive compliance.';
+cta.innerHTML='<a href="https://buy.stripe.com/7sY7sN2G01466kdaqI8k834" class="btn" style="background:#333;color:#fff">Get Compliance Pack — £49/mo →</a>';
+}else{
+r.className='result';
+title.textContent='✓ Limited risk — transparency required';
+text.textContent='Your AI system is likely LIMITED RISK under the EU AI Act. You still need transparency obligations (inform users they are interacting with AI) and basic documentation.';
+cta.innerHTML='<a href="https://buy.stripe.com/7sY7sN2G01466kdaqI8k834" class="btn">Get Compliance Pack — £49/mo →</a>';
+}
+}
+</script>
+</body>
+</html>
